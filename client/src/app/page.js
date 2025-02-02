@@ -8,7 +8,8 @@ export default function Home() {
     <div>
       {/* <AboutUs /> */}
       {/* <DiseasePredictor /> */}
-      <AlternativeDrug />
+      {/* <AlternativeDrug /> */}
+      Home Page
     </div>
   );
 }
