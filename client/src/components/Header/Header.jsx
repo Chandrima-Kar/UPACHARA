@@ -101,13 +101,13 @@ const Header = () => {
             {drugOpen && (
               <div className="absolute left-0 z-50  w-40 bg-[#e4eefd] shadow-xl shadow-lg rounded-lg ">
                 <Link
-                  href="/drug/alternative"
+                  href="/drug-alternative"
                   className="block px-4 py-4 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
                   Drug Alternative
                 </Link>
                 <Link
-                  href="/drug/response"
+                  href="/drug-response"
                   className="block px-4 py-4 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
                   Drug Response

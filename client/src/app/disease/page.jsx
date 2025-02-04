@@ -1,13 +1,11 @@
-import React from "react";
-
-const DiseasePredictor = ({
+export default function DiseasePage({
   predictedDisease,
   disDes,
   myPrecautions,
   medications,
   myWorkout,
   myDiet,
-}) => {
+}) {
   return (
     <div>
       {/* Heading Section */}
@@ -135,6 +133,4 @@ const DiseasePredictor = ({
       )}
     </div>
   );
-};
-
-export default DiseasePredictor;
+}

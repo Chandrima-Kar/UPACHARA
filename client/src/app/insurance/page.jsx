@@ -1,6 +1,4 @@
-import React from "react";
-
-const InsurancePricePredictor = ({ insurancePrice }) => {
+export default function InsurancePage() {
   return (
     <div>
       {/* Heading Section */}
@@ -109,13 +107,11 @@ const InsurancePricePredictor = ({ insurancePrice }) => {
       </div>
 
       {/* Display Insurance Price if available */}
-      {insurancePrice !== null && (
-        <div>
-          <h3>Rs. {insurancePrice} per year</h3>
-        </div>
-      )}
+      {/* {insurancePrice !== null && (
+    <div>
+      <h3>Rs. {insurancePrice} per year</h3>
+    </div>
+  )} */}
     </div>
   );
-};
-
-export default InsurancePricePredictor;
+}
