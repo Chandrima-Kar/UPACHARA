@@ -1,13 +1,11 @@
-import React from "react";
-
-const AboutUs = () => {
+export default function AboutPage() {
   return (
     <div>
       {/* Our Vision Section */}
       <section>
         <div>
           <div>
-            <h2>Our Vision</h2>
+            <h2 className=" text-5xl">Our Vision</h2>
             <p>
               We envision a world where access to healthcare information is not
               just a luxury but a fundamental right. Our journey began with a
@@ -99,6 +97,4 @@ const AboutUs = () => {
       </section>
     </div>
   );
-};
-
-export default AboutUs;
+}

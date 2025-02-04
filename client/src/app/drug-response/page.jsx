@@ -1,11 +1,9 @@
-import React from "react";
-
-const AlternativeDrug = ({ medicines, predictionText }) => {
+export default function DrugResponsePage({ medicines, predictionText }) {
   return (
     <div>
       {/* Heading */}
       <section>
-        <h2>Alternative Drug</h2>
+        <h2>response Drug</h2>
       </section>
 
       {/* About Us Section */}
@@ -28,7 +26,7 @@ const AlternativeDrug = ({ medicines, predictionText }) => {
           <li>Your well-being is our priority!</li>
         </ul>
 
-        <form action="/alternativedrug" method="POST">
+        {/* <form action="/alternativedrug" method="POST">
           <label htmlFor="medicine">Select a medicine:</label>
           <select id="medicine" name="medicine">
             {medicines.map((drugName) => (
@@ -38,9 +36,9 @@ const AlternativeDrug = ({ medicines, predictionText }) => {
             ))}
           </select>
           <button type="submit">Predict</button>
-        </form>
+        </form> */}
 
-        {predictionText && (
+        {/* {predictionText && (
           <div>
             <h2>Recommended Medicines</h2>
             <div>
@@ -58,10 +56,8 @@ const AlternativeDrug = ({ medicines, predictionText }) => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
       </section>
     </div>
   );
-};
-
-export default AlternativeDrug;
+}
