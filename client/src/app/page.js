@@ -3,9 +3,9 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <section className="relative my-24 flex flex-col items-center justify-center px-6 text-center">
+    <section className="relative my-20 flex flex-col items-center justify-center px-6 text-center">
       {/* Floating User Images */}
-      <div className="absolute top-40 left-40 hidden lg:block">
+      <div className="absolute top-32 -left-20 hidden lg:block">
         <div className="bg-orange-100 rounded-lg p-2">
           <Image
             src="/ed.jpg" // Replace with actual images
