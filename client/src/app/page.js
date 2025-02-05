@@ -59,9 +59,7 @@ export default function Home() {
         <br /> healthmap - <span className=" text-blue-500"> upachara</span>
       </h1>
       <p className="text-gray-600 max-w-xl mt-4">
-        HomeHero is your home manager who takes care of all the household tasks
-        and admin that you don’t want to, leaving you time for things that
-        really matter in life.
+        Your Health, Our Priority: Predict, Prevent, and Protect
       </p>
 
       {/* Email Input & Button */}
@@ -71,7 +69,7 @@ export default function Home() {
             "bg-gradient-to-r from-[#193c70e9] to-[#1489386c] hover:to-[#174926]"
           }
           // buttonLink={content.jobLink}
-          buttonName={"Join Our Team"}
+          buttonName={"Check Your Health"}
         />
         <MyButton1
           classDesign={
