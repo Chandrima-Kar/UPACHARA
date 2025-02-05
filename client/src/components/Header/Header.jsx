@@ -26,7 +26,7 @@ const Header = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex space-x-10 text-gray-700 font-logo_text text-lg  ">
+        <nav className="flex space-x-10 text-gray-700 font-ubuntu text-base  ">
           <Link
             href="/"
             className=" header_links transition-transform duration-700 ease transform hover:scale-125"

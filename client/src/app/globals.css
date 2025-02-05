@@ -1,10 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Macondo&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@700&family=Open+Sans&family=Roboto&family=Ubuntu:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 
-@import url("https://fonts.cdnfonts.com/css/gallient");
-@import url("https://fonts.cdnfonts.com/css/future-straw");
-@import url("https://fonts.cdnfonts.com/css/diphylleia");
 
 @tailwind base;
 @tailwind components;
@@ -52,4 +48,18 @@ body {
 
 .header_links:hover::before {
   transform: scaleX(1);
+}
+
+.perspective {
+  perspective: 1000px;
+}
+
+.rotate-3d-1 {
+  transform: rotateY(20deg);
+  transform-origin: center;
+}
+
+.rotate-3d-2 {
+  transform: rotateY(-25deg);
+  transform-origin: center;
 }

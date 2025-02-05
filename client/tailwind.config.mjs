@@ -17,10 +17,6 @@ export default {
         lato: ["Lato", "sans-serif"], // secondary heading
         montserrat: ["Montserrat", "sans-serif"], // primary heading
         ubuntu: ["Ubuntu", "sans-serif"], // buttons
-        logo_text: ["Macondo", "cursive"],
-        gallient: ["Gallient", "sans-serif"],
-        pangaia: ["Diphylleia", "sans-serif"],
-        searchBars: ["Future Straw", "sans-serif"],
       },
     },
   },
