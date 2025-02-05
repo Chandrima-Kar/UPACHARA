@@ -7,7 +7,6 @@ import Image from "next/image";
 const Header = () => {
   const [multiDiseaseOpen, setMultiDiseaseOpen] = useState(false);
   const [drugOpen, setDrugOpen] = useState(false);
-
   return (
     <header className=" relative w-full z-50">
       <div className="max-w-[85rem] mx-auto flex items-center justify-between px-6 py-5">
