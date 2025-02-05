@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 const Hero = () => {
   return (
-    <section className="relative my-20 flex flex-col items-center justify-center px-6 text-center">
+    <section className="relative  flex flex-col items-center justify-center px-6 text-center">
       <div className="absolute top-[15rem] -left-20 hidden lg:block perspective">
         <div className="bg-green-100 p-4 w-[220px] h-[250px] rounded-lg transform rotate-x-[15deg] -translate-y-4"></div>
 
