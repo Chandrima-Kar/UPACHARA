@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 const cardsLeft = [
   {
     id: 1,
-    image: "/patient2.png",
+    image: "/2.png",
     text: `Disease prediction intro - consectetur
           adipisicing elit. Atque similique corporis architecto
           soluta earum id ipsum voluptatem suscipit cupiditate illo
@@ -23,7 +23,7 @@ const cardsLeft = [
   },
   {
     id: 2,
-    image: "/patient2.png",
+    image: "/4.png",
     text: `Multi disease intro - consectetur
           adipisicing elit. Atque similique corporis architecto
           soluta earum id ipsum voluptatem suscipit cupiditate illo
@@ -39,7 +39,7 @@ const cardsLeft = [
 const cardsRight = [
   {
     id: 3,
-    image: "/patient2.png",
+    image: "/1.png",
     text: `drug alternative intro - consectetur
           adipisicing elit. Atque similique corporis architecto
           soluta earum id ipsum voluptatem suscipit cupiditate illo
@@ -52,7 +52,7 @@ const cardsRight = [
   },
   {
     id: 4,
-    image: "/patient2.png",
+    image: "/3.png",
     text: `drug response intro - consectetur
           adipisicing elit. Atque similique corporis architecto
           soluta earum id ipsum voluptatem suscipit cupiditate illo
