@@ -1,7 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 const Hero = () => {
+  const router = useRouter();
+
   return (
     <section className="relative  flex flex-col items-center justify-center px-6 text-center">
       <div className="absolute top-[15rem] -left-20 hidden lg:block perspective">
@@ -69,13 +73,13 @@ const Hero = () => {
 
       {/* Email Input & Button */}
       <div className="mt-6 flex  gap-10">
-        <Link
-          href="/disease-prediction"
-          className="bg-gradient-to-r from-[#3b82f6] to-[#174926] hover:to-[#166534]  px-8 py-4 rounded-full font-ubuntu font-medium text-lg text-white transition-transform duration-700 ease transform hover:scale-110"
+        <div
+          onClick={() => router.push("/disease-prediction")}
+          className="bg-gradient-to-r from-[#3b82f6] to-[#174926] hover:to-[#166534]  px-8 py-4 rounded-full font-ubuntu font-medium text-lg text-white transition-transform duration-700 ease transform hover:scale-110 cursor-pointer"
         >
           {" "}
           👩‍⚕️ Check Your Health
-        </Link>
+        </div>
 
         <Link
           href="https://youtu.be/9DXZKdeETJw"

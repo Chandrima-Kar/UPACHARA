@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MdArrowOutward } from "react-icons/md";
 
 import { motion } from "framer-motion";
@@ -67,6 +67,7 @@ const cardsRight = [
 
 const ServicesSection = () => {
   const [flippedCards, setFlippedCards] = useState({});
+  const router = useRouter();
 
   const handleFlip = (id) => {
     setFlippedCards((prev) => ({
@@ -107,12 +108,12 @@ const ServicesSection = () => {
                   <div className="absolute w-[28rem] h-[298.6px] bg-blue-500 text-white flex flex-col items-center justify-center rounded-xl shadow-2xl shadow-blue-200 rotate-y-180 backface-hidden">
                     <p className="text-center font-lato p-4">{card.text}</p>
 
-                    <Link
-                      href={card.linkedPage}
+                    <div
+                      onClick={() => router.push("/disease-prediction")}
                       className=" flex items-center justify-center p-3 outline-dotted outline-3 -outline-offset-[7px] outline-white  bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-110 hover:bg-blue-700 cursor-pointer"
                     >
                       <MdArrowOutward className=" w-7 h-7" />
-                    </Link>
+                    </div>
                   </div>
                 </motion.div>
               </div>
@@ -157,12 +158,12 @@ const ServicesSection = () => {
                   <div className="absolute w-[28rem] h-[298.6px] bg-blue-500 text-white flex flex-col items-center justify-center rounded-xl shadow-2xl shadow-blue-200 rotate-y-180 backface-hidden">
                     <p className="text-center font-lato p-4">{card.text}</p>
 
-                    <Link
-                      href={card.linkedPage}
+                    <div
+                      onClick={() => router.push("/blogs")}
                       className=" flex items-center justify-center p-3 outline-dotted outline-3 -outline-offset-[7px] outline-white  bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-110 hover:bg-blue-700 cursor-pointer"
                     >
                       <MdArrowOutward className=" w-7 h-7" />
-                    </Link>
+                    </div>
                   </div>
                 </motion.div>
               </div>

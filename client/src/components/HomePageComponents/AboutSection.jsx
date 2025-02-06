@@ -1,9 +1,11 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MdBatchPrediction } from "react-icons/md";
 
 const AboutSection = () => {
+  const router = useRouter();
+
   return (
     <div className="flex items-center justify-center gap-20">
       <div className="flex flex-col items-center justify-center gap-12">
@@ -20,12 +22,12 @@ const AboutSection = () => {
             asperiores doloribus. Animi
           </p>
 
-          <Link
-            href="/about"
-            className="bg-gradient-to-r from-[#3b82f6] to-[#174926] hover:to-[#166534]  px-4 py-2 rounded-3xl font-ubuntu font-medium text-lg text-white transition-transform duration-700 ease transform hover:scale-90 w-fit"
+          <div
+            onClick={() => router.push("/about")}
+            className="bg-gradient-to-r from-[#3b82f6] to-[#174926] hover:to-[#166534]  px-4 py-2 rounded-3xl font-ubuntu font-medium text-lg text-white transition-transform duration-700 ease transform hover:scale-90 w-fit cursor-pointer"
           >
             Learn More
-          </Link>
+          </div>
         </div>
         <div className="flex items-center justify-between gap-16 max-w-xl">
           <div className="flex flex-col gap-5">
