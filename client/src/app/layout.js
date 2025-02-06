@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
       >
         <ToastContainer />
         <Header />
-        {/* <Baseline /> */}
+        <Baseline />
         <main>{children}</main>
         <Footer />
       </body>

@@ -122,13 +122,13 @@ const ServicesSection = () => {
 
           <div className="flex flex-col items-center justify-center">
             <Image
-              src="/ed.jpg"
-              alt="Upachara"
-              width={200}
-              height={200}
-              className="w-[7rem] rounded-2xl"
+              src="/logoU.png"
+              alt="Logo"
+              width={170}
+              height={56.27}
+              className=""
             />
-            <h1 className=" text-lg font-mono">Presents</h1>
+            <h1 className=" text-lg font-mono pl-5">Presents</h1>
           </div>
 
           <div className="grid grid-cols-1 place-items-center gap-10">

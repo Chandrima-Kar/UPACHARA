@@ -14,14 +14,13 @@ const Header = () => {
         <div className="flex gap-x-1 items-center">
           <Link href="/">
             <Image
-              src="/ed.jpg" // Replace with your logo path
+              src="/logoU.png"
               alt="Logo"
-              width={35}
-              height={35}
+              width={170}
+              height={56.27}
               className="cursor-pointer rounded-full"
             />
           </Link>
-          <h1 className=" font-bold text-[1.5rem] ">Upachara</h1>
         </div>
 
         {/* Navigation */}
@@ -38,12 +37,6 @@ const Header = () => {
           >
             About
           </Link>
-          <Link
-            href="/disease-prediction"
-            className=" header_links transition-transform duration-700 ease transform hover:scale-125"
-          >
-            Disease Prediction
-          </Link>
 
           {/* Multi-disease Dropdown */}
           <div
@@ -55,40 +48,28 @@ const Header = () => {
               Multi-diseases
             </span>
             {multiDiseaseOpen && (
-              <div className="absolute left-0 w-full z-50 bg-[#e4eefd] shadow-xl rounded-lg ">
+              <div className="absolute left-0 w-48 z-50 bg-[#e4eefd] shadow-xl rounded-lg ">
                 <Link
                   href="/disease/liver"
                   className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
-                  Liver
+                  Predict by Symptoms
                 </Link>
                 <Link
                   href="/disease/kidney"
                   className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
-                  Kidney
-                </Link>
-                <Link
-                  href="/disease/heart"
-                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
-                >
-                  Heart
-                </Link>
-                <Link
-                  href="/disease/diabetes"
-                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
-                >
-                  Diabetes
-                </Link>
-                <Link
-                  href="/disease/pancreas"
-                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
-                >
-                  Pancreas
+                  Predict by Images
                 </Link>
               </div>
             )}
           </div>
+          <Link
+            href="/disease-prediction"
+            className=" header_links transition-transform duration-700 ease transform hover:scale-125"
+          >
+            Disease Prediction
+          </Link>
 
           {/* Drug Dropdown */}
           <div
@@ -101,13 +82,13 @@ const Header = () => {
               <div className="absolute left-0 z-50  w-40 bg-[#e4eefd] shadow-xl rounded-lg ">
                 <Link
                   href="/drug-alternative"
-                  className="block px-4 py-4 header_links transition-transform duration-700 ease transform hover:scale-90"
+                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
                   Drug Alternative
                 </Link>
                 <Link
                   href="/drug-response"
-                  className="block px-4 py-4 header_links transition-transform duration-700 ease transform hover:scale-90"
+                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
                   Drug Response
                 </Link>

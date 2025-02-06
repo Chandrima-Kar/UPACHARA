@@ -22,40 +22,44 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute top-[22rem] -right-10 hidden lg:block perspective">
-        <div className="bg-red-100 p-4 w-[210px] h-[150px] rounded-lg transform rotate-x-[15deg] -translate-y-4"></div>
+      <div className="absolute top-[22rem] -right-16 hidden lg:block perspective">
+        <div className="bg-yellow-100 p-4 w-[300px] h-[150px] rounded-lg transform rotate-x-[15deg] -translate-y-4"></div>
 
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center perspective">
           <Image
             src="/patient2.png"
             alt="User 1"
-            width={250}
-            height={250}
-            className="rounded-lg rotate-3d-2 shadow-xl  shadow-red-100"
+            width={450}
+            height={300}
+            className="rounded-lg rotate-3d-2 shadow-xl  shadow-yellow-100"
           />
         </div>
       </div>
 
-      <div className="absolute bottom-10 left-10 hidden lg:block">
-        <div className="bg-yellow-100 rounded-lg p-2 perspective">
+      <div className="absolute bottom-10 -left-16 hidden lg:block perspective">
+        <div className="bg-red-100 p-4 w-[300px] h-[150px] rounded-lg transform rotate-x-[15deg] -translate-y-4"></div>
+
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center perspective">
           <Image
             src="/patient3.png"
-            alt="User 3"
-            width={200}
-            height={200}
-            className="rounded-lg rotate-3d-1"
+            alt="User 1"
+            width={450}
+            height={300}
+            className="rounded-lg rotate-3d-1 shadow-xl  shadow-red-100"
           />
         </div>
       </div>
 
-      <div className="absolute bottom-5 right-10 hidden lg:block">
-        <div className="bg-purple-100 rounded-lg p-2 perspective">
+      <div className="absolute bottom-0 -right-20  hidden lg:block perspective">
+        <div className="bg-purple-100 p-4 w-[220px] h-[250px] rounded-lg transform rotate-x-[15deg] -translate-y-4"></div>
+
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center perspective">
           <Image
             src="/patient4.png"
-            alt="User 4"
-            width={180}
-            height={180}
-            className="rounded-lg rotate-3d-2"
+            alt="User 1"
+            width={300}
+            height={450}
+            className="rounded-lg rotate-3d-2 shadow-xl  shadow-purple-100"
           />
         </div>
       </div>
@@ -94,11 +98,11 @@ const Hero = () => {
       {/* Mobile Mockup */}
       <div className="mt-10 text-green-200">
         <Image
-          src="/heroMobile.png" // Replace with actual mobile UI screenshot
+          src="/heroMobile.png"
           alt="Chat App"
           width={420}
           height={630}
-          className="rounded-lg shadow-lg"
+          className=""
         />
       </div>
     </section>

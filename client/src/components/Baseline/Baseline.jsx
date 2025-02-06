@@ -31,7 +31,7 @@ const Baseline = () => {
               messi10.pratikbiswas@gmail.com
             </motion.div>
           )}
-          <IoMdMail className="w-6 h-6 text-blue-500" />
+          <IoMdMail className="w-6 h-6 text-blue-950" />
         </a>
 
         {/* Call Icon */}
@@ -51,7 +51,7 @@ const Baseline = () => {
               +91 7001316356
             </motion.div>
           )}
-          <IoMdCall className="w-6 h-6 text-blue-500" />
+          <IoMdCall className="w-6 h-6 text-blue-950" />
         </a>
       </div>
 
@@ -80,7 +80,7 @@ const Baseline = () => {
               Food Analyser
             </motion.div>
           )}
-          <IoFastFood className="w-6 h-6 text-blue-500 " />
+          <IoFastFood className="w-6 h-6 text-blue-950 " />
         </div>
 
         {/* Chat Assistant Icon */}
@@ -99,7 +99,7 @@ const Baseline = () => {
               Swasthya Sathi
             </motion.div>
           )}
-          <BsRobot className="w-6 h-6 text-blue-500 " />
+          <BsRobot className="w-6 h-6 text-blue-950 " />
         </div>
       </div>
     </div>
