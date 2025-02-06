@@ -98,7 +98,7 @@ const Header = () => {
           >
             <span className="header_links  cursor-context-menu">Drug</span>
             {drugOpen && (
-              <div className="absolute left-0 z-50  w-40 bg-[#e4eefd] shadow-xl shadow-lg rounded-lg ">
+              <div className="absolute left-0 z-50  w-40 bg-[#e4eefd] shadow-xl rounded-lg ">
                 <Link
                   href="/drug-alternative"
                   className="block px-4 py-4 header_links transition-transform duration-700 ease transform hover:scale-90"

@@ -1,9 +1,12 @@
 import React from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { MdArrowOutward } from "react-icons/md";
 
 const InsuranceSection = () => {
+  const router = useRouter();
+
   return (
     <div className="flex items-center justify-center gap-20">
       <div>
@@ -26,13 +29,6 @@ const InsuranceSection = () => {
             animi sit sunt a consequatur distinctio culpa laborum, officia
             perferendis asperiores doloribus. Animi
           </p>
-
-          {/* <Link
-            href="/about"
-            className="bg-gradient-to-r from-[#3b82f6] to-[#174926] hover:to-[#166534]  px-4 py-2 rounded-3xl font-ubuntu font-medium text-lg text-white transition-transform duration-700 ease transform hover:scale-90 w-fit"
-          >
-            Learn More
-          </Link> */}
         </div>
         <div className="grid grid-cols-2 items-center justify-center gap-10 max-w-xl">
           <div className="flex flex-col gap-3">
@@ -59,15 +55,15 @@ const InsuranceSection = () => {
           </div>
 
           <div className="flex flex-col items-center justify-center gap-3">
-            <Link
-              href="/insurance"
+            <div
+              onClick={() => router.push("/insurance")}
               className=" flex items-center justify-center w-32 h-32 outline-dotted outline-3 -outline-offset-[7px] outline-white  bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-110 hover:bg-blue-700 cursor-pointer"
             >
               <div className="flex flex-col items-center justify-center text-base leading-5 font-light font-ubuntu">
                 <MdArrowOutward className=" w-12 h-12" />
                 Know <br /> More
               </div>
-            </Link>
+            </div>
           </div>
 
           <div className="flex flex-col gap-3">
