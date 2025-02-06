@@ -68,12 +68,11 @@ body {
 }
 
 .testimonial-card {
-  background-color: rgba(117, 208, 234, 0.105);
+  background-color: #75d0ea1b;
   box-shadow: 0 20px 30px rgba(129, 124, 124, 0.2);
 
   backdrop-filter: blur(14px);
 }
-
 
 .preserve-3d {
   transform-style: preserve-3d;

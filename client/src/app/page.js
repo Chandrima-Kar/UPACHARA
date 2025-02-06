@@ -6,6 +6,7 @@ import Hero from "@/components/HomePageComponents/Hero";
 import InsuranceSection from "@/components/HomePageComponents/InsuranceSection";
 import TestimonialSection from "@/components/HomePageComponents/TestimonialSection";
 import ServicesSection from "@/components/HomePageComponents/ServicesSection";
+import OurBlogSection from "@/components/HomePageComponents/OurBlogSection";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <AboutSection />
       <ServicesSection />
       <InsuranceSection />
+      <OurBlogSection />
       <TestimonialSection />
     </div>
   );
