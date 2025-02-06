@@ -209,18 +209,6 @@ def predict():
         lg.error(f"Error in /predict route: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route("/data")
-def data():
-    user_data = Symptoms.query.all()
-    disease=Disease.query.all()
-    description=Description.query.all()
-    precautions = Precautions.query.all()
-    medications=Medications.query.all()
-    workout=Workout.query.all()
-    diet=Diet.query.all()
-
-    # return render_template("doctors.html", user_data=user_data,disease=disease,description=description, precautions=precautions, medications=medications,workout=workout,diet=diet)
-
 
 @app.route("/patient/<email>")
 def patient(email):
