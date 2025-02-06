@@ -11,7 +11,7 @@ const Baseline = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
 
   return (
-    <div className="flex w-fit items-center justify-center gap-x-56 fixed bottom-0 z-50 bg-blue-500 px-10 py-3 rounded-t-full">
+    <div className="flex w-fit items-center justify-center gap-x-56 fixed bottom-0 z-50 bg-blue-950 px-10 py-3 rounded-t-full">
       {/* Left Section */}
       <div className="flex items-center justify-center gap-20">
         {/* Email Icon */}
@@ -56,7 +56,7 @@ const Baseline = () => {
       </div>
 
       {/* Center Book Appointment Button */}
-      <div className="absolute mb-14 flex items-center justify-center w-[6.8rem] h-[6.8rem] border-[6px]  border-white bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-90 hover:bg-blue-700 cursor-pointer">
+      <div className="absolute mb-14 flex items-center justify-center w-[6.8rem] h-[6.8rem] border-[6px]  border-white bg-blue-950 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-90 hover:bg-blue-500 cursor-pointer">
         <h1 className="text-center text-sm whitespace-nowrap font-ubuntu">
           Book <br /> Appointment
         </h1>

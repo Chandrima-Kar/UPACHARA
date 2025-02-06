@@ -21,6 +21,7 @@ body {
 
 }
 
+/* header */
 
 .header_links {
   position: relative;
@@ -51,6 +52,27 @@ body {
 }
 
 
+/* Footer */
+
+.underline-animation {
+  position: relative;
+}
+
+.underline-animation::before {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0%;
+  height: 1.5px;
+  background-color: #a3a59e;
+  transition: all 0.5s;
+}
+
+.underline-animation:hover::before {
+  width: 100%;
+}
+
 
 /* Home page */
 .perspective {
@@ -68,8 +90,20 @@ body {
 }
 
 .testimonial-card {
-  background-color: rgba(117, 208, 234, 0.105);
+  background-color: #75d0ea1b;
   box-shadow: 0 20px 30px rgba(129, 124, 124, 0.2);
 
   backdrop-filter: blur(14px);
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
 }

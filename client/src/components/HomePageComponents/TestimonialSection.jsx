@@ -62,14 +62,14 @@ const TestimonialSection = () => {
     }
   }, [isHovered, selectedTestimonial, reviews]);
   return (
-    <section className="flex items-center md:h-full pt-4 md:pt-3 xl:py-12">
+    <section className="flex items-center ">
       <div
-        className="container mx-auto mb-6 flex flex-col items-center"
+        className="container mx-auto flex flex-col items-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Heading */}
-        <h1 className="text-3xl sm:text-4xl uppercase  font-montserrat">
+        <h1 className="text-3xl sm:text-4xl   font-montserrat">
           Patient Reviews
         </h1>
 
