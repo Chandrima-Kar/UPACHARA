@@ -78,7 +78,7 @@ const OurBlogSection = () => {
             {visiblePosts.map((post) => (
               <div
                 key={post.id}
-                className="relative bg-[#75d0ea1b] shadow-lg rounded-xl overflow-hidden cursor-pointer w-[300px] h-[300px] flex flex-col items-center justify-center group"
+                className="relative bg-[#75d0ea1b] shadow-lg rounded-xl overflow-hidden cursor-pointer w-[300px] h-[300px] flex flex-col items-center justify-center group transition-all duration-500 transform hover:scale-105"
               >
                 {/* Image */}
                 <Image
@@ -100,14 +100,12 @@ const OurBlogSection = () => {
 
             {/* View More Card - Now in the Same Row */}
             {startIndex + 3 >= blogPosts.length && (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-                className="flex justify-center items-center bg-[#75d0ea1b] text-black font-ubuntu font-medium text-xl shadow-lg rounded-xl w-[300px] h-[300px] cursor-pointer"
+              <div
+                className="flex justify-center items-center bg-[#75d0ea1b] text-black font-ubuntu font-medium text-xl shadow-lg rounded-xl w-[300px] h-[300px] cursor-pointer transition-all duration-500 transform hover:scale-105"
                 onClick={() => router.push("/blogs")}
               >
                 View More Blogs
-              </motion.div>
+              </div>
             )}
           </motion.div>
 
