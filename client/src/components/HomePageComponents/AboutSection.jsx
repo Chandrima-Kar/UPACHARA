@@ -11,15 +11,14 @@ const AboutSection = () => {
       <div className="flex flex-col items-center justify-center gap-12">
         <div className="flex flex-col max-w-xl  gap-5">
           <h1 className=" text-4xl font-montserrat">
-            Ekhane About Us r name er type r ekta heading hobe "About Us" likhbi
-            na
+            Our Mission in Healthcare Innovation
           </h1>
 
           <p className=" font-lato text-gray-800">
-            description about us dibi ---- Lorem ipsum dolor sit amet
-            consectetur, adipisicing elit. Ipsam facere, ducimus magni ut, animi
-            sit sunt a consequatur distinctio culpa laborum, officia perferendis
-            asperiores doloribus. Animi
+            Our platform harnesses the power of AI to enhance medical diagnosis,
+            optimize treatment plans, and improve patient care. By integrating
+            advanced analytics and automation, we make healthcare more
+            efficient, accessible, and personalized for everyone.
           </p>
 
           <div
@@ -29,16 +28,18 @@ const AboutSection = () => {
             Learn More
           </div>
         </div>
-        <div className="flex items-center justify-between gap-16 max-w-xl">
+        <div className="flex items-center justify-between gap-12 max-w-xl">
           <div className="flex flex-col gap-5">
             <div className=" p-1 bg-gray-300 rounded-lg w-fit">
               <MdBatchPrediction className="w-12 h-12" />
             </div>
-            <h1 className=" font-montserrat">Speciality about us 1</h1>
+            <h1 className=" font-montserrat">
+              Revolutionizing Healthcare with AI
+            </h1>
             <p className=" font-lato text-gray-800">
-              Icon change korbi based on kon speciality mention korchis ---
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Voluptatem non nemo
+              Our platform combines advanced AI with healthcare expertise to
+              deliver accurate diagnoses, personalized treatments, and seamless
+              patient management.
             </p>
           </div>
 
@@ -46,11 +47,13 @@ const AboutSection = () => {
             <div className=" p-1 bg-gray-300 rounded-lg w-fit">
               <MdBatchPrediction className="w-12 h-12" />
             </div>
-            <h1 className=" font-montserrat">Speciality about us 2</h1>
+            <h1 className=" font-montserrat">
+              Empowering Smarter & Safer Healthcare
+            </h1>
             <p className=" font-lato text-gray-800">
-              Icon change korbi based on kon speciality mention korchis ---
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Voluptatem non nemo
+              We leverage AI-driven insights to enhance medical decision-making,
+              improve accessibility, and ensure secure, data-driven patient
+              care.
             </p>
           </div>
         </div>

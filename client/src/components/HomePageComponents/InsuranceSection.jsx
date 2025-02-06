@@ -24,10 +24,10 @@ const InsuranceSection = () => {
           <h1 className=" text-4xl font-montserrat">The Perks</h1>
 
           <p className=" font-lato text-gray-800">
-            description Our Insurance Policy r dibi ---- Lorem ipsum dolor sit
-            amet consectetur, adipisicing elit. Ipsam facere, ducimus magni ut,
-            animi sit sunt a consequatur distinctio culpa laborum, officia
-            perferendis asperiores doloribus. Animi
+            Our AI-powered insurance advisor analyzes your medical history, age,
+            and location to recommend the best healthcare insurance plans. It
+            ensures you get the right coverage tailored to your needs, providing
+            financial security and peace of mind.
           </p>
         </div>
         <div className="grid grid-cols-2 items-center justify-center gap-10 max-w-xl">
@@ -35,10 +35,10 @@ const InsuranceSection = () => {
             <h1 className=" px-3 py-1 bg-blue-300 rounded-lg font-mono font-bold w-fit text-sm italic">
               Premium
             </h1>
-            <h1 className=" font-montserrat">Insurance Policy 1</h1>
+            <h1 className=" font-montserrat"> Comprehensive Health Coverage</h1>
             <p className="text-gray-800 font-lato">
-              Insurance policy describe korbi --- Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Voluptatem non nemo
+              Get extensive medical coverage, including hospitalization,
+              pre-existing conditions, and preventive care.
             </p>
           </div>
 
@@ -46,11 +46,10 @@ const InsuranceSection = () => {
             <h1 className=" px-3 py-1 bg-blue-300 rounded-lg font-mono font-bold w-fit text-sm italic">
               Freemium
             </h1>
-            <h1 className=" font-montserrat">Insurance Policy 2</h1>
+            <h1 className=" font-montserrat">Affordable Family Insurance</h1>
             <p className="text-gray-800 font-lato">
-              Insurance policy describe korbi --- Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Voluptatem non sit amet consectetur
-              adipisicing elit. Voluptatem non nemo
+              Protect your entire family with a single plan that covers medical
+              emergencies, consultations, and routine check-ups.
             </p>
           </div>
 
@@ -70,10 +69,10 @@ const InsuranceSection = () => {
             <h1 className=" px-3 py-1 bg-blue-300 rounded-lg font-mono font-bold w-fit text-sm italic">
               Free
             </h1>
-            <h1 className=" font-montserrat">Insurance Policy 3</h1>
+            <h1 className=" font-montserrat">Customizable Plans </h1>
             <p className="text-gray-800 font-lato">
-              Insurance policy describe korbi --- Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Voluptatem non nemo
+              Choose insurance that fits your needs, with flexible premiums,
+              add-on benefits, and cashless claim options.
             </p>
           </div>
         </div>
