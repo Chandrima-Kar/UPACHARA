@@ -26,13 +26,6 @@ const InsuranceSection = () => {
             animi sit sunt a consequatur distinctio culpa laborum, officia
             perferendis asperiores doloribus. Animi
           </p>
-
-          {/* <Link
-            href="/about"
-            className="bg-gradient-to-r from-[#3b82f6] to-[#174926] hover:to-[#166534]  px-4 py-2 rounded-3xl font-ubuntu font-medium text-lg text-white transition-transform duration-700 ease transform hover:scale-90 w-fit"
-          >
-            Learn More
-          </Link> */}
         </div>
         <div className="grid grid-cols-2 items-center justify-center gap-10 max-w-xl">
           <div className="flex flex-col gap-3">
