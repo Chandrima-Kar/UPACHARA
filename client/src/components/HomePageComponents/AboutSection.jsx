@@ -58,11 +58,11 @@ const AboutSection = () => {
 
       <div>
         <Image
-          src="/heroMobile.png" // Replace with actual mobile UI screenshot
+          src="/heroMobile1.png"
           alt="Chat App"
           width={420}
           height={630}
-          className="rounded-lg shadow-lg"
+          className=""
         />
       </div>
     </div>
