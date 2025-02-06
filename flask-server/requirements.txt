@@ -6,10 +6,9 @@ langchain-community==0.2.10
 python-dotenv==1.0.1
 streamlit==1.32.2
 faiss-cpu==1.8.0.post1
-torch==2.0.1
-torchvision==0.15.2
+torch==2.2.0
+torchvision==0.17.0
 flask_sqlalchemy==3.1.1
-
 absl-py==2.1.0
 altair==5.2.0
 asttokens==2.4.1
@@ -118,3 +117,6 @@ Werkzeug==3.0.1
 wheel==0.43.0
 wrapt==1.16.0
 xgboost==2.0.3
+Flask-Cors
+psycopg2
+psycopg2-binary

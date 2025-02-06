@@ -1,22 +1,21 @@
-from flask import Flask, request, render_template, session, url_for, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
-import numpy as np
-import cv2
 import os
-import asyncio
 import sys
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 import tensorflow as tf
+from flask_cors import CORS
 import warnings
 import json
 import logging
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+import pandas as pd
+import ast
 from src.ChatBot.chatbot import ingest_data,user_input
 import os
 import asyncio
-from flask import Flask, request, render_template, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for
 # Suppress warning
 warnings.filterwarnings("ignore", category=UserWarning, message="Trying to unpickle estimator")
 
@@ -36,13 +35,17 @@ from src.ChatBot.chatbot import ingest_data,user_input
 
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
+cors_origin = os.getenv("FLASK_CORS_ORIGIN", "*")
+flask_postgres_connection = os.getenv("FLASK_POSTGRES_STRING","*")
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///"+os.path.join(current_dir, "database2.sqlite3")
+CORS(app, origins=[cors_origin], methods=["GET", "POST", "OPTIONS"])
+# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///"+os.path.join(current_dir, "database2.sqlite3")
+app.config['SQLALCHEMY_DATABASE_URI'] = flask_postgres_connection
 app.config['SECRET_KEY'] = 'healthmap'
-db = SQLAlchemy()
-db.init_app(app)
-app.app_context().push()
+db = SQLAlchemy(app)
+
+
 
 class Symptoms(db.Model):
     __tablename__ = 'symptoms'
@@ -61,13 +64,13 @@ class Precautions(db.Model):
     __tablename__ = 'precautions'
     sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
     p_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    precaution = db.Column(db.String(30), nullable=False)
+    precaution = db.Column(db.JSON, nullable=False)
 
 class Medications(db.Model):
     __tablename__ = 'medications'
     sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
     m_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    medication = db.Column(db.String(30), nullable=False)
+    medication = db.Column(db.JSON, nullable=False)
 
 class Disease(db.Model):
     __tablename__ = 'disease'
@@ -79,13 +82,13 @@ class Diet(db.Model):
     __tablename__ = 'diet'
     sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
     di_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    diet = db.Column(db.String(30), nullable=False)
+    diet = db.Column(db.JSON, nullable=False)
 
 class Workout(db.Model):
     __tablename__ = 'workout'
     sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
     w_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    workout = db.Column(db.String(30), nullable=False)
+    workout = db.Column(db.JSON, nullable=False)
 
 class Description(db.Model):
     __tablename__ = 'description'
@@ -93,42 +96,24 @@ class Description(db.Model):
     des_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
     description = db.Column(db.String(200), nullable=False)
 
+with app.app_context():
+    db.create_all()
 
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route('/home')
-def home():
-    return render_template("index.html")
-
-with open('src/datasets/symptoms.json', 'r') as json_file:
-    symptoms_dict = json.load(json_file)
-with open('src/datasets/disease_list.json', 'r') as json_file:
-    diseases_list = json.load(json_file)
-
-@app.route("/disease")
-def disease():
-    return render_template("disease.html", symptoms_dict=symptoms_dict)
-
-@app.route('/developer')
-def developer():
-    return render_template("developer.html")
 
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
     try:
         if request.method == 'POST':
-            fname = request.form.get('fname')
-            lname = request.form.get('lname')
-            phone = request.form.get('phone')
-            email = request.form.get('email')
-            symptom_1 = request.form.get('symptom_1')
-            symptom_2 = request.form.get('symptom_2')
-            symptom_3 = request.form.get('symptom_3')
-            symptom_4 = request.form.get('symptom_4')
+            data = request.json
+            fname = data.get('fname')
+            lname = data.get('lname')
+            phone = data.get('phone')
+            email = data.get('email')
+            symptom_1 = data.get('symptom_1')
+            symptom_2 = data.get('symptom_2')
+            symptom_3 = data.get('symptom_3')
+            symptom_4 = data.get('symptom_4')
             symptoms_list = [symptom_1, symptom_2, symptom_3, symptom_4]
-            
             symp_list = Symptoms(fname=fname, lname=lname, phone=phone, email=email, symp1 = symptom_1, symp2 = symptom_2, symp3 = symptom_3, symp4 = symptom_4)
             db.session.add(symp_list)
             db.session.commit()
@@ -138,16 +123,59 @@ def predict():
             model = DiseasePrediction()
             predicted_disease, dis_des, my_precautions, medications, rec_diet, rec_workout, symptoms_dict = model.predict(symptoms_list=symptoms_list)
 
-            for precaution in my_precautions:
-                if precaution and isinstance(precaution, str):
-                    precaution_entry = Precautions(p_id=symptom_id, precaution=precaution)
-                    db.session.add(precaution_entry)
+            def convert_string_list(string_list):
+                if not string_list:
+                    return []
+
+                try:
+                    return ast.literal_eval(string_list[0])
+                except (ValueError, SyntaxError):
+                    return []
+
+            if isinstance(rec_workout, pd.Series):
+                rec_workout = rec_workout.tolist()
+
+            if isinstance(medications, pd.Series):
+                medications = medications.tolist()
+
+            if isinstance(rec_diet, pd.Series):
+                rec_diet = rec_diet.tolist()
+
+            if isinstance(my_precautions, pd.Series):
+                my_precautions = my_precautions.tolist()
+
+            if isinstance(medications, str):
+                try:
+                    medications = convert_string_list(medications)
+                except (ValueError, SyntaxError):
+                    medications = []
+
+            if isinstance(my_precautions, str):
+                try:
+                    my_precautions = json.loads(my_precautions)
+                except json.JSONDecodeError:
+                    my_precautions = []
+
+            if isinstance(rec_workout, str):
+                try:
+                    rec_workout = json.loads(rec_workout)
+                except json.JSONDecodeError:
+                    rec_workout = []
+
+            if isinstance(rec_diet, str):
+                try:
+                    rec_diet = convert_string_list(rec_diet)
+                except (ValueError, SyntaxError):
+                    rec_diet = []
+
+
+
+            precaution_entry = Precautions(p_id=symptom_id, precaution=my_precautions)
+            db.session.add(precaution_entry)
             db.session.commit()
 
-            for medication in medications:
-                if medication and isinstance(medication, str):
-                    medication_entry =Medications(m_id=symptom_id, medication=medication)
-                    db.session.add(medication_entry)
+            medication_entry = Medications(m_id=symptom_id, medication=medications)
+            db.session.add(medication_entry)
             db.session.commit()
 
             if predicted_disease and isinstance(predicted_disease, str):
@@ -161,27 +189,25 @@ def predict():
                     db.session.add(description_entry)
             db.session.commit()
 
-            for workout in rec_workout:
-                if workout and isinstance(workout, str):
-                    workout_entry =Workout(w_id=symptom_id, workout=workout)
-                    db.session.add(workout_entry)
-            db.session.commit()
-
-            for diet in rec_diet:
-                if diet and isinstance(diet, str):
-                    diet_entry =Diet(di_id=symptom_id, diet=diet)
-                    db.session.add(diet_entry)
+            workout_entry = Workout(w_id=symptom_id, workout=rec_workout)
+            db.session.add(workout_entry)
             db.session.commit()
 
 
-
-            return render_template('disease.html', predicted_disease=predicted_disease, dis_des=dis_des,
-                                   my_precautions=my_precautions, medications=medications, my_diet=rec_diet,
-                                   my_workout=rec_workout, symptoms_dict=symptoms_dict,)
-        return render_template('disease.html', symptoms_dict=symptoms_dict,fname=fname,lname=lname,phone=phone,email=email)
+            diet_entry =Diet(di_id=symptom_id, diet=rec_diet)
+            db.session.add(diet_entry)
+            db.session.commit()
+            return jsonify({
+                'predictedDisease': predicted_disease,
+                'disDes': dis_des,
+                'myPrecautions': my_precautions,
+                'medications': medications,
+                'myDiet': rec_diet,
+                'myWorkout': rec_workout
+            }), 200
     except Exception as e:
         lg.error(f"Error in /predict route: {e}")
-        raise CustomException(e, sys)
+        return jsonify({'error': str(e)}), 500
 
 @app.route("/data")
 def data():
@@ -193,7 +219,7 @@ def data():
     workout=Workout.query.all()
     diet=Diet.query.all()
 
-    return render_template("doctors.html", user_data=user_data,disease=disease,description=description, precautions=precautions, medications=medications,workout=workout,diet=diet)
+    # return render_template("doctors.html", user_data=user_data,disease=disease,description=description, precautions=precautions, medications=medications,workout=workout,diet=diet)
 
 
 @app.route("/patient/<email>")
@@ -208,11 +234,9 @@ def patient(email):
     workout=Workout.query.all()
     diet=Diet.query.all()
 
-    return render_template("patient.html", email=email, user_data=user_data,disease=disease,description=description, precautions=precautions,medications=medications,workout=workout,diet=diet)
+    # return render_template("patient.html", email=email, user_data=user_data,disease=disease,description=description, precautions=precautions,medications=medications,workout=workout,diet=diet)
 
-@app.route("/findpatient")
-def findpatient():
-    return render_template("findpatient.html")
+
 
 
 @app.route("/update_precaution", methods=['POST'])
@@ -249,7 +273,6 @@ def update_disease():
     print(f"Disease ID: {disease_id}")
     print(f"New Disease: {new_disease}")
 
-    # Fetch the disease record using the provided id
     disease = Disease.query.filter_by(sl=disease_id).first()
     
     if disease:
@@ -301,14 +324,6 @@ def update_diet():
         db.session.commit()
     return redirect(url_for('data'))
 
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
-@app.route('/contact')
-def contact():
-    return render_template("contact.html")
-
 @app.route('/drugres', methods=['GET', 'POST'])
 def drugres():
     try:
@@ -316,9 +331,9 @@ def drugres():
             data = request.form.to_dict()
             llm = report_generator2()
             data = llm.report(data)
-            return render_template('drug_response_output.html', data=data)
+        #     return render_template('drug_response_output.html', data=data)
         
-        return render_template('drug_response.html')
+        # return render_template('drug_response.html')
     except Exception as e:
         lg.error(f"Error in /drugresponse route: {e}")
         raise CustomException(e, sys)
@@ -330,11 +345,11 @@ def alternativedrug():
             selected_medicine = request.form['medicine']
             alt = AlternateDrug()
             recommendations, medicines_data = alt.recommendation(selected_medicine)  
-            return render_template("alternativedrug.html", medicines=medicines_data, prediction_text=recommendations)
+            # return render_template("alternativedrug.html", medicines=medicines_data, prediction_text=recommendations)
         else:
             alt = AlternateDrug()
             medicines_data = alt.medi()
-            return render_template("alternativedrug.html", medicines=medicines_data)
+            # return render_template("alternativedrug.html", medicines=medicines_data)
     except Exception as e:
         lg.error(f"Error in /alternativedrug route: {e}")
         raise CustomException(e, sys)
@@ -346,9 +361,9 @@ def liver():
             to_predict_dict = request.form.to_dict()
             model = ModelPipeline()
             pred = model.liver_predict(to_predict_dict)
-            return render_template("liver.html", prediction_text_liver=pred)
-        else:
-            return render_template("liver.html")
+        #     return render_template("liver.html", prediction_text_liver=pred)
+        # else:
+        #     return render_template("liver.html")
     except Exception as e:
         lg.error(f"Error in /liver route: {e}")
         raise CustomException(e, sys)
@@ -360,9 +375,9 @@ def breast():
             to_predict_dict = request.form.to_dict()
             model = ModelPipeline()
             pred = model.breast_cancer_predict(to_predict_dict)
-            return render_template("breast.html", prediction_text=pred)
-        else:
-            return render_template("breast.html")
+        #     return render_template("breast.html", prediction_text=pred)
+        # else:
+        #     return render_template("breast.html")
     except Exception as e:
         lg.error(f"Error in /breast route: {e}")
         raise CustomException(e, sys)
@@ -374,9 +389,9 @@ def diabetes():
             to_predict_dict = request.form.to_dict()
             model = ModelPipeline()
             pred = model.diabetes_predict(to_predict_dict)
-            return render_template("diabetes.html", prediction_text=pred)
-        else:
-            return render_template("diabetes.html")
+        #     return render_template("diabetes.html", prediction_text=pred)
+        # else:
+        #     return render_template("diabetes.html")
     except Exception as e:
         lg.error(f"Error in /diabetes route: {e}")
         raise CustomException(e, sys)
@@ -388,9 +403,9 @@ def heart():
             to_predict_dict = request.form.to_dict()
             model = ModelPipeline()
             pred = model.heart_predict(form_data=to_predict_dict)
-            return render_template("heart.html", prediction_text=pred)
-        else:
-            return render_template("heart.html")
+        #     return render_template("heart.html", prediction_text=pred)
+        # else:
+        #     return render_template("heart.html")
     except Exception as e:
         lg.error(f"Error in /heart route: {e}")
         raise CustomException(e, sys)
@@ -402,9 +417,9 @@ def kidney():
             to_predict_dict = request.form.to_dict()
             model = ModelPipeline()
             pred = model.kidney_predict(to_predict_dict)
-            return render_template("kidney.html", prediction_text=pred)
-        else:
-            return render_template("kidney.html")
+        #     return render_template("kidney.html", prediction_text=pred)
+        # else:
+        #     return render_template("kidney.html")
     except Exception as e:
         lg.error(f"Error in /kidney route: {e}")
         raise CustomException(e, sys)
@@ -416,9 +431,9 @@ def parkinsons():
             to_predict_dict = request.form.to_dict()
             model = ModelPipeline()
             pred = model.parkinsons_predict(to_predict_dict)
-            return render_template("parkinsons.html", prediction_text=pred)
-        else:
-            return render_template("parkinsons.html")
+        #     return render_template("parkinsons.html", prediction_text=pred)
+        # else:
+        #     return render_template("parkinsons.html")
     except Exception as e:
         lg.error(f"Error in /parkinsons route: {e}")
         raise CustomException(e, sys)
@@ -429,17 +444,11 @@ def insurance():
         form_data = request.form.to_dict()
         insurance_price = calculate_insurance_price(form_data)/20
         
-        return render_template("insurance.html", insurance_price = insurance_price)
-    else:
-        return render_template("insurance.html")
+    #     return render_template("insurance.html", insurance_price = insurance_price)
+    # else:
+    #     return render_template("insurance.html")
     
-@app.route('/multi_disease')
-def multi_disease():
-    return render_template("multi_disease.html")
 
-@app.route('/disease_input_type')
-def disease_input_type():
-    return render_template("disease_input_type.html")
 
 
 
@@ -471,9 +480,9 @@ def disease_image_input():
             response = llm.report(pred,class_name)
             
 
-            return render_template("disease_image_input.html", response = response)
-        return render_template("disease_image_input.html")
-    return render_template("disease_image_input.html")
+    #         return render_template("disease_image_input.html", response = response)
+    #     return render_template("disease_image_input.html")
+    # return render_template("disease_image_input.html")
 
 @app.route('/food', methods=['GET', 'POST'])
 def food():
@@ -497,8 +506,8 @@ def food():
         
         #Call the report method
         response = generator.report(file, disease)
-        return render_template('food-output.html', response=response)
-    return render_template('food-input.html')
+    #     return render_template('food-output.html', response=response)
+    # return render_template('food-input.html')
 
 
 
@@ -507,8 +516,8 @@ def food():
 def chatbot():
     if not os.path.exists("Faiss"):
         ingest_data()
-        return redirect(url_for('chatbot'))
-    return render_template('chatbot.html')
+    #     return redirect(url_for('chatbot'))
+    # return render_template('chatbot.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
