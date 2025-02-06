@@ -50,6 +50,9 @@ body {
   transform: scaleX(1);
 }
 
+
+
+/* Home page */
 .perspective {
   perspective: 1000px;
 }
@@ -62,4 +65,11 @@ body {
 .rotate-3d-2 {
   transform: rotateY(-25deg);
   transform-origin: center;
+}
+
+.testimonial-card {
+  background-color: rgba(117, 208, 234, 0.105);
+  box-shadow: 0 20px 30px rgba(129, 124, 124, 0.2);
+
+  backdrop-filter: blur(14px);
 }
