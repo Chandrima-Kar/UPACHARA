@@ -11,27 +11,13 @@ const cardsLeft = [
   {
     id: 1,
     image: "/2.png",
-    text: `Disease prediction intro - consectetur
-          adipisicing elit. Atque similique corporis architecto
-          soluta earum id ipsum voluptatem suscipit cupiditate illo
-          obcaecati, reprehenderit sit beatae unde corrupti ducimus
-          pariatur! Repudiandae Lorem, ipsum dolor sit amet
-          consectetur adipisicing elit. Culpa sed dolore
-          exercitationem labore pariatur adipisci, harum minus,
-          ipsam reprehenderit optio illum! Ut doloremque`,
+    text: `Our AI-powered disease prediction system analyzes symptoms to provide accurate and early health assessments. By leveraging machine learning and medical data, it identifies potential conditions based on user inputs, helping individuals and doctors make informed decisions. This proactive approach enables timely medical intervention, reducing complications and improving treatment outcomes.`,
     linkedPage: "/disease-prediction",
   },
   {
     id: 2,
     image: "/4.png",
-    text: `Multi disease intro - consectetur
-          adipisicing elit. Atque similique corporis architecto
-          soluta earum id ipsum voluptatem suscipit cupiditate illo
-          obcaecati, reprehenderit sit beatae unde corrupti ducimus
-          pariatur! Repudiandae Lorem, ipsum dolor sit amet
-          consectetur adipisicing elit. Culpa sed dolore
-          exercitationem labore pariatur adipisci, harum minus,
-          ipsam reprehenderit optio illum! Ut doloremque`,
+    text: `Our multi-disease prediction system uses AI to analyze symptoms and medical data, identifying potential health conditions across various diseases. It streamlines early diagnosis, helping patients and doctors take timely action for better treatment outcomes. This enhances accessibility to accurate healthcare insights and personalized recommendations.`,
     linkedPage: "/disease-prediction",
   },
 ];
@@ -40,27 +26,13 @@ const cardsRight = [
   {
     id: 3,
     image: "/1.png",
-    text: `drug alternative intro - consectetur
-          adipisicing elit. Atque similique corporis architecto
-          soluta earum id ipsum voluptatem suscipit cupiditate illo
-          obcaecati, reprehenderit sit beatae unde corrupti ducimus
-          pariatur! Repudiandae Lorem, ipsum dolor sit amet
-          consectetur adipisicing elit. Culpa sed dolore
-          exercitationem labore pariatur adipisci, harum minus,
-          ipsam reprehenderit optio illum! Ut doloremque`,
+    text: `Our AI-driven drug alternative system helps users find safe and effective medication substitutes when their prescribed drugs are unavailable. By analyzing drug compositions, medical history, and effectiveness, it recommends suitable alternatives tailored to individual needs. This ensures continuous treatment without disruption, improving accessibility and affordability of medications.`,
     linkedPage: "/disease-prediction",
   },
   {
     id: 4,
     image: "/3.png",
-    text: `drug response intro - consectetur
-          adipisicing elit. Atque similique corporis architecto
-          soluta earum id ipsum voluptatem suscipit cupiditate illo
-          obcaecati, reprehenderit sit beatae unde corrupti ducimus
-          pariatur! Repudiandae Lorem, ipsum dolor sit amet
-          consectetur adipisicing elit. Culpa sed dolore
-          exercitationem labore pariatur adipisci, harum minus,
-          ipsam reprehenderit optio illum! Ut doloremque`,
+    text: `Our drug response analysis leverages AI to predict how a patient will react to a medication based on their medical history, genetics, and health conditions. This ensures safer treatments, minimizes adverse effects, and helps doctors prescribe the most effective drugs. It enhances personalized medicine, leading to better patient outcomes.`,
     linkedPage: "/disease-prediction",
   },
 ];
