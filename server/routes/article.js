@@ -9,7 +9,9 @@ import {
   like_article,
   post_article,
   update_article,
-} from "../controller/article";
+} from "../controller/article.js";
+import { authenticateToken, authorizeDoctor } from "../middleware/index.js";
+import { validateArticle, validateComment } from "../validators/articles.js";
 
 const router = express.Router();
 

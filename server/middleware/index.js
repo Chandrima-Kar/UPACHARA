@@ -1,4 +1,4 @@
-const authenticateToken = (req, res, next) => {
+export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -18,22 +18,16 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-const authorizeDoctor = (req, res, next) => {
+export const authorizeDoctor = (req, res, next) => {
   if (req.user.role !== "doctor") {
     return res.status(403).json({ error: "Access denied. Doctors only." });
   }
   next();
 };
 
-const authorizePatient = (req, res, next) => {
+export const authorizePatient = (req, res, next) => {
   if (req.user.role !== "patient") {
     return res.status(403).json({ error: "Access denied. Patients only." });
   }
   next();
-};
-
-export default {
-  authenticateToken,
-  authorizeDoctor,
-  authorizePatient,
 };
