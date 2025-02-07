@@ -6,6 +6,7 @@ import { IoFastFood } from "react-icons/io5";
 import { BsRobot } from "react-icons/bs";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const Baseline = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
@@ -65,7 +66,8 @@ const Baseline = () => {
       {/* Right Section */}
       <div className="flex items-center justify-center gap-20 ">
         {/* Food Analyser Icon */}
-        <div
+        <Link
+          href="/food"
           className="relative flex items-center justify-center bg-white p-2 rounded-full cursor-pointer transition-all duration-500 transform hover:scale-125"
           onMouseEnter={() => setHoveredIcon("food")}
           onMouseLeave={() => setHoveredIcon(null)}
@@ -81,7 +83,7 @@ const Baseline = () => {
             </motion.div>
           )}
           <IoFastFood className="w-6 h-6 text-blue-950 " />
-        </div>
+        </Link>
 
         {/* Chat Assistant Icon */}
         <div
