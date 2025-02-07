@@ -1,10 +1,9 @@
-import google.generativeai as genai
 import os
+
+import google.generativeai as genai
 from dotenv import load_dotenv
-from src.Food.data import preimage_data
+
 load_dotenv()
-from PIL import Image
-import ast
 
 
 class food_report_generator:

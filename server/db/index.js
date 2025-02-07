@@ -12,6 +12,7 @@ export default async function initDB(pool) {
         experience_years INTEGER,
         phone VARCHAR(20),
         address TEXT,
+        image_url TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
@@ -26,6 +27,7 @@ export default async function initDB(pool) {
         blood_group VARCHAR(5),
         phone VARCHAR(20),
         address TEXT,
+        image_url TEXT,
         medical_history TEXT[],
         emergency_contact VARCHAR(100),
         emergency_phone VARCHAR(20),

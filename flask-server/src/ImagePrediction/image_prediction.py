@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
-from torchvision import models, transforms
-from PIL import Image
 import torch.nn.functional as F
+from PIL import Image
+from torchvision import models, transforms
+
 
 class ImagePrediction:
 

@@ -1,22 +1,24 @@
-from flask_sqlalchemy import SQLAlchemy
 import os
 import sys
+
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import text
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 import tensorflow as tf
 from flask_cors import CORS
 import warnings
 import json
+import pandas as pd
 import logging
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-import pandas as pd
-import ast
-from src.ChatBot.chatbot import ingest_data,user_input
+from datetime import datetime
+
 import os
 import asyncio
 from flask import Flask, request, jsonify, redirect, url_for
-# Suppress warning
 warnings.filterwarnings("ignore", category=UserWarning, message="Trying to unpickle estimator")
 
 tf.get_logger().setLevel(logging.ERROR)
@@ -32,6 +34,7 @@ from src.DrugResponse.drugresponse import report_generator2
 from src.llm_report.Report import report_generator
 from src.Food.food import food_report_generator
 from src.ChatBot.chatbot import ingest_data,user_input
+from utils.helper import get_patient_id_from_token
 
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
@@ -40,191 +43,118 @@ flask_postgres_connection = os.getenv("FLASK_POSTGRES_STRING","*")
 
 app = Flask(__name__)
 CORS(app, origins=[cors_origin], methods=["GET", "POST", "OPTIONS"])
-# app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///"+os.path.join(current_dir, "database2.sqlite3")
 app.config['SQLALCHEMY_DATABASE_URI'] = flask_postgres_connection
 app.config['SECRET_KEY'] = 'healthmap'
 db = SQLAlchemy(app)
 
+class Patient(db.Model):
+    __tablename__ = 'patients'
 
-
-class Symptoms(db.Model):
-    __tablename__ = 'symptoms'
-    id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
-    fname = db.Column(db.String(30), nullable=False)
-    lname = db.Column(db.String(30), nullable=False)
-    phone = db.Column(db.String(13), nullable=False)
-    email = db.Column(db.String(40), nullable=False)
-    symp1 = db.Column(db.String(30), nullable=False)
-    symp2 = db.Column(db.String(30))
-    symp3 = db.Column(db.String(30))
-    symp4 = db.Column(db.String(30))
-
-
-class Precautions(db.Model):
-    __tablename__ = 'precautions'
-    sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
-    p_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    precaution = db.Column(db.JSON, nullable=False)
-
-class Medications(db.Model):
-    __tablename__ = 'medications'
-    sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
-    m_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    medication = db.Column(db.JSON, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    date_of_birth = db.Column(db.Date, nullable=False)
+    gender = db.Column(db.String(10))
+    blood_group = db.Column(db.String(5))
+    phone = db.Column(db.String(20))
+    address = db.Column(db.Text)
+    image_url = db.Column(db.Text)
+    medical_history = db.Column(db.ARRAY(db.Text))
+    emergency_contact = db.Column(db.String(100))
+    emergency_phone = db.Column(db.String(20))
+    created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
 
 class Disease(db.Model):
     __tablename__ = 'disease'
-    sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
-    d_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    disease = db.Column(db.String(30), nullable=False)
-
-class Diet(db.Model):
-    __tablename__ = 'diet'
-    sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
-    di_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    diet = db.Column(db.JSON, nullable=False)
-
-class Workout(db.Model):
-    __tablename__ = 'workout'
-    sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
-    w_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    workout = db.Column(db.JSON, nullable=False)
-
-class Description(db.Model):
-    __tablename__ = 'description'
-    sl = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
-    des_id = db.Column(db.Integer, db.ForeignKey("symptoms.id"), nullable=False)
-    description = db.Column(db.String(200), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey("patients.id"), nullable=False)
+    symptoms = db.Column(db.ARRAY(db.String(30)), nullable=False)
+    predicted_disease = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(200))
+    precautions = db.Column(db.JSON)
+    medications = db.Column(db.JSON)
+    diet = db.Column(db.JSON)
+    workout = db.Column(db.JSON)
+    created_at = db.Column(db.TIMESTAMP, default=datetime.utcnow)
 
 with app.app_context():
-    db.create_all()
+    Disease.__table__.create(db.engine, checkfirst=True)
 
 
-@app.route('/predict', methods=['GET', 'POST'])
+
+@app.route('/predict', methods=['POST'])
 def predict():
     try:
-        if request.method == 'POST':
-            data = request.json
-            fname = data.get('fname')
-            lname = data.get('lname')
-            phone = data.get('phone')
-            email = data.get('email')
-            symptom_1 = data.get('symptom_1')
-            symptom_2 = data.get('symptom_2')
-            symptom_3 = data.get('symptom_3')
-            symptom_4 = data.get('symptom_4')
-            symptoms_list = [symptom_1, symptom_2, symptom_3, symptom_4]
-            symp_list = Symptoms(fname=fname, lname=lname, phone=phone, email=email, symp1 = symptom_1, symp2 = symptom_2, symp3 = symptom_3, symp4 = symptom_4)
-            db.session.add(symp_list)
-            db.session.commit()
+        data = request.json
+        token = request.headers.get("Authorization")  
+        patient_id = get_patient_id_from_token(token)  
 
-            symptom_id = symp_list.id
+        if not patient_id:
+            return jsonify({"error": "Invalid token or user not authenticated"}), 401
 
-            model = DiseasePrediction()
-            predicted_disease, dis_des, my_precautions, medications, rec_diet, rec_workout, symptoms_dict = model.predict(symptoms_list=symptoms_list)
+        symptoms_list = [
+            data.get('symptom_1'), 
+            data.get('symptom_2'), 
+            data.get('symptom_3'), 
+            data.get('symptom_4')
+        ]
+        symptoms_list = [s for s in symptoms_list if s]  
 
-            def convert_string_list(string_list):
-                if not string_list:
-                    return []
+        model = DiseasePrediction()
+        predicted_disease, dis_des, my_precautions, medications, rec_diet, rec_workout, _ = model.predict(symptoms_list)
 
-                try:
-                    return ast.literal_eval(string_list[0])
-                except (ValueError, SyntaxError):
-                    return []
+        def convert_json(data):
+            if isinstance(data, pd.Series):
+                data = data.tolist()
 
-            if isinstance(rec_workout, pd.Series):
-                rec_workout = rec_workout.tolist()
+            try:
+                return json.loads(data) if isinstance(data, str) else data
+            except json.JSONDecodeError:
+                return []
 
-            if isinstance(medications, pd.Series):
-                medications = medications.tolist()
+        my_precautions = convert_json(my_precautions)
+        medications = convert_json(medications)
+        rec_diet = convert_json(rec_diet)
+        rec_workout = convert_json(rec_workout)
 
-            if isinstance(rec_diet, pd.Series):
-                rec_diet = rec_diet.tolist()
+        disease_entry = Disease(
+            patient_id=patient_id,
+            symptoms=symptoms_list,
+            predicted_disease=predicted_disease,
+            description=dis_des,
+            precautions=my_precautions,
+            medications=medications,
+            diet=rec_diet,
+            workout=rec_workout
+        )
+        db.session.add(disease_entry)
+        db.session.commit()
 
-            if isinstance(my_precautions, pd.Series):
-                my_precautions = my_precautions.tolist()
+        db.session.execute(
+            text("""
+                UPDATE patients
+                SET medical_history = array_append(medical_history, :disease)
+                WHERE id = :patient_id
+                AND NOT (:disease = ANY(medical_history))  -- Avoid duplicates
+            """),
+            {"disease": predicted_disease, "patient_id": patient_id}
+        )
+        db.session.commit()
 
-            if isinstance(medications, str):
-                try:
-                    medications = convert_string_list(medications)
-                except (ValueError, SyntaxError):
-                    medications = []
+        return jsonify({
+            'predictedDisease': predicted_disease,
+            'disDes': dis_des,
+            'myPrecautions': my_precautions,
+            'medications': medications,
+            'myDiet': rec_diet,
+            'myWorkout': rec_workout
+        }), 200
 
-            if isinstance(my_precautions, str):
-                try:
-                    my_precautions = json.loads(my_precautions)
-                except json.JSONDecodeError:
-                    my_precautions = []
-
-            if isinstance(rec_workout, str):
-                try:
-                    rec_workout = json.loads(rec_workout)
-                except json.JSONDecodeError:
-                    rec_workout = []
-
-            if isinstance(rec_diet, str):
-                try:
-                    rec_diet = convert_string_list(rec_diet)
-                except (ValueError, SyntaxError):
-                    rec_diet = []
-
-
-
-            precaution_entry = Precautions(p_id=symptom_id, precaution=my_precautions)
-            db.session.add(precaution_entry)
-            db.session.commit()
-
-            medication_entry = Medications(m_id=symptom_id, medication=medications)
-            db.session.add(medication_entry)
-            db.session.commit()
-
-            if predicted_disease and isinstance(predicted_disease, str):
-                disease_entry = Disease(d_id=symptom_id, disease=predicted_disease)
-                db.session.add(disease_entry)
-                db.session.commit()
-
-
-            if dis_des and isinstance(dis_des, str):
-                    description_entry =Description(des_id=symptom_id, description=dis_des)
-                    db.session.add(description_entry)
-            db.session.commit()
-
-            workout_entry = Workout(w_id=symptom_id, workout=rec_workout)
-            db.session.add(workout_entry)
-            db.session.commit()
-
-
-            diet_entry =Diet(di_id=symptom_id, diet=rec_diet)
-            db.session.add(diet_entry)
-            db.session.commit()
-            return jsonify({
-                'predictedDisease': predicted_disease,
-                'disDes': dis_des,
-                'myPrecautions': my_precautions,
-                'medications': medications,
-                'myDiet': rec_diet,
-                'myWorkout': rec_workout
-            }), 200
     except Exception as e:
         lg.error(f"Error in /predict route: {e}")
         return jsonify({'error': str(e)}), 500
-
-
-@app.route("/patient/<email>")
-def patient(email):
-    # email = Symptoms.email()
-    user_data = Symptoms.query.filter_by(email=email).all()
-    
-    disease=Disease.query.all()
-    description=Description.query.all()
-    precautions = Precautions.query.all()
-    medications=Medications.query.all()
-    workout=Workout.query.all()
-    diet=Diet.query.all()
-
-    # return render_template("patient.html", email=email, user_data=user_data,disease=disease,description=description, precautions=precautions,medications=medications,workout=workout,diet=diet)
-
-
 
 
 @app.route("/update_precaution", methods=['POST'])

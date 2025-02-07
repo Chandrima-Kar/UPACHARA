@@ -152,7 +152,8 @@ export default function DiseasePage() {
                             (word) =>
                               word.charAt(0).toUpperCase() + word.slice(1)
                           ) // Capitalize first letter
-                          .join(" ")}{" "}
+                          .join(" ")
+                          .replace(/_/g, " ")}{" "}
                       </option>
                     ))}
                 </select>

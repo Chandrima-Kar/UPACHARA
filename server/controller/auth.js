@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
-
+import { pool } from "../index.js";
 export const doctor_register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

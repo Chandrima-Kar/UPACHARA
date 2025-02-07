@@ -1,7 +1,8 @@
-import google.generativeai as genai
-import os
-from dotenv import load_dotenv
 import json
+import os
+
+import google.generativeai as genai
+from dotenv import load_dotenv
 
 
 class report_generator:

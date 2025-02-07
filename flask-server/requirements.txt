@@ -120,3 +120,5 @@ xgboost==2.0.3
 Flask-Cors
 psycopg2
 psycopg2-binary
+jwt
+pyjwt==1.7.1
