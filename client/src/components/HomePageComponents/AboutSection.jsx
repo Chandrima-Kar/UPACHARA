@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MdBatchPrediction } from "react-icons/md";
+import { GiHealthPotion, GiUpgrade } from "react-icons/gi";
 
 const AboutSection = () => {
   const router = useRouter();
@@ -30,8 +30,8 @@ const AboutSection = () => {
         </div>
         <div className="flex items-center justify-between gap-12 max-w-xl">
           <div className="flex flex-col gap-5">
-            <div className=" p-1 bg-gray-300 rounded-lg w-fit">
-              <MdBatchPrediction className="w-12 h-12" />
+            <div className=" p-2 bg-blue-200 rounded-lg w-fit">
+              <GiUpgrade className="w-12 h-12" />
             </div>
             <h1 className=" font-montserrat">
               Revolutionizing Healthcare with AI
@@ -44,16 +44,16 @@ const AboutSection = () => {
           </div>
 
           <div className="flex flex-col gap-5">
-            <div className=" p-1 bg-gray-300 rounded-lg w-fit">
-              <MdBatchPrediction className="w-12 h-12" />
+            <div className=" p-2 bg-blue-200 rounded-lg w-fit">
+              <GiHealthPotion className="w-12 h-12" />
             </div>
             <h1 className=" font-montserrat">
               Empowering Smarter & Safer Healthcare
             </h1>
             <p className=" font-lato text-gray-800">
               We leverage AI-driven insights to enhance medical decision-making,
-              improve accessibility, and ensure secure, data-driven patient
-              care.
+              improve accessibility, and ensure accurate, secure, data-driven
+              patient care.
             </p>
           </div>
         </div>

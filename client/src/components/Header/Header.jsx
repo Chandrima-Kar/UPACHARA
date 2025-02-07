@@ -48,15 +48,15 @@ const Header = () => {
               Multi-diseases
             </span>
             {multiDiseaseOpen && (
-              <div className="absolute left-0 w-48 z-50 bg-[#e4eefd] shadow-xl rounded-lg ">
+              <div className="absolute left-0 w-44 z-50 bg-[#e4eefd] shadow-xl rounded-lg ">
                 <Link
-                  href="/disease/liver"
+                  href="/predict-by-reports"
                   className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
-                  Predict by Symptoms
+                  Predict by Reports
                 </Link>
                 <Link
-                  href="/disease/kidney"
+                  href="/predict-by-images"
                   className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
                 >
                   Predict by Images
