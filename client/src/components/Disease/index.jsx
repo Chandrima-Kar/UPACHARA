@@ -176,8 +176,30 @@ export default function DiseasePage() {
           <div className="flex items-center justify-center">
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
+              disabled={
+                isLoading ||
+                !formData.fname ||
+                !formData.lname ||
+                !formData.phone ||
+                !formData.email ||
+                (!formData.symptom_1 &&
+                  !formData.symptom_2 &&
+                  !formData.symptom_3 &&
+                  !formData.symptom_4)
+              }
+              className={`w-fit py-2 px-4 rounded-md shadow-md font-medium font-ubuntu transition-all duration-500 transform ${
+                isLoading ||
+                !formData.fname ||
+                !formData.lname ||
+                !formData.phone ||
+                !formData.email ||
+                (!formData.symptom_1 &&
+                  !formData.symptom_2 &&
+                  !formData.symptom_3 &&
+                  !formData.symptom_4)
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              }`}
             >
               {isLoading ? "Predicting..." : "Predict"}
             </button>
