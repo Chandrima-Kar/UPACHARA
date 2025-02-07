@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import symptoms from "../../utils/symptoms.json";
 import convertStringList from "@/utils/helper";
-
+import Image from "next/image";
 export default function DiseasePage() {
   const [formData, setFormData] = useState({
     fname: "",
@@ -68,86 +68,124 @@ export default function DiseasePage() {
   }
   console.log(predictionResult);
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
-          Disease Predictor
-        </h2>
+    <section className="flex flex-col relative w-[1300px] h-[300px] my-10 mb-[35rem]  items-center justify-center ">
+      <div className="absolute inset-0">
+        <Image
+          src="/diseaseMain.png"
+          alt="Commercial Real Estate"
+          layout="fill"
+          objectFit="cover"
+          className="rounded-3xl drop-shadow-lg opacity-80"
+        />
+      </div>
 
-        {/* Form Section */}
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Fill Your Information Here:
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                {["fname", "lname", "phone", "email"].map((field) => (
-                  <div key={field}>
-                    <input
-                      type={
-                        field === "email"
-                          ? "email"
-                          : field === "phone"
-                          ? "tel"
-                          : "text"
-                      }
-                      name={field}
-                      id={field}
-                      placeholder={
-                        field.charAt(0).toUpperCase() +
-                        field.slice(1).replace("name", " Name")
-                      }
-                      value={formData[field]}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                {[1, 2, 3, 4].map((num) => (
-                  <div key={num}>
-                    <select
-                      name={`symptom_${num}`}
-                      id={`symptom_${num}`}
-                      value={formData[`symptom_${num}`]}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                      <option value="">Select a symptom</option>
-                      {Object.keys(symptoms).map((symptom) => (
-                        <option key={symptoms[symptom]} value={symptom}>
-                          {symptom.replace(/_/g, " ")}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-              </div>
-              <div>
-                <textarea
-                  name="message"
-                  placeholder="Message"
-                  rows={4}
-                  value={formData.message}
+      {/* Text Content */}
+      <div className="relative flex flex-col items-center justify-center gap-5 text-black px-6">
+        <h1 className="text-3xl sm:text-5xl  text-center  font-montserrat">
+          Disease Prediction Using Symptoms
+        </h1>
+        <p className="font-lato text-gray-800 text-center max-w-3xl">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati
+          deserunt neque labore distinctio nostrum eos doloribus consectetur
+          fugit ea numquam, ex, hic exercitationem, quod voluptates aliquid
+          expedita vitae
+        </p>
+      </div>
+
+      {/* Form Box */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 top-[250px]  w-full max-w-2xl bg-blue-50 shadow-xl rounded-lg p-6">
+        <h3 className="text-lg font-medium font-mono text-gray-900 mb-4 text-center">
+          -- Fill Your Information Here --
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name & Contact Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {["fname", "lname", "phone", "email"].map((field) => (
+              <div key={field}>
+                <input
+                  type={
+                    field === "email"
+                      ? "email"
+                      : field === "phone"
+                      ? "tel"
+                      : "text"
+                  }
+                  name={field}
+                  id={field}
+                  placeholder={
+                    field.charAt(0).toUpperCase() +
+                    field.slice(1).replace("name", " Name")
+                  }
+                  value={formData[field]}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                ></textarea>
+                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
+                />
               </div>
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                >
-                  {isLoading ? "Predicting..." : "Predict"}
-                </button>
-              </div>
-            </form>
+            ))}
           </div>
-        </div>
 
+          {/* Symptom Selection */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map((num) => (
+              <div key={num}>
+                <select
+                  name={`symptom_${num}`}
+                  id={`symptom_${num}`}
+                  value={formData[`symptom_${num}`]}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm "
+                >
+                  <option value="">Select a symptom</option>
+
+                  {/* Sorting the options alphabetically */}
+                  {Object.keys(symptoms)
+                    .sort((a, b) => a.localeCompare(b)) // Sort in ascending order
+                    .map((symptom) => (
+                      <option
+                        key={symptoms[symptom]}
+                        value={symptom}
+                        className="overflow-y-auto"
+                      >
+                        {symptom
+                          .split(" ") // Split words
+                          .map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          ) // Capitalize first letter
+                          .join(" ")}{" "}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            ))}
+          </div>
+
+          {/* Message Field */}
+          <div>
+            <textarea
+              name="message"
+              placeholder="Message"
+              rows={4}
+              value={formData.message}
+              onChange={handleInputChange}
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
+            ></textarea>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex items-center justify-center">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
+            >
+              {isLoading ? "Predicting..." : "Predict"}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div className="container mx-auto flex flex-col items-center">
         {/* Display Prediction Result if available */}
         {error && (
           <div
@@ -215,6 +253,6 @@ export default function DiseasePage() {
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
