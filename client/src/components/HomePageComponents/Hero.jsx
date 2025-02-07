@@ -70,9 +70,9 @@ const Hero = () => {
         <br /> healthmap - <span className=" text-blue-500"> upachara</span>
       </h1>
       <p className="text-gray-600 max-w-xl mt-4">
-        Your Health, Our Priority: Predict, Prevent, and Protect Lorem ipsum
-        dolor sit amet consectetur adipisicing elit. Quo totam aperiam
-        voluptatibus, non odit
+        Your Health, Our Priority: Predict, Prevent, and Protect. AI-Powered
+        Healthcare at Your Fingertips – Smarter Diagnoses, Personalized Care,
+        and Seamless Access to Medical Solutions Anytime, Anywhere.
       </p>
 
       {/* Email Input & Button */}
