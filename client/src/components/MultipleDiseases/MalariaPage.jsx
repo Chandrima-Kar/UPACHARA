@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-const Chest = () => {
+const MalariaPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,8 +26,8 @@ const Chest = () => {
     <section className="flex flex-col my-16 gap-12 items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-4">
         <h1 className="text-4xl text-center uppercase font-extrabold text-gray-900 font-montserrat">
-          Protect Your
-          <br /> <span className="text-blue-500">Chest:</span> Get Checked
+          Protect Yourself form
+          <br /> <span className="text-blue-500">Malaria:</span> Get Checked
         </h1>
         <p className="text-gray-600 max-w-3xl text-center">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo
@@ -95,4 +95,4 @@ const Chest = () => {
   );
 };
 
-export default Chest;
+export default MalariaPage;

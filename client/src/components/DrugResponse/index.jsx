@@ -102,12 +102,12 @@ export default function DrugResponsePage() {
                   required
                   className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm"
                 >
-                  <option value="">Select Gender</option>
+                  <option value="" disabled selected>
+                    Select Gender
+                  </option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
-                  <option value="Gay">Gay</option>
-                  <option value="Lesbian">Lesbian</option>
-                  <option value="Transgender">Transgender</option>
+                  <option value="others">Others</option>
                 </select>
               </div>
 

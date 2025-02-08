@@ -5,19 +5,22 @@ const Parkinsons = () => {
     <section className="flex flex-col my-16 gap-12 items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-4">
         <h1 className="text-4xl text-center uppercase font-extrabold text-gray-900 font-montserrat">
-          Parkinson's Disease <br />{" "}
-          <span className="text-blue-500">Predictor</span>
+          <span className="text-blue-500">
+            {" "}
+            Parkinson's <br />{" "}
+          </span>
+          Disease Predictor
         </h1>
         <p className="text-gray-600 max-w-3xl text-center">
           Fill in the required details to check for Parkinson's disease.
         </p>
       </div>
-      <div className="w-full max-w-2xl bg-blue-50 shadow-xl rounded-lg p-6">
+      <div className="w-full max-w-4xl bg-blue-50 shadow-xl rounded-lg p-6">
         <h3 className="text-lg font-medium font-mono text-gray-900 mb-4 text-center">
           -- Fill Your Information Here --
         </h3>
         <form className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
             {[
               "MDVP:Fo(Hz)",
               "MDVP:Fhi(Hz)",

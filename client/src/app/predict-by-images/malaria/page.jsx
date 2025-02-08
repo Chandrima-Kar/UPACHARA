@@ -1,3 +1,3 @@
-import Malaria from "@/components/MultipleDiseases/Malaria";
+import Malaria from "@/components/MultipleDiseases/MalariaPage";
 
 export default Malaria;

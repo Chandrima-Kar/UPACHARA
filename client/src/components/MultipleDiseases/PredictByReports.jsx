@@ -34,12 +34,6 @@ const ReportPredictionCards = [
     para: " Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rem eligendi velit dolorum neque vero ex! Incidunt.",
     link: "/predict-by-reports/parkinson",
   },
-  {
-    imageN: "/1.png",
-    heading: "BREAST CANCER",
-    para: " Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rem eligendi velit dolorum neque vero ex! Incidunt.",
-    link: "/predict-by-reports/breast-cancer",
-  },
 ];
 const PredictByReports = () => {
   const router = useRouter();
