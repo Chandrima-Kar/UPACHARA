@@ -63,7 +63,7 @@ export default function DrugResponsePage() {
       {/* Text Content */}
       <div className="relative flex flex-col items-center justify-center gap-5 text-black px-6">
         <h1 className="text-3xl sm:text-5xl  text-center  font-montserrat">
-          Find Your Alternative Drug
+          How Does Your Drug Response?
         </h1>
         <p className="font-lato text-gray-800 text-center max-w-3xl">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati
