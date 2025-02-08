@@ -6,18 +6,17 @@ import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const blogPosts = [
-  { id: 1, title: "Understanding AI in Healthcare", image: "/ed.jpg" },
-  { id: 2, title: "Top 10 Health Tips for 2024", image: "/ed.jpg" },
-  { id: 3, title: "The Future of Telemedicine", image: "/ed.jpg" },
-  { id: 4, title: "How Nutrition Impacts Mental Health", image: "/ed.jpg" },
-  { id: 5, title: "Advancements in Cancer Treatment", image: "/pb.jpg" },
+  { id: 1, title: "Simple Tips for a Healthy Mind", image: "/7.png" },
+  { id: 2, title: "Liver Damage Warning", image: "/5.png" },
+  { id: 3, title: "Is Heart Disease Genetic?", image: "/6.png" },
+  { id: 4, title: "Hormonal Fluctuations In Women", image: "/8.png" },
+  { id: 5, title: "Artificial Sugars and Diabetes", image: "/10.png" },
   {
     id: 6,
-    title:
-      "How to Maintain a Healthy Heartdfegergergrgergerg rgerwef ewrfewfew erwef",
-    image: "/ed.jpg",
+    title: "Causes,Preventions and How To Find Relief From Headaches",
+    image: "/9.png",
   },
-  { id: 7, title: "Advancements in Cancer Treatment", image: "/ed.jpg" },
+  { id: 7, title: "Understanding Kidney Stones", image: "/11.png" },
 ];
 
 const OurBlogSection = () => {
