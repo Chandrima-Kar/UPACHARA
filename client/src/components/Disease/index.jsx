@@ -6,10 +6,10 @@ import convertStringList from "@/utils/helper";
 import Image from "next/image";
 export default function DiseasePage() {
   const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    phone: "",
-    email: "",
+    // fname: "",
+    // lname: "",
+    // phone: "",
+    // email: "",
     symptom_1: "",
     symptom_2: "",
     symptom_3: "",
@@ -68,19 +68,19 @@ export default function DiseasePage() {
   }
   console.log(predictionResult);
   return (
-    <section className="flex flex-col relative w-[1300px] h-[300px] my-10 mb-[35rem]  items-center justify-center ">
+    <section className="flex flex-col relative  my-10  items-center justify-center ">
       <div className="absolute inset-0">
         <Image
-          src="/diseaseMain.png"
+          src="/patient2.png"
           alt="Commercial Real Estate"
-          layout="fill"
-          objectFit="cover"
+          width={1600}
+          height={200}
           className="rounded-3xl drop-shadow-lg opacity-80"
         />
       </div>
 
       {/* Text Content */}
-      <div className="relative flex flex-col items-center justify-center gap-5 text-black px-6">
+      <div className="relative mt-16 mx-10 flex flex-col items-center justify-center gap-5 text-black px-6">
         <h1 className="text-3xl sm:text-5xl  text-center  font-montserrat">
           Disease Prediction Using Symptoms
         </h1>
@@ -99,7 +99,7 @@ export default function DiseasePage() {
         </h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name & Contact Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {["fname", "lname", "phone", "email"].map((field) => (
               <div key={field}>
                 <input
@@ -122,7 +122,7 @@ export default function DiseasePage() {
                 />
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* Symptom Selection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -147,7 +147,7 @@ export default function DiseasePage() {
                         className="overflow-y-auto"
                       >
                         {symptom
-                          .split(" ") // Split words
+                          .split("_") // Split words
                           .map(
                             (word) =>
                               word.charAt(0).toUpperCase() + word.slice(1)
@@ -178,10 +178,6 @@ export default function DiseasePage() {
               type="submit"
               disabled={
                 isLoading ||
-                !formData.fname ||
-                !formData.lname ||
-                !formData.phone ||
-                !formData.email ||
                 (!formData.symptom_1 &&
                   !formData.symptom_2 &&
                   !formData.symptom_3 &&
@@ -189,10 +185,6 @@ export default function DiseasePage() {
               }
               className={`w-fit py-2 px-4 rounded-md shadow-md font-medium font-ubuntu transition-all duration-500 transform ${
                 isLoading ||
-                !formData.fname ||
-                !formData.lname ||
-                !formData.phone ||
-                !formData.email ||
                 (!formData.symptom_1 &&
                   !formData.symptom_2 &&
                   !formData.symptom_3 &&
@@ -207,7 +199,7 @@ export default function DiseasePage() {
         </form>
       </div>
 
-      <div className="container mx-auto flex flex-col items-center">
+      <div className="container  mx-auto flex flex-col items-center mt-[37rem]">
         {/* Display Prediction Result if available */}
         {error && (
           <div
@@ -219,7 +211,71 @@ export default function DiseasePage() {
           </div>
         )}
         {predictionResult && (
-          <div className="mt-8 bg-white shadow-md rounded-lg overflow-hidden">
+          <div className=" bg-blue-50 shadow-xl rounded-lg w-full max-w-[1000px] p-6 flex flex-col gap-5">
+            <h3 className="text-3xl font-montserrat text-black text-center">
+              ⚕️{predictionResult.predictedDisease}⚕️
+            </h3>
+            <div className="space-y-6 justify-center">
+              <div>
+                <h4 className="text-lg font-semibold font-mono text-black mb-2">
+                  📙 Description
+                </h4>
+                <p className="text-gray-700 pl-[2.2rem] font-lato">
+                  {predictionResult.disDes}
+                </p>
+              </div>
+              <div className=" grid grid-cols-2 gap-6">
+                {[
+                  {
+                    title: "⚠️ Precautions",
+                    items: predictionResult.myPrecautions,
+                  },
+                  {
+                    title: "💊 Medications",
+                    items: predictionResult.medications,
+                  },
+                  { title: "🏋🏻‍♂️ Workouts", items: predictionResult.myWorkout },
+                  { title: "🍽️ Diet", items: predictionResult.myDiet },
+                ].map((section, index) => (
+                  <div key={index}>
+                    <h4 className="text-lg font-semibold font-mono text-black mb-2">
+                      {section.title}
+                    </h4>
+                    <ul className="list-disc pl-[3rem] space-y-1">
+                      {section.items.map((item, itemIndex) => (
+                        <li key={itemIndex} className="text-gray-700 font-lato">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-6 text-center">
+              <a
+                href="/findpatient"
+                className="inline-flex items-center px-4 py-2 border border-transparent font-medium rounded-xl shadow-sm  transition-transform duration-700 ease transform  font-ubuntu w-fit cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Send For Review
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* <div className=" mx-auto flex flex-col items-center">
+        {error && (
+          <div
+            className="mt-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
+            <strong className="font-bold">Error!</strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        )}
+        {predictionResult && (
+          <div className="mt-[20rem] bg-white shadow-md rounded-lg ">
             <div className="px-4 py-5 sm:p-6">
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">
                 {predictionResult.predictedDisease}
@@ -274,7 +330,7 @@ export default function DiseasePage() {
             </div>
           </div>
         )}
-      </div>
+      </div> */}
     </section>
   );
 }
