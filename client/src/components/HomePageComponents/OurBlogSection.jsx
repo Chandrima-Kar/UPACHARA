@@ -8,7 +8,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 const blogPosts = [
   { id: 1, title: "Simple Tips for a Healthy Mind", image: "/7.png" },
   { id: 2, title: "Liver Damage Warning", image: "/5.png" },
-  { id: 3, title: "Is Heart Disease Genetic", image: "/6.png" },
+  { id: 3, title: "Is Heart Disease Genetic?", image: "/6.png" },
   { id: 4, title: "Hormonal Fluctuations In Women", image: "/8.png" },
   { id: 5, title: "Artificial Sugars and Diabetes", image: "/10.png" },
   {

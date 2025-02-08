@@ -11,7 +11,7 @@ const InsuranceSection = () => {
     <div className="flex items-center justify-center gap-20">
       <div>
         <Image
-          src="/heroMobile.png" // Replace with actual mobile UI screenshot
+          src="/insurance.png" // Replace with actual mobile UI screenshot
           alt="Chat App"
           width={420}
           height={630}
