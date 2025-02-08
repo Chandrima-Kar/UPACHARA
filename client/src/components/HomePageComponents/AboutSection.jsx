@@ -61,7 +61,7 @@ const AboutSection = () => {
 
       <div>
         <Image
-          src="/heroMobile1.png"
+          src="/doctor.jpg"
           alt="Chat App"
           width={420}
           height={630}
