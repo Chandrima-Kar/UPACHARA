@@ -1,11 +1,10 @@
+import InsurancePage from "@/components/Insurance/InsurancePage";
+
+export default InsurancePage;
+/*
 export default function InsurancePage() {
   return (
-    <div>
-      {/* Heading Section */}
-      <h2>Discover the Future of Proactive Healthcare</h2>
-      <p>Fill Your Information Here:</p>
-
-      {/* Form Section */}
+   
       <div>
         <h5>Insurance Policy Price Predictor</h5>
         <form action="/insurance" method="POST">
@@ -106,12 +105,12 @@ export default function InsurancePage() {
         </form>
       </div>
 
-      {/* Display Insurance Price if available */}
-      {/* {insurancePrice !== null && (
+    {insurancePrice !== null && (
     <div>
       <h3>Rs. {insurancePrice} per year</h3>
     </div>
-  )} */}
+  )} 
     </div>
   );
 }
+*/
