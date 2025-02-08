@@ -17,9 +17,9 @@ const Liver = () => {
           -- Fill Your Information Here --
         </h3>
         <form className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              "age",
+              "Age",
               "tot_bilirubin",
               "direct_bilirubin",
               "ag_ratio",
@@ -31,7 +31,7 @@ const Liver = () => {
             ].map((field, index) => (
               <div key={index}>
                 <input
-                  type="text"
+                  type={field === "Age" ? "number" : "text"}
                   name={field}
                   placeholder={field
                     .replace(/_/g, " ")
@@ -43,28 +43,36 @@ const Liver = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <select
-                name="gender"
-                className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm"
-              >
-                <option value="" disabled selected>
-                  Gender
-                </option>
-                <option value="1">Male</option>
-                <option value="0">Female</option>
-              </select>
-            </div>
-          </div>
+          {/* <div>
+            <select
+              name="gender"
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Gay">Others</option>
+            </select>
+          </div> */}
 
-          <div>
-            <textarea
-              name="message"
-              placeholder="Message (Optional)"
-              rows={4}
-              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
-            ></textarea>
+          <div className="flex items-center justify-center  gap-x-5 font-lato">
+            <label className="text-gray-700 font-medium">Select Gender:</label>
+            <div className="flex gap-4">
+              {["Male", "Female", "Others"].map((gender) => (
+                <label
+                  key={gender}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="gender"
+                    value={gender}
+                    className="w-3 h-3 text-blue-500 focus:ring-blue-700 border-gray-300"
+                  />
+                  <span className="text-gray-700 ">{gender}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center justify-center">

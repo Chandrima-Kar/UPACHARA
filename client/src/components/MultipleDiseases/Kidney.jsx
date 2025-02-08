@@ -12,13 +12,38 @@ const Kidney = () => {
           Fill in your details and check your kidney health status.
         </p>
       </div>
-      <div className="w-full max-w-2xl bg-blue-50 shadow-xl rounded-lg p-6">
+      <div className="w-full max-w-4xl bg-blue-50 shadow-xl rounded-lg p-6">
         <h3 className="text-lg font-medium font-mono text-gray-900 mb-4 text-center">
           -- Fill Your Information Here --
         </h3>
         <form className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {["age", "bp", "sg", "al", "su"].map((field, index) => (
+          <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
+            {[
+              "age",
+              "bp",
+              "sg",
+              "al",
+              "su",
+              "rbc",
+              "pc",
+              "pcc",
+              "ba",
+              "bgr",
+              "bu",
+              "sc",
+              "sod",
+              "pot",
+              "hemo",
+              "pcv",
+              "wc",
+              "rc",
+              "htn",
+              "dm",
+              "cad",
+              "appet",
+              "pe",
+              "ane",
+            ].map((field, index) => (
               <div key={index}>
                 <input
                   type="number"
