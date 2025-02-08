@@ -61,70 +61,50 @@ export default function AlternativeDrugPage() {
   if (!isClient) return null;
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
-          Alternative Drug Finder
-        </h2>
-
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Select a Medicine:
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <select
-                  name="medicine"
-                  value={formData.medicine}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                >
-                  <option value="">Select a medicine</option>
-                  {medicines.map((medicine, index) => (
-                    <option key={index} value={medicine}>
-                      {medicine}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-                >
-                  {isLoading ? "Fetching..." : "Find Alternative"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        {error && (
-          <div className="mt-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <strong className="font-bold">Error!</strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
-
-        {recommendations && (
-          <div className="mt-8 bg-white shadow-md rounded-lg overflow-hidden">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Alternative Recommendations
-              </h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {recommendations.prediction_text.map((rec, index) => (
-                  <li key={index} className="text-gray-600">
-                    {rec}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
+    <section className="flex flex-col my-16 gap-12 items-center justify-center ">
+      <div className="flex flex-col items-center justify-center gap-4">
+        <h1 className="text-4xl text-center uppercase font-extrabold text-gray-900 font-montserrat">
+          Find Your
+          <br /> Alternative <span className=" text-blue-500"> Drug</span>
+        </h1>
+        <p className="text-gray-600 max-w-3xl text-center">
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tempora
+          commodi numquam qui autem asperiores officiis! Eaque enim molestias, a
+          nesciunt nobis deserunt
+        </p>
       </div>
-    </div>
+      <div className="w-full max-w-2xl bg-blue-50 shadow-xl rounded-lg p-6">
+        <h3 className="text-lg font-medium font-mono text-gray-900 mb-4 text-center">
+          -- Fill Your Information Here --
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <select
+              name="medicine"
+              value={formData.medicine}
+              onChange={handleInputChange}
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm"
+            >
+              <option value="">Select a medicine</option>
+              {medicines.map((medicine, index) => (
+                <option key={index} value={medicine}>
+                  {medicine}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center justify-center">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
+            >
+              {isLoading ? "Finding..." : "Find Alternative"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
   );
 }
