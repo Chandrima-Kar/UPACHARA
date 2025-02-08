@@ -8,7 +8,7 @@ const reviews = [
   {
     id: 1,
     name: "Pratik Biswas",
-    image: "/pb.png",
+    image: "/16.png",
     location: "Hyderabad",
     review:
       "This AI-powered healthcare platform has completely transformed the way I manage my health. The accurate disease predictions and personalized treatment recommendations have given me confidence in my medical decisions. The seamless telemedicine feature allows me to consult doctors anytime, making healthcare more accessible than ever!",
@@ -34,7 +34,7 @@ const reviews = [
   {
     id: 4,
     name: "Ayaan Ahmed",
-    image: "/ayaan.png",
+    image: "/12.png",
     location: "Bangalore",
 
     review:
