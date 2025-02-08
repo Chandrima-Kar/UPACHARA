@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function FoodAnalyzerPage() {
   const [file, setFile] = useState(null);
@@ -8,6 +9,13 @@ export default function FoodAnalyzerPage() {
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -49,50 +57,71 @@ export default function FoodAnalyzerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
-          Food Analyzer
-        </h2>
-        <p className="text-center text-gray-700 mb-6">
+    <section className="flex flex-col mb-16 gap-5 items-center justify-center ">
+      <Image
+        src="/foodBG.png"
+        alt="Commercial Real Estate"
+        width={1200}
+        height={400}
+        className="rounded-b-3xl  w-[81rem] h-[25rem] drop-shadow-lg"
+      />
+      <div className="flex justify-between w-full px-3 gap-20">
+        <h1 className="text-6xl  uppercase font-extrabold text-gray-900 font-montserrat">
+          <span className=" text-blue-500">
+            {" "}
+            Analyze Food <br />{" "}
+          </span>{" "}
+          For Your Health
+        </h1>
+        <p className="text-gray-600 max-w-lg font-open_sans text-right">
           Upload a photo of your meal and enter any relevant disease information
           to analyze the meal’s nutritional value.
         </p>
+      </div>
 
+      <div className="w-full max-w-3xl bg-blue-50 shadow-xl rounded-lg p-6">
+        <h3 className="text-lg font-medium font-mono text-gray-900 mb-10 text-center">
+          -- Upload Your Photo Here --
+        </h3>
         <form
           onSubmit={handleSubmit}
-          className="bg-white shadow-md rounded-lg p-6"
+          className="rounded-lg flex flex-col items-center justify-center gap-7 mx-auto"
         >
-          <div className="mb-4">
-            <label className="block text-gray-700">Upload a meal photo:</label>
+          <div className=" text-center transition-all duration-500 transform hover:scale-105">
+            {/* Hidden Input Field */}
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              required
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm py-2 px-3"
+              className="hidden"
+              id="fileInput"
             />
+
+            {/* Custom Upload Button */}
+            <label
+              htmlFor="fileInput"
+              className="cursor-pointer px-4 py-2 bg-gradient-to-r from-[#bfdbfe] to-[#eff6ff] border border-[#000000] rounded-xl font-ubuntu"
+            >
+              Upload A Meal Photo
+            </label>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700">
-              Enter your disease (if any):
-            </label>
+          <div className=" w-full">
             <input
               type="text"
               value={disease}
+              placeholder="Enter Your Disease Name (If Any)"
               onChange={(e) => setDisease(e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm py-2 px-3"
+              className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
             />
           </div>
 
-          <div className="mt-6 text-center">
+          <div className="flex items-center justify-center">
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
             >
-              {isLoading ? "Analyzing..." : "Analyze Meal"}
+              Analyze Food
             </button>
           </div>
         </form>
@@ -112,6 +141,6 @@ export default function FoodAnalyzerPage() {
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
