@@ -111,14 +111,27 @@ const Header = () => {
         </nav>
 
         {/* User Profile */}
-        <div className="flex items-center space-x-4">
-          <Image
-            src="/pb.jpg" // Replace with the user's profile image
+        <div className="flex items-center font-sans  space-x-5">
+          {/* <Image
+            src="/pb.jpg" 
             alt="User"
             width={52}
             height={52}
             className="rounded-full cursor-pointer border-2 border-gray-300"
-          />
+          /> */}
+
+          <Link
+            href="/login"
+            className="  transition-transform duration-700 ease font-medium text-blue-500 hover:text-blue-700 transform hover:scale-110"
+          >
+            Login
+          </Link>
+          <Link
+            href="/sign-up"
+            className="  transition-transform duration-700 ease font-medium text-blue-500 hover:text-blue-700 transform hover:scale-110"
+          >
+            Sign Up
+          </Link>
         </div>
       </div>
     </header>
