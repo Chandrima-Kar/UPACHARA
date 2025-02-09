@@ -65,7 +65,7 @@ const AboutSection = () => {
           alt="Chat App"
           width={420}
           height={630}
-          className=""
+          className="rounded-lg shadow-lg"
         />
       </div>
     </div>

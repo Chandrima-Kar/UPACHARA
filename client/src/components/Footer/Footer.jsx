@@ -34,7 +34,7 @@ const Footer = () => {
           <p className="w-40 h-[0.5] bg-black"></p>
           Made by{" "}
           <span className=" text-white">
-            <em>Deocodians</em>{" "}
+            <em>Hactivists</em>{" "}
           </span>
         </div>
       </div>
@@ -43,24 +43,42 @@ const Footer = () => {
           <h1 className=" font-montserrat mb-3">Quick Links</h1>
 
           <ul className=" font-medium font-lato opacity-70 flex flex-col gap-y-1">
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            <Link
+              href="/about"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               About Us
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/blogs"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Our Blogs{" "}
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/insurance"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Insurances{" "}
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/disease-prediction"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Disease Prediction
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/drug-alternative"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Drug Alternative
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/drug-response"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Drug Response
-            </li>
+            </Link>
           </ul>
         </div>
 
@@ -68,25 +86,43 @@ const Footer = () => {
           <h1 className=" font-montserrat mb-3">Multi-Diseases</h1>
 
           <ul className=" font-medium font-lato opacity-70 flex flex-col gap-y-1">
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            <Link
+              href="/predict-by-reports/liver"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Liver
-            </li>
+            </Link>
 
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            <Link
+              href="/predict-by-reports/kidney"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Kidney
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/predict-by-reports/heart"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Heart{" "}
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/predict-by-reports/diabetes"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Diabetes{" "}
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/predict-by-reports/breast-cancer"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Breast Cancer
-            </li>
-            <li className="cursor-pointer underline-animation h-fit w-fit">
+            </Link>
+            <Link
+              href="/predict-by-reports/parkinson"
+              className="cursor-pointer underline-animation h-fit w-fit"
+            >
               Parkinson's{" "}
-            </li>
+            </Link>
           </ul>
         </div>
 
