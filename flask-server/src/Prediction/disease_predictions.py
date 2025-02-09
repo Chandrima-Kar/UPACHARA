@@ -4,10 +4,8 @@ import numpy as np
 
 
 class ModelPipeline:
-        
-        
-    def heart_predict(self, form_data):
 
+    def heart_predict(self, form_data):
         model_path = f"src/models/heart-model.pkl"
         pca_path = f"src/pca/heart-pca.pkl"
         scaler_path = f"src/scalar/heart-scaler.pkl"
@@ -21,58 +19,39 @@ class ModelPipeline:
         with open(model_path, 'rb') as file:
             self.model = pickle.load(file)
 
-        chest_pain_type = form_data['ChestPain']
-        thal_type = form_data['Thal']
+        chest_pain_type = form_data.get('ChestPain', '')
+        thal_type = form_data.get('Thal', '')
 
-        if chest_pain_type == '0':
-            form_data['ChestPain_asymptomatic'] = 1
-            form_data['ChestPain_nonanginal'] = 0
-            form_data['ChestPain_nontypical'] = 0
-            form_data['ChestPain_typical'] = 0
-        elif chest_pain_type == '1':
-            form_data['ChestPain_asymptomatic'] = 0
-            form_data['ChestPain_nonanginal'] = 1
-            form_data['ChestPain_nontypical'] = 0
-            form_data['ChestPain_typical'] = 0
-        elif chest_pain_type == '2':
-            form_data['ChestPain_asymptomatic'] = 0
-            form_data['ChestPain_nonanginal'] = 0
-            form_data['ChestPain_nontypical'] = 1
-            form_data['ChestPain_typical'] = 0
-        elif chest_pain_type == '3':
-            form_data['ChestPain_asymptomatic'] = 0
-            form_data['ChestPain_nonanginal'] = 0
-            form_data['ChestPain_nontypical'] = 0
-            form_data['ChestPain_typical'] = 1
+        if chest_pain_type == 'asymptomatic':
+            form_data.update({'ChestPain_asymptomatic': 1, 'ChestPain_nonanginal': 0, 'ChestPain_nontypical': 0,
+                              'ChestPain_typical': 0})
+        elif chest_pain_type == 'nonanginal':
+            form_data.update({'ChestPain_asymptomatic': 0, 'ChestPain_nonanginal': 1, 'ChestPain_nontypical': 0,
+                              'ChestPain_typical': 0})
+        elif chest_pain_type == 'nontypical':
+            form_data.update({'ChestPain_asymptomatic': 0, 'ChestPain_nonanginal': 0, 'ChestPain_nontypical': 1,
+                              'ChestPain_typical': 0})
+        elif chest_pain_type == 'typical':
+            form_data.update({'ChestPain_asymptomatic': 0, 'ChestPain_nonanginal': 0, 'ChestPain_nontypical': 0,
+                              'ChestPain_typical': 1})
 
-        if thal_type == '0':
-            form_data['Thal_fixed'] = 1
-            form_data['Thal_normal'] = 0
-            form_data['Thal_reversable'] = 0
-        elif thal_type == '1':
-            form_data['Thal_fixed'] = 0
-            form_data['Thal_normal'] = 1
-            form_data['Thal_reversable'] = 0
-        elif thal_type == '2':
-            form_data['Thal_fixed'] = 0
-            form_data['Thal_normal'] = 0
-            form_data['Thal_reversable'] = 1
-        
+        if thal_type == 'fixed':
+            form_data.update({'Thal_fixed': 1, 'Thal_normal': 0, 'Thal_reversable': 0})
+        elif thal_type == 'normal':
+            form_data.update({'Thal_fixed': 0, 'Thal_normal': 1, 'Thal_reversable': 0})
+        elif thal_type == 'reversable':
+            form_data.update({'Thal_fixed': 0, 'Thal_normal': 0, 'Thal_reversable': 1})
+
         inputs = ['Age', 'Sex', 'RestBP', 'Chol', 'Fbs', 'RestECG', 'MaxHR', 'ExAng',
                   'Oldpeak', 'Slope', 'Ca', 'ChestPain_asymptomatic', 'ChestPain_nonanginal',
                   'ChestPain_nontypical', 'ChestPain_typical', 'Thal_fixed', 'Thal_normal',
                   'Thal_reversable']
-        
-        # Create input array for prediction
+
         input_data = np.array([form_data[input_name] for input_name in inputs]).reshape(1, -1)
 
-        # Apply the scaler
         scaled_data = self.scaler.transform(input_data)
-        
-        # Apply PCA
         pca_data = self.pca.transform(scaled_data)
-        
-        # Predict using the model
+
         predictions = self.model.predict(pca_data)
         prob = self.model.predict_proba(pca_data)
 
@@ -80,10 +59,8 @@ class ModelPipeline:
             return int(predictions[0])
         else:
             return 0
-        
 
     def diabetes_predict(self, form_data):
-
         model_path = f"src/models/diabetes-model.pkl"
         pca_path = f"src/pca/diabetes-pca.pkl"
         scaler_path = f"src/scalar/diabetes-scaler.pkl"
@@ -97,27 +74,22 @@ class ModelPipeline:
         with open(model_path, 'rb') as file:
             self.model = pickle.load(file)
 
-        inputs = ['Pregnancies','Glucose','BloodPressure',
-        	'SkinThickness',	'Insulin',	'BMI',
-                	'DiabetesPedigreeFunction',	'Age']
+        inputs = [
+            'Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
+            'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age'
+        ]
 
         input_data = np.array([form_data[input_name] for input_name in inputs]).reshape(1, -1)
-        # Apply the scaler
+
         scaled_data = self.scaler.transform(input_data)
-        
-        # Apply PCA
         pca_data = self.pca.transform(scaled_data)
-        
-        # Predict using the model
+
         predictions = self.model.predict(pca_data)
-
         prob = self.model.predict_proba(pca_data)
-
         if prob[0][predictions[0]] > 0.70:
             return int(predictions[0])
         else:
             return 0
-
 
     def breast_cancer_predict(self, form_data):
 
@@ -179,7 +151,7 @@ class ModelPipeline:
         else:
             return 0
 
-        
+
 
     def liver_predict(self, form_data):
 
@@ -197,24 +169,20 @@ class ModelPipeline:
             self.model = pickle.load(file)
 
         inputs = ['age','gender','tot_bilirubin','direct_bilirubin','tot_proteins','albumin','ag_ratio','sgpt','sgot','alkphos']
-        
+        gender_map = {"female": 0, "male": 1}
+        form_data["gender"] = gender_map.get(form_data["gender"].lower(), -1)
         input_data = np.array([form_data[input_name] for input_name in inputs]).reshape(1, -1)
-
         scaled_data = self.scaler.transform(input_data)
-
         pca_data = self.pca.transform(scaled_data)
 
         predictions = self.model.predict(pca_data)
 
-
         prob = self.model.predict_proba(pca_data)
-        
-
         if prob[0][predictions[0]] > 0.70:
             return int(predictions[0])
         else:
             return 0
-        
+
 
     def kidney_predict(self, form_data):
 

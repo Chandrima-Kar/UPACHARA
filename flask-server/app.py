@@ -157,91 +157,6 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route("/update_precaution", methods=['POST'])
-def update_precaution():
-    precaution_id = request.form.get('precaution_id')
-    new_precaution = request.form.get('new_precaution')
-    
-    precaution = Precautions.query.filter_by(sl=precaution_id).first()
-    if precaution:
-        precaution.precaution = new_precaution
-        db.session.commit()
-
-    return redirect(url_for('data'))
-
-@app.route("/update_medication", methods=['POST'])
-def update_medication():
-    medication_id = request.form.get('medication_id')
-    new_medication = request.form.get('new_medication')
-    print(f"Medication ID: {medication_id}")
-    print(f"New Medication: {new_medication}")
-    
-    medication = Medications.query.filter_by(sl=medication_id).first()
-    if medication:
-        medication.medication = new_medication
-        db.session.commit()
-
-    return redirect(url_for('data'))
-
-@app.route("/update_disease", methods=['POST'])
-def update_disease():
-    disease_id = request.form.get('disease_id')
-    new_disease = request.form.get('new_disease')
-    
-    print(f"Disease ID: {disease_id}")
-    print(f"New Disease: {new_disease}")
-
-    disease = Disease.query.filter_by(sl=disease_id).first()
-    
-    if disease:
-        disease.disease = new_disease  # Update the disease field
-        db.session.commit()  # Commit the changes to the database
-        print("Disease updated successfully")
-    else:
-        print("Disease not found")
-
-    return redirect(url_for('data'))
-
-
-    return redirect(url_for('data'))
-
-@app.route("/update_description", methods=['POST'])
-def update_description():
-    description_id = request.form.get('description_id')
-    new_description = request.form.get('new_description')
-    
-    description = Description.query.filter_by(sl=description_id).first()
-    if description:
-        description.description = new_description
-        db.session.commit()
-
-    return redirect(url_for('data'))
-
-@app.route("/update_workout", methods=['POST'])
-def update_workout():
-    workout_id = request.form.get('workout_id')
-    new_workout = request.form.get('new_workout')
-    print(f"workout ID: {workout_id}")
-    print(f"New workout: {new_workout}")
-    
-    workout = Workout.query.filter_by(sl=workout_id).first()
-    if workout:
-        workout.workout = new_workout
-        db.session.commit()
-
-    return redirect(url_for('data'))
-
-@app.route("/update_diet", methods=['POST'])
-def update_diet():
-    diet_id = request.form.get('diet_id')
-    new_diet = request.form.get('new_diet')
-    
-    diet = Diet.query.filter_by(sl=diet_id).first()
-    if diet:
-        diet.diet = new_diet
-        db.session.commit()
-    return redirect(url_for('data'))
-
 @app.route('/drugres', methods=['GET', 'POST'])
 def drugres():
     try:
@@ -272,19 +187,37 @@ def alternativedrug():
         lg.error(f"Error in /alternativedrug route: {e}")
         raise CustomException(e, sys)
 
-@app.route('/liver', methods=['GET', 'POST'])
+@app.route('/liver', methods=['POST'])
 def liver():
     try:
-        if request.method == 'POST':
-            to_predict_dict = request.form.to_dict()
-            model = ModelPipeline()
-            pred = model.liver_predict(to_predict_dict)
-        #     return render_template("liver.html", prediction_text_liver=pred)
-        # else:
-        #     return render_template("liver.html")
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Invalid JSON payload"}), 400
+
+        processed_data = {}
+
+        for k, v in data.items():
+            if k == "gender":
+                processed_data[k] = v
+            else:
+                try:
+                    processed_data[k] = float(v)
+                except ValueError:
+                    return jsonify({"error": f"Invalid number format in field: {k}"}), 400
+
+        if processed_data["gender"].lower() not in ["male", "female"]:
+            return jsonify({"error": "Gender must be 'male' or 'female'"}), 400
+
+        model = ModelPipeline()
+        pred = model.liver_predict(processed_data)
+
+        return jsonify({"result": pred})
+
     except Exception as e:
         lg.error(f"Error in /liver route: {e}")
-        raise CustomException(e, sys)
+        return jsonify({"error": str(e)}), 500
+
+
 
 @app.route('/breast', methods=['GET', 'POST'])
 def breast():
@@ -300,33 +233,48 @@ def breast():
         lg.error(f"Error in /breast route: {e}")
         raise CustomException(e, sys)
 
-@app.route('/diabetes', methods=['GET', 'POST'])
+@app.route('/diabetes', methods=['POST'])
 def diabetes():
     try:
         if request.method == 'POST':
-            to_predict_dict = request.form.to_dict()
+            data = request.get_json()
+
+            processed_data = {}
+            for k, v in data.items():
+                try:
+                    processed_data[k] = float(v)
+                except ValueError:
+                    return jsonify({"error": f"Invalid number format in field: {k}"}), 400
+
             model = ModelPipeline()
-            pred = model.diabetes_predict(to_predict_dict)
-        #     return render_template("diabetes.html", prediction_text=pred)
-        # else:
-        #     return render_template("diabetes.html")
+            pred = model.diabetes_predict(processed_data)
+
+            return jsonify({"result": pred})
+
     except Exception as e:
         lg.error(f"Error in /diabetes route: {e}")
-        raise CustomException(e, sys)
+        return jsonify({"error": str(e)}), 500
 
-@app.route('/heart', methods=['GET', 'POST'])
+@app.route('/heart', methods=['POST'])
 def heart():
     try:
         if request.method == 'POST':
-            to_predict_dict = request.form.to_dict()
+            data = request.get_json()
+
+            processed_data = {}
+            for key, value in data.items():
+                try:
+                    processed_data[key] = float(value)
+                except ValueError:
+                    processed_data[key] = value
+
             model = ModelPipeline()
-            pred = model.heart_predict(form_data=to_predict_dict)
-        #     return render_template("heart.html", prediction_text=pred)
-        # else:
-        #     return render_template("heart.html")
+            pred = model.heart_predict(processed_data)
+            return jsonify({"result": "Heart disease predicted" if pred == 1 else "No heart disease detected"})
+
     except Exception as e:
         lg.error(f"Error in /heart route: {e}")
-        raise CustomException(e, sys)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/kidney', methods=['GET', 'POST'])
 def kidney():
@@ -342,19 +290,35 @@ def kidney():
         lg.error(f"Error in /kidney route: {e}")
         raise CustomException(e, sys)
 
-@app.route('/parkinsons', methods=['GET', 'POST'])
+
+@app.route('/parkinsons', methods=['POST'])
 def parkinsons():
     try:
-        if request.method == 'POST':
-            to_predict_dict = request.form.to_dict()
+        if request.is_json:
+            to_predict_dict = request.get_json()
+
+            required_fields = [
+                'MDVP:Fo(Hz)', 'MDVP:Fhi(Hz)', 'MDVP:Flo(Hz)', 'MDVP:Jitter(%)',
+                'MDVP:Jitter(Abs)', 'MDVP:RAP', 'MDVP:PPQ', 'Jitter:DDP', 'MDVP:Shimmer',
+                'MDVP:Shimmer(dB)', 'Shimmer:APQ3', 'Shimmer:APQ5', 'MDVP:APQ', 'Shimmer:DDA',
+                'NHR', 'HNR', 'RPDE', 'DFA', 'spread1', 'spread2', 'D2', 'PPE'
+            ]
+
+            missing_fields = [field for field in required_fields if field not in to_predict_dict]
+            if missing_fields:
+                return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
+
             model = ModelPipeline()
+
             pred = model.parkinsons_predict(to_predict_dict)
-        #     return render_template("parkinsons.html", prediction_text=pred)
-        # else:
-        #     return render_template("parkinsons.html")
+
+            return jsonify({"prediction": pred}), 200
+        else:
+            return jsonify({"error": "Request must be in JSON format"}), 400
+
     except Exception as e:
         lg.error(f"Error in /parkinsons route: {e}")
-        raise CustomException(e, sys)
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/insurance', methods=['GET', 'POST'])
 def insurance():
