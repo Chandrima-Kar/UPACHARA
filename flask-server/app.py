@@ -271,7 +271,7 @@ def heart():
 
             model = ModelPipeline()
             pred = model.heart_predict(processed_data)
-            return jsonify({"result": "Heart disease predicted" if pred == 1 else "No heart disease detected"})
+            return jsonify({"result": "😟 The results suggest some concerns with your Heart function. Let's not panic, but we need to discuss these results and come up with a plan. Let's schedule a follow-up appointment to discuss these results in more detail and explore the next steps." if pred == 1 else "😇 Peace of mind: Your Heart is functioning perfectly! Stay Connected with us for further health related updates."})
 
     except Exception as e:
         lg.error(f"Error in /heart route: {e}")

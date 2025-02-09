@@ -85,7 +85,7 @@ const DiabetesPredictor = () => {
           -- Fill Your Information Here --
         </h3>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {Object.keys(formData).map((field) => (
               <div key={field}>
                 <input
@@ -111,20 +111,30 @@ const DiabetesPredictor = () => {
             >
               {isLoading ? "Processing..." : "Predict"}
             </button>
-            <button
+            {/* <button
               type="button"
               onClick={autofillData}
               className="px-4 py-2 bg-gray-500 text-white rounded-md"
             >
               Autofill Test Data
-            </button>
+            </button> */}
           </div>
         </form>
       </div>
-      {result && (
-        <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
-          <h4 className="text-lg font-semibold mb-2">Result:</h4>
-          <p>{result}</p>
+      {result !== null && (
+        <div
+          className={`${
+            result === 0
+              ? "bg-red-200 shadow-red-600"
+              : "bg-green-200 shadow-green-600"
+          } p-4 max-w-2xl flex flex-col items-center gap-7 rounded-lg shadow-xl `}
+        >
+          <h4 className="text-3xl font-serif font-semibold ">👉 Result 👈</h4>
+          <p className=" text-lg font-lato tracking-wider text-center">
+            {result === 0
+              ? "😟 The results are indicating some possibility of diabetes. Let's not panic, but we need to discuss these results and make a plan. Let's schedule a follow-up appointment to discuss these results in more detail and explore next steps."
+              : "😇 Peace of mind: Your don't have Diabetes! Stay Connected with us for further health related updates."}
+          </p>
         </div>
       )}
     </section>
