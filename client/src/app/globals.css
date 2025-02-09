@@ -21,6 +21,23 @@ body {
 
 }
 
+/* scrollbar */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Customize the scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Customize the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 50px;
+}
+
+
 /* header */
 
 .header_links {

@@ -7,9 +7,12 @@ import { BsRobot } from "react-icons/bs";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import ChatInterface from "../ChatBot/ChatInterface";
 
 const Baseline = () => {
   const [hoveredIcon, setHoveredIcon] = useState(null);
+  const [isChatPopupOpen, setIsChatPopupOpen] = useState(false);
+  const toggleChatPopup = () => setIsChatPopupOpen(!isChatPopupOpen);
 
   return (
     <div className="flex w-fit items-center justify-center gap-x-56 fixed bottom-0 z-50 bg-blue-950 px-10 py-3 rounded-t-full">
@@ -90,6 +93,7 @@ const Baseline = () => {
           className="relative flex items-center justify-center bg-white p-2 rounded-full cursor-pointer transition-all duration-500 transform hover:scale-125"
           onMouseEnter={() => setHoveredIcon("chat")}
           onMouseLeave={() => setHoveredIcon(null)}
+          onClick={toggleChatPopup}
         >
           {hoveredIcon === "chat" && (
             <motion.div
@@ -103,6 +107,7 @@ const Baseline = () => {
           )}
           <BsRobot className="w-6 h-6 text-blue-950 " />
         </div>
+        {isChatPopupOpen && <ChatInterface onClose={toggleChatPopup} />}
       </div>
     </div>
   );
