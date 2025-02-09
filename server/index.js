@@ -11,7 +11,10 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND],
+    origin: ["http://localhost:3000"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+    credentials: true,
   })
 );
 app.use(express.json());
