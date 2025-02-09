@@ -34,6 +34,7 @@ from src.DrugResponse.drugresponse import report_generator2
 from src.llm_report.Report import report_generator
 from src.Food.food import food_report_generator
 from src.ChatBot.chatbot import ingest_data,user_input
+from src.recommendarticles.articles_recommendation import recommend_articles
 from utils.helper import get_patient_id_from_token
 
 
@@ -428,8 +429,6 @@ def food():
     # return render_template('food-input.html')
 
 
-
-
 @app.route('/chatbot')
 def chatbot():
     if not os.path.exists("Faiss"):
@@ -444,7 +443,22 @@ def chat():
     response = asyncio.run(user_input(user_question, chat_history))
     return jsonify(response)
 
+@app.route("/recommend-articles", methods=["POST"])
+def get_recommendations():
+    try:
+        data = request.get_json()
+        user_history_list = data.get("user_history", [])
+
+        if not isinstance(user_history_list, list) or not user_history_list:
+            return jsonify({"error": "user_history must be a non-empty list"}), 400
+
+        with db.engine.connect() as conn:  # Establish connection manually
+            recommendations = recommend_articles(user_history_list, conn)
+
+        return jsonify({"recommendations": recommendations})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
-    
-

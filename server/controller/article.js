@@ -1,4 +1,5 @@
 import { validationResult } from "express-validator";
+import { pool } from "../index.js";
 
 export const post_article = async (req, res) => {
   const errors = validationResult(req);
