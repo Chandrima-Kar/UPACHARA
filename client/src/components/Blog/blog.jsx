@@ -10,12 +10,12 @@ export default function BlogsPage() {
   const [articles, setArticles] = useState([]);
   const [recommendedArticles, setRecommendedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingRecommendations, setLoadingRecommendations] = useState(false); // New state for recommendations
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [role, setRole] = useState(null);
-  const [isClient, setIsClient] = useState(false);
 
   // Fix for Next.js hydration error
+  const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
   }, []);
@@ -27,7 +27,7 @@ export default function BlogsPage() {
       setRole(storedRole);
     }
   }, []);
-  
+
   // Fetch latest articles
   const fetchArticles = async (page = 1, limit = 10, category = "") => {
     const { data } = await api.get(
@@ -36,10 +36,10 @@ export default function BlogsPage() {
     return data;
   };
 
-  // Fetch recommended articles only if user profile exists in localStorage
+  // Fetch recommended articles only if user profile exists in localStorage(i.e patient logged in)
   const fetchRecommendedArticles = async () => {
     try {
-      setLoadingRecommendations(true); // Start loading
+      setLoadingRecommendations(true);
       const storedProfile = localStorage.getItem("profile");
       const role = localStorage.getItem("role");
 
@@ -71,7 +71,7 @@ export default function BlogsPage() {
       );
       return [];
     } finally {
-      setLoadingRecommendations(false); 
+      setLoadingRecommendations(false);
     }
   };
 
@@ -81,7 +81,6 @@ export default function BlogsPage() {
         const articlesData = await fetchArticles();
         setArticles(articlesData.articles);
 
-        // Fetch recommendations if profile exists
         const recommendedData = await fetchRecommendedArticles();
         setRecommendedArticles(recommendedData);
       } catch (error) {
@@ -94,15 +93,17 @@ export default function BlogsPage() {
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading articles...</p>;
-
-  // Hydration error fix
-  if (!isClient) {
-    return null;
+  if (loading) {
+    return <p>Loading articles...</p>;
   }
 
   console.log(role);
 
+  // Fix for Next.js hydration error
+  if (!isClient) {
+    return null;
+  }
+  
   return (
     <div className="container mx-auto px-4">
       {/* Recommended Articles Section */}

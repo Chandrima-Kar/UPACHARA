@@ -2,7 +2,6 @@ from fastapi import FastAPI, Query
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import json
 from sqlalchemy.sql import text  # Import text() for executing raw SQL
 import numpy as np
 
@@ -14,13 +13,13 @@ def fetch_articles(conn):
     try:
         query = text("SELECT id, title, image_url, content, category FROM articles WHERE status = 'published'")
         with conn as connection:  # Open a DB connection
-            result = connection.execute(query)  # Use `text()` for execution
+            result = connection.execute(query)
             articles = result.fetchall()
 
         # Convert result to Pandas DataFrame
         return pd.DataFrame(articles, columns=["id", "title", "image_url", "content", "category"])
     except Exception as e:
-        print("Database Query Error:", e)  # Debugging
+        print("Database Query Error:", e) 
         return pd.DataFrame([])
 
 

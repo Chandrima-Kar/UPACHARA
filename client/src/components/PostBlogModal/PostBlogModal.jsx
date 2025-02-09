@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import api from "@/utils/api";
+import { toast } from "react-toastify";
 
 const PostBlogModal = ({ isOpen, onClose, refreshArticles }) => {
   const [formData, setFormData] = useState({
@@ -34,6 +35,7 @@ const PostBlogModal = ({ isOpen, onClose, refreshArticles }) => {
 
     try {
       await api.post("/article", formattedData);
+      toast.success("Post Successful !!");
       refreshArticles();
       onClose();
     } catch (err) {
