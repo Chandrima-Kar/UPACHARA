@@ -79,19 +79,16 @@ export default function AlternativeDrugPage() {
         </h3>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <select
-              name="medicine"
-              value={formData.medicine}
-              onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm"
-            >
-              <option value="">Select a medicine</option>
-              {medicines.map((medicine, index) => (
-                <option key={index} value={medicine}>
-                  {medicine}
-                </option>
-              ))}
-            </select>
+            <input
+              type="text"
+              step="any"
+              name="name_of_medicine"
+              // value={formData[field]}
+              // onChange={handleInputChange}
+              placeholder="Name of Your medicine"
+              className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
+              required
+            />
           </div>
 
           <div className="flex items-center justify-center">
