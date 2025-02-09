@@ -142,25 +142,41 @@ const Parkinsons = () => {
               {loading ? "Predicting..." : "Predict"}
             </button>
 
-            <button
+            {/* <button
               type="button"
               onClick={autofillData}
               className="py-2 px-4 text-white bg-gray-500 rounded-md"
             >
               Autofill Test Data
-            </button>
+            </button> */}
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
-            {result && (
+            {/* {result && (
               <div className="text-center p-4 bg-white rounded-lg shadow">
                 <h4 className="font-semibold text-lg">Prediction Result:</h4>
                 <p>{JSON.stringify(result)}</p>
               </div>
-            )}
+            )} */}
           </div>
         </form>
       </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
+      {result !== null && (
+        <div
+          className={`${
+            result.prediction === 0
+              ? "bg-red-200 shadow-red-600"
+              : "bg-green-200 shadow-green-600"
+          } p-4 max-w-2xl flex flex-col items-center gap-7 rounded-lg shadow-xl `}
+        >
+          <h4 className="text-3xl font-serif font-semibold ">👉 Result 👈</h4>
+          <p className=" text-lg font-lato tracking-wider text-center">
+            {result.prediction === 0
+              ? "😟 The results are indicating some possibility of Parkinson's Disease. Let's not panic, but we need to discuss these results and make a plan. Let's schedule a follow-up appointment to discuss these results in more detail and explore next steps."
+              : "😇 Peace of mind: Your don't have Parkinson's Disease! Stay Connected with us for further health related updates."}
+          </p>
+        </div>
+      )}
     </section>
   );
 };

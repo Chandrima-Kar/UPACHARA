@@ -134,7 +134,7 @@ const Liver = () => {
             >
               {isLoading ? "Processing..." : "Predict"}
             </button>
-            <button
+            {/* <button
               type="button"
               onClick={() =>
                 setFormData({
@@ -153,14 +153,24 @@ const Liver = () => {
               className="px-4 py-2 bg-gray-500 text-white rounded-md"
             >
               Autofill Test Data
-            </button>
+            </button> */}
           </div>
         </form>
       </div>
-      {result && (
-        <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
-          <h4 className="text-lg font-semibold mb-2">Result:</h4>
-          <p>{result}</p>
+      {result !== null && (
+        <div
+          className={`${
+            result === 0
+              ? "bg-red-200 shadow-red-600"
+              : "bg-green-200 shadow-green-600"
+          } p-4 max-w-2xl flex flex-col items-center gap-7 rounded-lg shadow-xl `}
+        >
+          <h4 className="text-3xl font-serif font-semibold ">👉 Result 👈</h4>
+          <p className=" text-lg font-lato tracking-wider text-center">
+            {result === 0
+              ? "😟 The results suggest some concerns with your liver function. Let's not panic, but we need to discuss these results and come up with a plan. Let's schedule a follow-up appointment to discuss these results in more detail and explore the next steps."
+              : "😇 Peace of mind: Your liver is functioning perfectly! Stay Connected with us for further health related updates."}
+          </p>
         </div>
       )}
     </section>

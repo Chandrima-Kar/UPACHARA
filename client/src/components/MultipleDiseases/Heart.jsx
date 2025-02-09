@@ -112,6 +112,7 @@ const Heart = () => {
                   value={formData[field]}
                   onChange={handleInputChange}
                   placeholder={field
+                    .replace(/_/g, " ")
                     .replace(/([A-Z])/g, " $1")
                     .replace(/^./, (str) => str.toUpperCase())}
                   className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
@@ -145,20 +146,30 @@ const Heart = () => {
             >
               {isLoading ? "Processing..." : "Predict"}
             </button>
-            <button
+            {/* <button
               type="button"
               onClick={autofillData}
               className="py-2 px-4 text-white bg-gray-500 rounded-md"
             >
               Autofill Test Data
-            </button>
+            </button> */}
           </div>
         </form>
       </div>
-      {result && (
-        <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
-          <h4 className="text-lg font-semibold mb-2">Result:</h4>
-          <p>{result}</p>
+
+      {result !== null && (
+        <div
+          className={`${
+            result ===
+            "😟 The results suggest some concerns with your Heart function. Let's not panic, but we need to discuss these results and come up with a plan. Let's schedule a follow-up appointment to discuss these results in more detail and explore the next steps."
+              ? "bg-red-200 shadow-red-600"
+              : "bg-green-200 shadow-green-600"
+          } p-4 max-w-2xl flex flex-col items-center gap-7 rounded-lg shadow-xl `}
+        >
+          <h4 className="text-3xl font-serif font-semibold ">👉 Result 👈</h4>
+          <p className=" text-lg font-lato tracking-wider text-center">
+            {result}
+          </p>
         </div>
       )}
     </section>
