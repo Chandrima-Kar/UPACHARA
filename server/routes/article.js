@@ -16,19 +16,19 @@ import { validateArticle, validateComment } from "../validators/articles.js";
 const router = express.Router();
 
 router.post(
-  "/api/articles",
+  "/",
   authenticateToken,
   authorizeDoctor,
   validateArticle,
   post_article
 );
 
-router.get("/api/articles", get_articles);
+router.get("/", get_articles);
 
-router.get("/api/articles/:id", get_article);
+router.get("/:id", get_article);
 
 router.put(
-  "/api/articles/:id",
+  "/:id",
   authenticateToken,
   authorizeDoctor,
   validateArticle,
@@ -36,22 +36,22 @@ router.put(
 );
 
 router.delete(
-  "/api/articles/:id",
+  "/:id",
   authenticateToken,
   authorizeDoctor,
   delete_article
 );
 
-router.post("/api/articles/:id/like", authenticateToken, like_article);
+router.post("/:id/like", authenticateToken, like_article);
 
 router.post(
-  "/api/articles/:id/comments",
+  "/:id/comments",
   authenticateToken,
   validateComment,
   comment_article
 );
 
-router.get("/api/articles/:id/comments", get_comments);
+router.get("/:id/comments", get_comments);
 
 router.get(
   "/api/doctor/articles",

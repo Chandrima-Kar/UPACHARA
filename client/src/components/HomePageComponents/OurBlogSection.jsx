@@ -4,31 +4,56 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
-const blogPosts = [
-  { id: 1, title: "Simple Tips for a Healthy Mind", image: "/7.png" },
-  { id: 2, title: "Liver Damage Warning", image: "/5.png" },
-  { id: 3, title: "Is Heart Disease Genetic?", image: "/6.png" },
-  { id: 4, title: "Hormonal Fluctuations In Women", image: "/8.png" },
-  { id: 5, title: "Artificial Sugars and Diabetes", image: "/10.png" },
-  {
-    id: 6,
-    title: "Causes,Preventions and How To Find Relief From Headaches",
-    image: "/9.png",
-  },
-  { id: 7, title: "Understanding Kidney Stones", image: "/11.png" },
-];
+import api from "@/utils/api";
+import flaskapi from "@/utils/flaskapi";
 
 const OurBlogSection = () => {
   const router = useRouter();
   const [startIndex, setStartIndex] = useState(0);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const containerRef = useRef(null);
 
-  const visiblePosts = blogPosts.slice(startIndex, startIndex + 4); // Show 3 cards + View More
+  useEffect(() => {
+    async function fetchBlogs() {
+      try {
+        setLoading(true);
+
+        // Check if profile exists in localStorage
+        const storedProfile = localStorage.getItem("profile");
+
+        if (storedProfile) {
+          const profile = JSON.parse(storedProfile);
+          if (profile?.medical_history) {
+            // Fetch recommended blogs from Flask API
+            const response = await flaskapi.post("/recommend-articles", {
+              user_history: profile.medical_history,
+            });
+            setBlogs(response.data.recommendations);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // If no profile, fetch normal blogs
+        const { data } = await api.get("/article");
+        setBlogs(data.articles);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBlogs();
+  }, []);
+
+  // Pagination Logic
+  const visiblePosts = blogs.slice(startIndex, startIndex + 4); // Show 3 cards + View More
 
   // Handle Next
   const handleNext = () => {
-    if (startIndex + 3 < blogPosts.length) {
+    if (startIndex + 3 < blogs.length) {
       setStartIndex((prev) => prev + 4);
     }
   };
@@ -50,14 +75,19 @@ const OurBlogSection = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [startIndex]);
 
+  if (loading) {
+    return <p className="text-center text-lg">Loading blogs...</p>;
+  }
+
   return (
     <section className="flex items-center py-10">
       <div
         className="container mx-auto flex flex-col items-center relative"
-        ref={containerRef}
-      >
+        ref={containerRef}>
         <h1 className="text-3xl sm:text-4xl font-semibold font-montserrat">
-          Our Blogs
+          {localStorage.getItem("profile")
+            ? "Recommended Blogs for You"
+            : "Our Blogs"}
         </h1>
 
         {/* Blog Cards Slider */}
@@ -72,16 +102,15 @@ const OurBlogSection = () => {
               ease: "easeInOut",
               staggerChildren: 0.2,
             }}
-            className="flex gap-7"
-          >
+            className="flex gap-7">
             {visiblePosts.map((post) => (
               <div
                 key={post.id}
                 className="relative bg-[#75d0ea1b] shadow-lg rounded-xl overflow-hidden cursor-pointer w-[300px] h-[300px] flex flex-col items-center justify-center group transition-all duration-500 transform hover:scale-105"
-              >
+                onClick={() => router.push(`/blogs/${post.id}`)}>
                 {/* Image */}
                 <Image
-                  src={post.image}
+                  src={post.image_url}
                   alt={post.title}
                   width={400}
                   height={400}
@@ -98,11 +127,10 @@ const OurBlogSection = () => {
             ))}
 
             {/* View More Card - Now in the Same Row */}
-            {startIndex + 3 >= blogPosts.length && (
+            {startIndex + 3 >= blogs.length && (
               <div
                 className="flex justify-center items-center bg-[#75d0ea1b] text-black font-ubuntu font-medium text-xl shadow-lg rounded-xl w-[300px] h-[300px] cursor-pointer transition-all duration-500 transform hover:scale-105"
-                onClick={() => router.push("/blogs")}
-              >
+                onClick={() => router.push("/blogs")}>
                 View More Blogs
               </div>
             )}
@@ -116,20 +144,18 @@ const OurBlogSection = () => {
                 : "hover:bg-gray-600"
             }`}
             onClick={handlePrev}
-            disabled={startIndex === 0}
-          >
+            disabled={startIndex === 0}>
             <FaChevronLeft />
           </button>
 
           <button
             className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg ${
-              startIndex + 3 >= blogPosts.length
+              startIndex + 3 >= blogs.length
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-gray-600"
             }`}
             onClick={handleNext}
-            disabled={startIndex + 3 >= blogPosts.length}
-          >
+            disabled={startIndex + 3 >= blogs.length}>
             <FaChevronRight />
           </button>
         </div>
