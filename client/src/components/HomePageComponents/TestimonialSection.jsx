@@ -8,55 +8,55 @@ const reviews = [
   {
     id: 1,
     name: "Pratik Biswas",
-    image: "/16.png",
-    location: "Hyderabad",
+    image: "/pb27.jpg",
+    location: "Bardhaman",
     review:
       "This AI-powered healthcare platform has completely transformed the way I manage my health. The accurate disease predictions and personalized treatment recommendations have given me confidence in my medical decisions. The seamless telemedicine feature allows me to consult doctors anytime, making healthcare more accessible than ever!",
   },
   {
     id: 2,
-    name: "Sattwikee Ghosh",
+    name: "Sattwikee Khan",
     image: "/sg.jpg",
-    location: "Chennai",
+    location: "Israel",
 
     review:
       "As a healthcare professional, I’ve seen firsthand how this platform improves patient care. The AI-driven diagnosis tools and real-time data analysis streamline decision-making, reducing errors and saving valuable time. The integration of smart insurance advisors and blockchain security makes it a game-changer in digital healthcare.",
   },
   {
     id: 3,
-    name: "Rupal Paul",
+    name: "Chandrima Khatun",
+    image: "/ck.png",
+    location: "Dubai",
+
+    review:
+      "Healthcare has never been this efficient! The multi-disease prediction feature is incredibly accurate, helping me stay ahead of potential health issues. The blockchain security gives me peace of mind, knowing my data is protected. This platform is the future of personalized healthcare!",
+  },
+  {
+    id: 4,
+    name: "Md. Rupal Reyaz",
     image: "/rp.png",
-    location: "Chattisgarh",
+    location: "Afghanistan",
 
     review:
       "I was skeptical at first, but this platform exceeded my expectations. The AI chatbot provides instant support, and the drug forecasting feature helps me find effective medication alternatives effortlessly. With its intuitive interface and cutting-edge AI capabilities, it truly bridges the gap between technology and quality healthcare.",
   },
   {
-    id: 4,
-    name: "Ayaan Ahmed",
+    id: 5,
+    name: "Ayaan Mukherjee",
     image: "/12.png",
-    location: "Bangalore",
+    location: "Prayagraj",
 
     review:
       "This platform is a lifesaver! The AI-driven symptom analysis helped me identify potential health risks early, allowing me to take preventive measures. The virtual consultation feature made it easy to connect with doctors without long wait times. It’s a must-have for anyone looking for smarter healthcare solutions.",
   },
   {
-    id: 5,
-    name: "Md Zaib Reyaz",
+    id: 6,
+    name: " Zaib Sengupta",
     image: "/mzr.png",
-    location: "Mumbai",
+    location: "Vrindavan",
 
     review:
       "I love how this platform simplifies healthcare. The drug response predictor ensures I take medications that work best for me, while the AI-powered diagnostics provide reliable insights. The user-friendly interface makes navigation effortless, making it accessible to all age groups.",
-  },
-  {
-    id: 6,
-    name: "Chandrima Kar",
-    image: "/ck.png",
-    location: "Kolkata",
-
-    review:
-      "Healthcare has never been this efficient! The multi-disease prediction feature is incredibly accurate, helping me stay ahead of potential health issues. The blockchain security gives me peace of mind, knowing my data is protected. This platform is the future of personalized healthcare!",
   },
 ];
 

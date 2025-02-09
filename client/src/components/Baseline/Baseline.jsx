@@ -60,11 +60,14 @@ const Baseline = () => {
       </div>
 
       {/* Center Book Appointment Button */}
-      <div className="absolute mb-14 flex items-center justify-center w-[6.8rem] h-[6.8rem] border-[6px]  border-white bg-blue-950 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-90 hover:bg-blue-500 cursor-pointer">
+      <Link
+        href="/book-appointment"
+        className="absolute mb-14 flex items-center justify-center w-[6.8rem] h-[6.8rem] border-[6px]  border-white bg-blue-950 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-90 hover:bg-blue-500 cursor-pointer"
+      >
         <h1 className="text-center text-sm whitespace-nowrap font-ubuntu">
           Book <br /> Appointment
         </h1>
-      </div>
+      </Link>
 
       {/* Right Section */}
       <div className="flex items-center justify-center gap-20 ">
