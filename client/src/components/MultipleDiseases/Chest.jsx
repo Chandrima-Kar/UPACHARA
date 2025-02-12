@@ -1,25 +1,53 @@
 "use client";
-import React, { useState } from "react";
+
+import { useState } from "react";
+import { ResultDisplay } from "./Result-Display/result-display";
+
 const Chest = () => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSelectedImage(URL.createObjectURL(file));
+      setSelectedImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedImage) return; // Prevent submitting without an image
+    if (!selectedImage) return;
 
     setIsLoading(true);
-    setTimeout(() => {
+    setResult(null);
+
+    const formData = new FormData();
+    formData.append("image", selectedImage);
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:5000/disease_image_input",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      console.error("Error:", error);
+      setResult("An error occurred while processing your request.");
+    } finally {
       setIsLoading(false);
-      alert("Checking successfully!");
-    }, 2000);
+    }
   };
 
   return (
@@ -30,15 +58,14 @@ const Chest = () => {
           <br /> <span className="text-blue-500">Chest:</span> Get Checked
         </h1>
         <p className="text-gray-600 max-w-3xl text-center">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo
-          impedit perspiciatis provident recusandae vero, aspernatur,
-          repellendus nostrum sit tenetur sequi laudantium.
+          Upload a chest X-ray image for analysis. Our advanced AI will check
+          for any abnormalities.
         </p>
       </div>
 
       <div className="w-full max-w-3xl bg-blue-50 shadow-xl rounded-lg p-6">
         <h3 className="text-lg font-medium font-mono text-gray-900 mb-10 text-center">
-          -- Upload Your Photo Here --
+          -- Upload Your Chest X-ray Image Here --
         </h3>
         <form
           onSubmit={handleSubmit}
@@ -65,12 +92,12 @@ const Chest = () => {
           </div>
 
           {/* Image Preview */}
-          {selectedImage && (
-            <div className="">
+          {previewUrl && (
+            <div className="mb-4">
               <img
-                src={selectedImage}
+                src={previewUrl || "/placeholder.svg"}
                 alt="Selected"
-                className="w-full h-full object-cover rounded-md shadow"
+                className="w-full max-w-md h-auto object-cover rounded-md shadow"
               />
             </div>
           )}
@@ -86,11 +113,14 @@ const Chest = () => {
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              {isLoading ? "Checking..." : "Check"}
+              {isLoading ? "Analyzing..." : "Analyze Image"}
             </button>
           </div>
         </form>
       </div>
+
+      {/* Result Display */}
+      {result && <ResultDisplay data={result} />}
     </section>
   );
 };

@@ -1,51 +1,10 @@
 
 {
-  "name_of_disease": "Eczema",
-  "description": [
-    "Eczema, also known as atopic dermatitis, is a long-term (chronic) skin condition that causes dry, itchy patches of skin.",
-    "It's a common condition, particularly in children, and can range in severity from mild to severe."
-  ],
-  "most_likely_cause_of_disease": [
-    "The exact cause is unknown, but it's believed to be a combination of genetic and environmental factors.",
-    "A weakened skin barrier, which allows irritants and allergens to enter the skin more easily.",
-    "A faulty immune system, which may overreact to triggers.",
-    "Dry skin, which is more prone to irritation and inflammation.",
-    "Family history of eczema.",
-    "Exposure to allergens, such as dust mites, pollen, pet dander, and certain foods.",
-    "Irritants, such as soaps, detergents, and perfumes.",
-    "Stress and anxiety."
-  ],
-  "precautions_we_need_to_take": [
-    "Avoid known triggers, such as allergens and irritants.",
-    "Keep skin moisturized by applying a thick, fragrance-free moisturizer regularly.",
-    "Take lukewarm baths or showers and avoid harsh soaps.",
-    "Wear loose-fitting, breathable clothing.",
-    "Avoid scratching, as this can worsen inflammation.",
-    "Use cool compresses to relieve itching.",
-    "Manage stress and anxiety."
-  ],
-  "symptoms_of_that_disease": [
-    "Red, itchy patches of skin.",
-    "Dry, scaly skin.",
-    "Small, raised bumps or blisters.",
-    "Cracked or weeping skin.",
-    "Thickened, leathery skin.",
-    "Skin infections, such as impetigo or cellulitis.",
-    "Swollen lymph nodes.",
-    "Fatigue."
-  ],
-  "diet_we_need_to_follow": [
-    "There is no specific diet for eczema, but some people may find that certain foods worsen their symptoms.",
-    "Common food triggers include dairy products, eggs, wheat, soy, nuts, and seafood.",
-    "It's important to keep a food diary to track potential triggers.",
-    "A balanced diet rich in fruits, vegetables, and whole grains is generally recommended.",
-    "Staying hydrated by drinking plenty of water is also important.",
-    "Probiotics, which are good bacteria found in fermented foods, may help to improve gut health and reduce eczema symptoms."
-  ],
-  "affect_of_disease": [
-    "Eczema can be uncomfortable and itchy, affecting quality of life.",
-    "It can lead to skin infections.",
-    "In severe cases, it can cause sleep disturbances and emotional distress.",
-    "There is no cure for eczema, but treatments can help to manage symptoms and improve quality of life."
-  ]
+  "name_of_disease": ["Eczema (Atopic Dermatitis)"],
+  "description": ["Eczema, also known as atopic dermatitis, is a long-term (chronic) inflammatory skin condition that causes dry, itchy, and inflamed skin. It's characterized by recurring rashes and intense itching."],
+  "most_likely_cause_of_disease": ["Genetic predisposition (family history of eczema, asthma, or hay fever)", "Defects in the skin barrier function", "Immune system dysfunction", "Environmental triggers (allergens, irritants)"],
+  "precautions_we_need_to_take": ["Avoid known allergens and irritants (e.g., soaps, detergents, fragrances, certain fabrics)", "Moisturize skin regularly with fragrance-free emollients", "Keep nails short and clean to prevent scratching", "Avoid hot showers and baths (lukewarm is better)", "Wear loose-fitting clothing made of soft, breathable fabrics", "Manage stress (stress can worsen eczema)", "Identify and avoid trigger foods if applicable (food allergies can worsen eczema)"],
+  "symptoms_of_that_disease": ["Itchy, dry skin", "Red or brownish-gray patches", "Small, raised bumps", "Blisters that may leak fluid and crust over", "Thickened, scaly skin", "Raw, cracked skin (especially in creases)", "Swollen, eyelids", "intense itching that worsens at night"],
+  "diet_we_need_to_follow": ["Eliminate or reduce known food allergens if identified (e.g., dairy, eggs, peanuts, soy, wheat)", "Increase intake of omega-3 fatty acids (found in fatty fish, flaxseeds, walnuts)", "Ensure adequate intake of vitamins and minerals (particularly vitamin D, zinc, and vitamin E)","Hydrate by drinking plenty of water", "Consider a balanced diet rich in fruits, vegetables, and whole grains"],
+  "affect_of_disease": ["Itching and discomfort", "Disrupted sleep due to nighttime itching", "Skin infections (secondary bacterial or viral infections)", "Emotional distress due to appearance and itching", "Scarring (in severe cases)", "Reduced quality of life"]
 }

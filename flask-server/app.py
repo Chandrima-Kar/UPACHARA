@@ -18,11 +18,12 @@ from datetime import datetime
 
 import os
 import asyncio
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify
 warnings.filterwarnings("ignore", category=UserWarning, message="Trying to unpickle estimator")
 
 tf.get_logger().setLevel(logging.ERROR)
 
+from io import BytesIO
 from src.exception import CustomException
 from src.logger import logging as lg
 from src.disease_prediction.disease_prediction import DiseasePrediction
@@ -346,26 +347,28 @@ if not os.path.exists(UPLOAD_FOLDER):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/disease_image_input', methods=['POST', 'GET'])
+@app.route('/disease_image_input', methods=['POST'])
 def disease_image_input():
-    if request.method == 'POST':
+    try:
+        if 'image' not in request.files:
+            return jsonify({"error": "No image uploaded"}), 400
+
         file = request.files['image']
         if file and allowed_file(file.filename):
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(file_path)
-            img = file_path
+            img = BytesIO(file.read())  
 
             model = ImagePrediction()
             pred, class_name = model.predict(img)
-            llm = report_generator()
-            response = llm.report(pred,class_name)
-            
 
-    #         return render_template("disease_image_input.html", response = response)
-    #     return render_template("disease_image_input.html")
-    # return render_template("disease_image_input.html")
+            llm = report_generator()
+            response = llm.report(pred, class_name)
+
+            return jsonify({"prediction": pred, "class_name": class_name, "report": response})
+
+        return jsonify({"error": "Invalid file format"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/food', methods=['GET', 'POST'])
 def food():

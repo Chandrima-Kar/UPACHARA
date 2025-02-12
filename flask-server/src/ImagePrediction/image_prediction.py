@@ -155,20 +155,15 @@ class ImagePrediction:
 
 
 
-
-
-    def predict(self,image_path):
-
-        # Load the trained model
+    def predict(self, image_data):
         model = models.inception_v3(pretrained=False)
         num_ftrs = model.fc.in_features
         model.fc = nn.Linear(num_ftrs, 4)
 
-
-        model.load_state_dict(torch.load('src/image_models/brain_chest_malaria_skin_inception_v3_model_state_dict.pth', map_location=torch.device('cpu')))
+        model.load_state_dict(torch.load('src/image_models/brain_chest_malaria_skin_inception_v3_model_state_dict.pth',
+                                         map_location=torch.device('cpu')))
         model.eval()
 
-        # Define image transformations
         preprocess = transforms.Compose([
             transforms.Resize(299),
             transforms.CenterCrop(299),
@@ -176,37 +171,31 @@ class ImagePrediction:
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
-        image = Image.open(image_path).convert('L')
+        image = Image.open(image_data).convert('L')
         image = Image.merge("RGB", (image, image, image))
         image = preprocess(image)
         image = image.unsqueeze(0)
+
         with torch.no_grad():
             output = model(image)
             probabilities = F.softmax(output, dim=1)
             _, predicted = torch.max(output, 1)
             prob = probabilities[0][predicted].item()
+
             if prob > 0.3:
                 if predicted.item() == 0:
                     prediction = "Brain"
-                    chest_pred = self.brain(image_path=image_path)
-                    return chest_pred,prediction
-
+                    return self.brain(image_data), prediction
                 elif predicted.item() == 1:
                     prediction = "Chest"
-                    brain_pred = self.chest(image_path=image_path)
-                    return brain_pred,prediction
-
+                    return self.chest(image_data), prediction
                 elif predicted.item() == 2:
                     prediction = "Malaria"
-                    malaria_pred = self.malaria(image_path=image_path)
-                    return malaria_pred,prediction
-                
+                    return self.malaria(image_data), prediction
                 elif predicted.item() == 3:
                     prediction = "Skin"
-                    skin_pred = self.skin(image_path=image_path)
-                    return skin_pred,prediction
+                    return self.skin(image_data), prediction
 
-            else:
-                return "Sorry!, we don't have that disease in out database."
+            return "Sorry!, we don't have that disease in our database."
 
-        
+

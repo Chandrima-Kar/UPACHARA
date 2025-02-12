@@ -2,6 +2,7 @@ import os
 
 import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
+
 SECRET_KEY = os.getenv("JWT_SECRET", "your-secret-key")
 
 def get_patient_id_from_token(token):
