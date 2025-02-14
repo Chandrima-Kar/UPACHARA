@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { SlRefresh } from "react-icons/sl";
+import api from "@/utils/api";
+import { toast } from "react-toastify";
 
 const generateCaptcha = () => {
   const characters =
@@ -15,25 +17,47 @@ const generateCaptcha = () => {
 
 const LoginPage = () => {
   const router = useRouter();
-
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [captcha, setCaptcha] = useState(generateCaptcha());
   const [captchaInput, setCaptchaInput] = useState("");
+  const [userType, setUserType] = useState("patient");
 
-  // Refresh captcha on page reload
   useEffect(() => {
     setCaptcha(generateCaptcha());
   }, []);
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (captchaInput !== captcha) {
       alert("Captcha verification failed. Please try again.");
       return;
     }
-    alert("Login successful!");
-    router.push("/"); // Redirect after login (change the path as needed)
+
+    const formData = {
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
+
+    try {
+      const loginRoute = `/auth/${userType}/login`;
+      const profileRoute = `/auth/${userType}/profile`;
+      
+      const response = await api.post(loginRoute, formData);
+      console.log(response);
+      
+      const data = response.data;
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
+      
+      const profileResponse = await api.get(profileRoute);
+      console.log(profileResponse.data);
+      localStorage.setItem("profile", JSON.stringify(profileResponse.data));
+
+      toast.success("Login successful!");
+    } catch (error) {
+      toast.error("Login failed");
+    }
   };
 
   return (
@@ -56,6 +80,29 @@ const LoginPage = () => {
         </h3>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="flex justify-center gap-6">
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="userType"
+                value="patient"
+                checked={userType === "patient"}
+                onChange={() => setUserType("patient")}
+              />
+              Patient
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="userType"
+                value="doctor"
+                checked={userType === "doctor"}
+                onChange={() => setUserType("doctor")}
+              />
+              Doctor
+            </label>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             {["email", "password"].map((field, index) => (
               <div key={index} className="relative">
@@ -79,31 +126,23 @@ const LoginPage = () => {
                     className="absolute right-3 top-[10px] text-blue-500 hover:text-blue-800"
                     onClick={() => setPasswordVisible(!passwordVisible)}
                   >
-                    {passwordVisible ? (
-                      <FaEyeSlash size={18} />
-                    ) : (
-                      <FaEye size={18} />
-                    )}
+                    {passwordVisible ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                   </button>
                 )}
               </div>
             ))}
           </div>
 
-          {/* Captcha Section */}
-          <div className="flex  items-center justify-center gap-3">
+          <div className="flex items-center justify-center gap-3">
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setCaptcha(generateCaptcha())}
-                className="  text-blue-950 rounded-md hover:text-blue-500 transition"
+                className="text-blue-950 rounded-md hover:text-blue-500 transition"
               >
                 <SlRefresh className="w-5 h-5" />
               </button>
-              <span
-                onContextMenu={(e) => e.preventDefault()}
-                className="bg-blue-700 text-white font-medium font-mono px-4 py-1 rounded-md cursor-not-allowed "
-              >
+              <span className="bg-blue-700 text-white font-medium font-mono px-4 py-1 rounded-md cursor-not-allowed">
                 {captcha}
               </span>
             </div>
@@ -117,7 +156,6 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <div className="flex items-center justify-center">
             <button
               type="submit"
