@@ -80,13 +80,16 @@ const SignUpPage = () => {
     try {
       const response = await api.post(
         `/auth/${userType === "doctor" ? "doctor" : "patient"}/register`,
-        userData 
+        userData
       );
 
-      const { message } = response; 
+      const { message } = response.data;
 
-      if (message === "Patient registered successfully") {
-        toast.success(data.message);
+      if (
+        message === "Patient registered successfully" ||
+        message === "Doctor registered successfully"
+      ) {
+        toast.success(message);
         router.push("/login"); // Redirect to login after successful signup
       } else {
         toast.error("Registration failed. Please try again.");
