@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import symptoms from "../../utils/symptoms.json";
 import convertStringList from "@/utils/helper";
 import Image from "next/image";
+import flaskapi from "@/utils/flaskapi";
+
 export default function DiseasePage() {
   const [formData, setFormData] = useState({
     // fname: "",
@@ -39,19 +41,24 @@ export default function DiseasePage() {
     setError(null);
     console.log(formData);
     try {
-      const response = await fetch("http://127.0.0.1:5000/predict", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      // const response = await fetch("http://127.0.0.1:5000/predict", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      const { data } = await flaskapi.post(
+        "http://127.0.0.1:5000/predict",
+        formData
+      );
 
-      const data = await response.json();
+      // if (!response.ok) {
+      //   throw new Error("Network response was not ok");
+      // }
+
+      // const data = await response.json();
       data.medications = convertStringList(data.medications);
       data.myDiet = convertStringList(data.myDiet);
       setPredictionResult(data);

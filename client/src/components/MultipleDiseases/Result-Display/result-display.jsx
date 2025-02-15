@@ -26,19 +26,16 @@ export function ResultDisplay({ data }) {
   }, [description]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6 p-4">
+    <div className="w-full max-w-5xl mx-auto space-y-6 p-4">
       <div className="text-center space-y-4 mb-8">
-        <span className="inline-block bg-blue-100 text-blue-800 text-lg px-4 py-1 rounded-full">
-          Analysis Result
-        </span>
-        <h2 className="text-3xl font-bold text-blue-600">
-          {data?.report.name_of_disease[0]}
+        <h2 className="text-3xl font-montserrat text-black text-center">
+          ⚕️{data?.report.name_of_disease[0]}⚕️
         </h2>
       </div>
 
       <div className="bg-white rounded-lg shadow-lg border-l-4 border-l-blue-500 overflow-hidden">
         <div className="p-4 border-b">
-          <h3 className="text-xl font-semibold flex items-center gap-2">
+          <h3 className="text-xl font-semibold flex items-center gap-2  font-mono">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 text-blue-500"
@@ -55,7 +52,9 @@ export function ResultDisplay({ data }) {
           </h3>
         </div>
         <div className="p-4">
-          <p className="leading-relaxed min-h-[4rem]">{displayText}</p>
+          <p className="leading-relaxed min-h-[4rem] font-lato">
+            {displayText}
+          </p>
         </div>
       </div>
 
@@ -63,7 +62,7 @@ export function ResultDisplay({ data }) {
         <div className="grid gap-6 md:grid-cols-2 animate-[fadeIn_1s_ease-in]">
           <div className="bg-white rounded-lg shadow-lg border-l-4 border-l-yellow-500 overflow-hidden">
             <div className="p-4 border-b">
-              <h3 className="text-xl font-semibold flex items-center gap-2">
+              <h3 className="text-xl font-semibold flex items-center gap-2  font-mono">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-yellow-500"
@@ -82,7 +81,7 @@ export function ResultDisplay({ data }) {
             <div className="p-4">
               <ul className="space-y-2">
                 {data?.report.symptoms_of_that_disease.map((symptom, index) => (
-                  <li key={index} className="flex items-start gap-2">
+                  <li key={index} className="flex items-start gap-2 font-lato">
                     <svg
                       className="h-5 w-5 text-green-500 shrink-0 mt-0.5"
                       fill="none"
@@ -105,7 +104,7 @@ export function ResultDisplay({ data }) {
 
           <div className="bg-white rounded-lg shadow-lg border-l-4 border-l-red-500 overflow-hidden">
             <div className="p-4 border-b">
-              <h3 className="text-xl font-semibold flex items-center gap-2">
+              <h3 className="text-xl font-semibold flex items-center gap-2  font-mono">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-red-500"
@@ -124,7 +123,7 @@ export function ResultDisplay({ data }) {
             <div className="p-4">
               <ul className="space-y-2">
                 {data?.report.affect_of_disease.map((effect, index) => (
-                  <li key={index} className="flex items-start gap-2">
+                  <li key={index} className="flex items-start gap-2 font-lato ">
                     <svg
                       className="h-5 w-5 text-green-500 shrink-0 mt-0.5"
                       fill="none"
@@ -147,7 +146,7 @@ export function ResultDisplay({ data }) {
 
           <div className="bg-white rounded-lg shadow-lg border-l-4 border-l-purple-500 overflow-hidden">
             <div className="p-4 border-b">
-              <h3 className="text-xl font-semibold flex items-center gap-2">
+              <h3 className="text-xl font-semibold flex items-center gap-2  font-mono">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-purple-500"
@@ -167,7 +166,10 @@ export function ResultDisplay({ data }) {
               <ul className="space-y-2">
                 {data?.report.precautions_we_need_to_take.map(
                   (precaution, index) => (
-                    <li key={index} className="flex items-start gap-2">
+                    <li
+                      key={index}
+                      className="flex items-start gap-2 font-lato"
+                    >
                       <svg
                         className="h-5 w-5 text-green-500 shrink-0 mt-0.5"
                         fill="none"
@@ -191,7 +193,7 @@ export function ResultDisplay({ data }) {
 
           <div className="bg-white rounded-lg shadow-lg border-l-4 border-l-green-500 overflow-hidden">
             <div className="p-4 border-b">
-              <h3 className="text-xl font-semibold flex items-center gap-2">
+              <h3 className="text-xl font-semibold flex items-center gap-2  font-mono">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 text-green-500"
@@ -210,7 +212,7 @@ export function ResultDisplay({ data }) {
             <div className="p-4">
               <ul className="space-y-2">
                 {data?.report.diet_we_need_to_follow.map((diet, index) => (
-                  <li key={index} className="flex items-start gap-2">
+                  <li key={index} className="flex items-start gap-2 font-lato">
                     <svg
                       className="h-5 w-5 text-green-500 shrink-0 mt-0.5"
                       fill="none"
