@@ -33,7 +33,11 @@ def calculate_insurance_price(data):
 
     data['age'] = int(data['age'])
     data['income_level'] = int(data['income_level'])
-    data['previous_claims'] = int(data['previous_claims'])
+    if data['previous_claims'] == "Yes":
+        data['previous_claims'] = 1
+    else:
+        data['previous_claims'] = 0
+
     
     # Age factor
     if data['age'] < 25:
@@ -74,7 +78,7 @@ def calculate_insurance_price(data):
     # Alcohol consumption factor
     if data['alcohol_consumption'] == 'None':
         alcohol_factor = 1.0
-    elif data['alcohol_consumption'] == 'Occasional':
+    elif data['alcohol_consumption'] == 'Moderate':
         alcohol_factor = 1.1
     else:
         alcohol_factor = 1.3

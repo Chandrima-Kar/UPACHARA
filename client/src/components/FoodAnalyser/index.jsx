@@ -2,9 +2,29 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+
+const TypeWriter = ({ text }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText((prevText) => prevText + text[currentIndex]);
+        setCurrentIndex((prevIndex) => prevIndex + 1);
+      }, 20);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, text]);
+
+  return <p>{displayedText}</p>;
+};
 
 export default function FoodAnalyzerPage() {
   const [file, setFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [disease, setDisease] = useState("");
   const [response, setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +38,11 @@ export default function FoodAnalyzerPage() {
   if (!isClient) return null;
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    if (selectedFile) {
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -48,7 +72,7 @@ export default function FoodAnalyzerPage() {
       }
 
       const data = await res.json();
-      setResponse(data);
+      setResponse(data?.report);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -57,38 +81,53 @@ export default function FoodAnalyzerPage() {
   };
 
   return (
-    <section className="flex flex-col mb-16 gap-5 items-center justify-center ">
-      <Image
-        src="/foodBG.png"
-        alt="Commercial Real Estate"
-        width={1200}
-        height={400}
-        className="rounded-b-3xl  w-[81rem] h-[25rem] drop-shadow-lg"
-      />
-      <div className="flex justify-between w-full px-3 gap-20">
-        <h1 className="text-6xl  uppercase font-extrabold text-gray-900 font-montserrat">
-          <span className=" text-blue-500">
-            {" "}
-            Analyze Food <br />{" "}
-          </span>{" "}
+    <section className="flex flex-col mb-16 gap-5 items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Image
+          src="/foodBG.png"
+          alt="Food Analysis Background"
+          width={1200}
+          height={400}
+          className="rounded-b-3xl w-[81rem] h-[25rem] drop-shadow-lg"
+        />
+      </motion.div>
+      <motion.div
+        className="flex justify-between w-full px-3 gap-20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <h1 className="text-6xl uppercase font-extrabold text-gray-900 font-montserrat">
+          <span className="text-blue-500">
+            Analyze Food <br />
+          </span>
           For Your Health
         </h1>
         <p className="text-gray-600 max-w-lg font-open_sans text-right">
           Upload a photo of your meal and enter any relevant disease information
-          to analyze the meal’s nutritional value.
+          to analyze the meal's nutritional value and receive personalized
+          recommendations.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="w-full max-w-3xl bg-blue-50 shadow-xl rounded-lg p-6">
+      <motion.div
+        className="w-full max-w-3xl bg-blue-50 shadow-xl rounded-lg p-6"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
         <h3 className="text-lg font-medium font-mono text-gray-900 mb-10 text-center">
-          -- Upload Your Photo Here --
+          -- Upload Your Meal Photo Here --
         </h3>
         <form
           onSubmit={handleSubmit}
           className="rounded-lg flex flex-col items-center justify-center gap-7 mx-auto"
         >
-          <div className=" text-center transition-all duration-500 transform hover:scale-105">
-            {/* Hidden Input Field */}
+          <div className="text-center transition-all duration-500 transform hover:scale-105">
             <input
               type="file"
               accept="image/*"
@@ -96,8 +135,6 @@ export default function FoodAnalyzerPage() {
               className="hidden"
               id="fileInput"
             />
-
-            {/* Custom Upload Button */}
             <label
               htmlFor="fileInput"
               className="cursor-pointer px-4 py-2 bg-gradient-to-r from-[#bfdbfe] to-[#eff6ff] border border-[#000000] rounded-xl font-ubuntu"
@@ -106,7 +143,19 @@ export default function FoodAnalyzerPage() {
             </label>
           </div>
 
-          <div className=" w-full">
+          {previewUrl && (
+            <div className="mt-4">
+              <Image
+                src={previewUrl || "/placeholder.svg"}
+                alt="Meal preview"
+                width={300}
+                height={200}
+                className="rounded-md object-cover"
+              />
+            </div>
+          )}
+
+          <div className="w-full">
             <input
               type="text"
               value={disease}
@@ -119,28 +168,45 @@ export default function FoodAnalyzerPage() {
           <div className="flex items-center justify-center">
             <button
               type="submit"
+              disabled={isLoading || !file}
               className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
             >
-              Analyze Food
+              {isLoading ? "Analyzing..." : "Analyze Food"}
             </button>
           </div>
         </form>
 
-        {/* Response Section */}
-        {error && (
-          <div className="mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <strong className="font-bold">Error: </strong> {error}
-          </div>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              className="mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <strong className="font-bold">Error: </strong> {error}
+            </motion.div>
+          )}
 
-        {response && (
-          <div className="mt-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-            <strong className="font-bold">Analysis: </strong> {response.message}
-            <p>File: {response.file}</p>
-            {response.disease && <p>Disease: {response.disease}</p>}
-          </div>
-        )}
-      </div>
+          {response && (
+            <motion.div
+              className="mt-6 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 text-gray-800 px-6 py-4 rounded-lg shadow-md"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h4 className="text-xl font-semibold mb-3 text-blue-600">
+                Food Analysis Report
+              </h4>
+              <div className="space-y-2">
+                <TypeWriter text={response} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </section>
   );
 }

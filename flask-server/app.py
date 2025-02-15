@@ -159,35 +159,43 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/drugres', methods=['GET', 'POST'])
-def drugres():
+@app.route('/drugs', methods=['POST'])
+def drugs():
     try:
-        if request.method == 'POST':
-            data = request.form.to_dict()
-            llm = report_generator2()
-            data = llm.report(data)
-        #     return render_template('drug_response_output.html', data=data)
-        
-        # return render_template('drug_response.html')
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Invalid request, JSON data required"}), 400
+        llm = report_generator2()
+        result = llm.report(data)
+
+        return jsonify(result), 200
+
     except Exception as e:
-        lg.error(f"Error in /drugresponse route: {e}")
-        raise CustomException(e, sys)
+        lg.error(f"Error in /drugres route: {e}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/alternativedrug', methods=['GET', 'POST'])
 def alternativedrug():
     try:
+        alt = AlternateDrug()
+
         if request.method == 'POST':
-            selected_medicine = request.form['medicine']
-            alt = AlternateDrug()
-            recommendations, medicines_data = alt.recommendation(selected_medicine)  
-            # return render_template("alternativedrug.html", medicines=medicines_data, prediction_text=recommendations)
-        else:
-            alt = AlternateDrug()
+            data = request.get_json()
+            selected_medicine = data.get("name_of_medicine", "").strip()
+
+            if not selected_medicine:
+                return jsonify({"error": "Medicine name is required"}), 400
+
+            recommendations = alt.recommendation(selected_medicine)
+            return jsonify({"prediction_text": recommendations[0]})
+
+        elif request.method == 'GET':
             medicines_data = alt.medi()
-            # return render_template("alternativedrug.html", medicines=medicines_data)
+            return jsonify({"medicines": medicines_data})
+
     except Exception as e:
         lg.error(f"Error in /alternativedrug route: {e}")
-        raise CustomException(e, sys)
+        return jsonify({"error": "An internal server error occurred"}), 500
 
 @app.route('/liver', methods=['POST'])
 def liver():
@@ -322,27 +330,32 @@ def parkinsons():
         lg.error(f"Error in /parkinsons route: {e}")
         return jsonify({"error": str(e)}), 500
 
-@app.route('/insurance', methods=['GET', 'POST'])
+
+@app.route('/insurance', methods=['POST'])
 def insurance():
-    if request.method == 'POST':
-        form_data = request.form.to_dict()
-        insurance_price = calculate_insurance_price(form_data)/20
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Invalid request, JSON data required"}), 400
+
+        required_fields = [
+            "gender", "city", "occupation", "smoking_status",
+            "alcohol_consumption", "education_level", "previous_claims",
+            "past_disease_history", "family_disease_history","age","income_level"
+        ]
+
+        missing_fields = [field for field in required_fields if field not in data]
+        if missing_fields:
+            return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
+
+        insurance_price = calculate_insurance_price(data) / 20
+
+        return jsonify({"result": insurance_price}), 200
+
+    except Exception as e:
+        print(f"Error in /insurance route: {e}")
+        return jsonify({"error": str(e)}), 500
         
-    #     return render_template("insurance.html", insurance_price = insurance_price)
-    # else:
-    #     return render_template("insurance.html")
-    
-
-
-
-
-
-UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -370,30 +383,31 @@ def disease_image_input():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/food', methods=['GET', 'POST'])
+@app.route("/food", methods=["POST"])
 def food():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(file_path)
-            file = file_path
+    try:
+        # Check if file was uploaded
+        if "file" not in request.files:
+            return jsonify({"error": "No image uploaded"}), 400
 
-        disease = request.form.get('disease')
-        if disease == "":
-            disease = None
-        else:
-            disease = disease.strip()  # Ensure it's a clean string
+        file = request.files["file"]
 
-        # Create an instance of the class
+        if not file or not allowed_file(file.filename):
+            return jsonify({"error": "Invalid file format"}), 400
+
+        img = BytesIO(file.read())  # Read image into memory
+
+        disease = request.form.get("disease", "").strip()
+        disease = disease if disease else None
+
         generator = food_report_generator()
-        
-        #Call the report method
-        response = generator.report(file, disease)
-    #     return render_template('food-output.html', response=response)
-    # return render_template('food-input.html')
+
+        response = generator.report(img, disease)
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/chatbot')
