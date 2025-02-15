@@ -1,37 +1,12 @@
 
 {
-  "name_of_disease": [
-    "Eczema (Atopic Dermatitis)"
-  ],
-  "description": [
-    "Eczema is a long-term (chronic) inflammatory skin condition that causes itchy, dry, and inflamed skin.  It's not contagious."
-  ],
-  "most_likely_cause_of_disease": [
-    "A combination of genetic predisposition and environmental triggers.  A weakened skin barrier allows irritants and allergens to enter the skin, triggering an inflammatory response."
-  ],
-  "precautions_we_need_to_take": [
-    "Avoid known triggers (e.g., soaps, detergents, fragrances, certain fabrics), Moisturize skin regularly with fragrance-free emollients,  Keep skin cool and avoid excessive sweating,  Avoid scratching (use cool compresses to relieve itch), Shower or bathe in lukewarm water (avoid hot water), Gently pat skin dry, Use mild, fragrance-free cleansers."
-  ],
-  "symptoms_of_that_disease": [
-    "Itchy, dry skin",
-    "Red, inflamed skin",
-    "Small, raised bumps",
-    "Blisters (especially in infants)",
-    "Weeping or oozing skin",
-    "Thickened, leathery skin (in chronic cases)",
-    "Scaling or crusting skin",
-    "Skin infections (secondary to scratching)"
-  ],
-  "diet_we_need_to_follow": [
-    "There's no specific diet for eczema, but some people find that eliminating certain foods (like dairy, eggs, soy, peanuts, or wheat) improves symptoms. This should be done under the guidance of a doctor or registered dietitian.",
-    "Focus on a balanced diet rich in fruits, vegetables, and omega-3 fatty acids.",
-    "Staying well-hydrated is also important."
-  ],
-  "affect_of_disease": [
-    "Itchy, uncomfortable skin",
-    "Sleep disturbances due to itching",
-    "Social impact due to appearance",
-    "Increased risk of skin infections",
-    "Potential psychological distress"
-  ]
+  "disease_name": ["Chest Nodule"],
+  "description": ["A chest nodule is a small, round growth or mass in the lung or chest wall.  They can be benign (non-cancerous) or malignant (cancerous). Size is generally less than 3cm."],
+  "most_likely_causes": ["Infection (e.g., granulomas from tuberculosis, fungal infections)", "Inflammation (e.g., sarcoidosis)", "Benign tumors (e.g., hamartomas)", "Malignant tumors (e.g., lung cancer, lymphomas)", "Exposure to environmental factors (e.g., asbestos, silica)"],
+  "precautions": ["Regular check-ups with your doctor, especially if you have a history of smoking or exposure to environmental hazards.", "Prompt medical attention for any new or worsening symptoms.", "Avoid smoking and exposure to harmful substances."],
+  "symptoms": ["Often asymptomatic (no symptoms).", "Cough (possibly with blood)", "Shortness of breath", "Chest pain", "Wheezing", "Fatigue", "Weight loss", "Fever"],
+  "diet": ["A balanced diet rich in fruits, vegetables, and whole grains is recommended to support overall health.", "Limit processed foods, sugary drinks, and red meat.",  "Consult a doctor or registered dietitian for personalized dietary advice."],
+  "effects_of_disease": ["Depending on the cause and size, a chest nodule can be harmless or cause serious complications, including: respiratory distress, lung damage, or even death (in the case of cancer)."]
 }
+
+**Disclaimer:** This JSON is for informational purposes only and does not constitute medical advice.  A chest nodule requires professional medical evaluation to determine its nature and appropriate management.  Always consult a doctor for diagnosis and treatment.
