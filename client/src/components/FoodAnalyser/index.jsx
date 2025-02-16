@@ -30,6 +30,8 @@ export default function FoodAnalyzerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isClient, setIsClient] = useState(false);
+  const parsedResponse = response ? JSON.parse(response) : null;
+  // const parsedResponse = response;
 
   useEffect(() => {
     setIsClient(true);
@@ -190,6 +192,21 @@ export default function FoodAnalyzerPage() {
           )}
 
           {response && (
+            // <motion.div
+            //   className="mt-6 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 text-gray-800 px-6 py-4 rounded-lg shadow-md"
+            //   initial={{ opacity: 0, y: 20 }}
+            //   animate={{ opacity: 1, y: 0 }}
+            //   exit={{ opacity: 0, y: -20 }}
+            //   transition={{ duration: 0.5 }}
+            // >
+            //   <h4 className=" font-semibold mb-7 text-3xl font-montserrat text-black text-center">
+            //     Food Analysis Report
+            //   </h4>
+            //   <div className="space-y-2">
+            //     <TypeWriter text={response} />
+            //   </div>
+            // </motion.div>
+
             <motion.div
               className="mt-6 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 text-gray-800 px-6 py-4 rounded-lg shadow-md"
               initial={{ opacity: 0, y: 20 }}
@@ -197,12 +214,52 @@ export default function FoodAnalyzerPage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
             >
-              <h4 className="text-xl font-semibold mb-3 text-blue-600">
+              <h4 className="font-semibold mb-7 text-3xl font-montserrat text-black text-center">
                 Food Analysis Report
               </h4>
-              <div className="space-y-2">
-                <TypeWriter text={response} />
-              </div>
+
+              {parsedResponse && (
+                <div className="space-y-4">
+                  {/* Display Nutritional Values in a Styled Table */}
+                  <div className="bg-white p-4 border border-gray-300 rounded-lg shadow-md">
+                    <h5 className="text-lg font-semibold text-blue-700 mb-3">
+                      Meal Breakdown:
+                    </h5>
+                    {parsedResponse}
+                    {/* {parsedResponse.meal.map((item, index) => (
+                      <div
+                        key={index}
+                        className="mb-3 p-3 border rounded-lg bg-gray-100"
+                      >
+                        <h6 className="font-semibold text-lg text-gray-900">
+                          {item.item}
+                        </h6>
+                        <p className="text-gray-700 text-sm">
+                          Serving Size: {item.serving_size}
+                        </p>
+                        <ul className="text-sm text-gray-700 mt-2">
+                          {Object.entries(item.nutrients).map(
+                            ([key, value]) => (
+                              <li key={key}>
+                                <strong>{key.replace(/_/g, " ")}:</strong>{" "}
+                                {value}
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    ))} */}
+                  </div>
+
+                  {/* Meal Analysis Section */}
+                  {/* <div className="p-4 bg-white rounded-lg border border-gray-300 shadow-md">
+                    <h5 className="text-lg font-semibold text-blue-700 mb-2">
+                      Meal Analysis:
+                    </h5>
+                    <p className="text-gray-700">{parsedResponse.analysis}</p>
+                  </div> */}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
