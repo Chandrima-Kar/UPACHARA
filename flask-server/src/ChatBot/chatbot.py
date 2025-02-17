@@ -8,6 +8,8 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain.schema import StrOutputParser
+from langchain.schema.runnable import RunnablePassthrough
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -90,7 +92,15 @@ Answer:
         messages=messages
     )
 
-    chain = LLMChain(llm=model, prompt=prompt)  
+    #  =============== COMMENTED OUT THIS CODE DUE TO DEPRECATION ISSUE =================
+    # chain = LLMChain(llm=model, prompt=prompt)  
+    
+    chain = (
+        {"context": RunnablePassthrough(), "chat_history": RunnablePassthrough(), "question": RunnablePassthrough()}
+        | prompt
+        | model
+        | StrOutputParser()
+    )
     
     return chain
 
@@ -99,12 +109,30 @@ async def user_input(user_question, chat_history):
     new_db = FAISS.load_local("Faiss", embeddings, allow_dangerous_deserialization=True)
     
     docs = new_db.similarity_search(user_question)
-    chain = get_conversational_chain(context=docs, chat_history=chat_history, question=user_question)
+    #  =============== COMMENTED OUT THIS CODE DUE TO DEPRECATION ISSUE =================
+    # chain = get_conversational_chain(context=docs, chat_history=chat_history, question=user_question)
     
-    response = chain.run({
-        "context": docs, 
-        "chat_history": chat_history, 
+    # ------------ NEW CODE ------------
+    context = "\n".join([doc.page_content for doc in docs])  # Extracting text from documents
+
+    if not user_question.strip():
+        return "Error: Empty question received."
+
+    chain = get_conversational_chain(context, chat_history, user_question)
+    # ------------ NEW CODE ------------
+
+
+    #  =============== COMMENTED OUT THIS CODE DUE TO DEPRECATION ISSUE =================
+    # response = chain.run({
+    #     "context": docs, 
+    #     "chat_history": chat_history, 
+    #     "question": user_question
+    #  })
+    
+    response = chain.invoke({
+        "context": context,
+        "chat_history": chat_history,
         "question": user_question
-     })
+    })
     
     return response

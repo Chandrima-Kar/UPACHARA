@@ -7,7 +7,7 @@ from sqlalchemy.sql import text
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 import tensorflow as tf
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import warnings
 import json
 import pandas as pd
@@ -418,9 +418,23 @@ def chatbot():
     # return render_template('chatbot.html')
 
 @app.route('/chat', methods=['POST'])
+# @cross_origin()  # Explicitly allowing CORS for this endpoint
 def chat():
-    user_question = request.form['question']
-    chat_history = request.form['history']
+    print("BACKEND REQUEST RECEIVED .............")
+    print(request)
+    print("================================================")
+    # Get JSON data from request
+    # Log the raw request and the data extracted from it
+    print(f"Request Data: {request.data}")  # This logs the raw data (just to confirm it's coming through)
+    data = request.get_json()
+    
+    print(f"Received data (JSON): {data}")  # This will print the parsed JSON
+    
+    user_question = data.get("question", "")
+    chat_history = data.get("history", [])
+    
+    print(f"User Question: {user_question}")  # Logs the extracted user question
+    print(f"Chat History: {chat_history}")  # Logs the extracted chat history
     response = asyncio.run(user_input(user_question, chat_history))
     return jsonify(response)
 

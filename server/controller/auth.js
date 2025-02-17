@@ -19,6 +19,7 @@ export const doctor_register = async (req, res) => {
       experienceYears,
       phone,
       address,
+      imageURL,
     } = req.body;
 
     const doctorExists = await pool.query(
@@ -38,8 +39,8 @@ export const doctor_register = async (req, res) => {
     await pool.query(
       `INSERT INTO doctors (
         email, password, first_name, last_name, specialization, 
-        license_number, experience_years, phone, address
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        license_number, experience_years, phone, address, image_url
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [
         email,
         hashedPassword,
@@ -50,6 +51,7 @@ export const doctor_register = async (req, res) => {
         experienceYears,
         phone,
         address,
+        imageURL,
       ]
     );
 
@@ -77,6 +79,7 @@ export const patient_register = async (req, res) => {
       bloodGroup,
       phone,
       address,
+      imageURL,
       medicalHistory,
       emergencyContact,
       emergencyPhone,
@@ -98,9 +101,9 @@ export const patient_register = async (req, res) => {
     await pool.query(
       `INSERT INTO patients (
         email, password, first_name, last_name, date_of_birth, 
-        gender, blood_group, phone, address, medical_history, 
+        gender, blood_group, phone, address, image_url, medical_history, 
         emergency_contact, emergency_phone
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         email,
         hashedPassword,
@@ -111,6 +114,7 @@ export const patient_register = async (req, res) => {
         bloodGroup,
         phone,
         address,
+        imageURL,
         medicalHistory,
         emergencyContact,
         emergencyPhone,
@@ -189,7 +193,7 @@ export const patient_login = async (req, res) => {
 export const doctor_profile = async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, email, first_name, last_name, specialization, license_number, experience_years, phone, address FROM doctors WHERE id = $1",
+      "SELECT id, email, first_name, last_name, specialization, license_number, experience_years, phone, address, image_url FROM doctors WHERE id = $1",
       [req.user.id]
     );
 
@@ -207,7 +211,7 @@ export const doctor_profile = async (req, res) => {
 export const patient_profile = async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, email, first_name, last_name, date_of_birth, gender, blood_group, phone, address, medical_history, emergency_contact, emergency_phone FROM patients WHERE id = $1",
+      "SELECT id, email, first_name, last_name, date_of_birth, gender, blood_group, phone, address, image_url, medical_history, emergency_contact, emergency_phone FROM patients WHERE id = $1",
       [req.user.id]
     );
 
