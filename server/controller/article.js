@@ -280,37 +280,3 @@ export const get_comments = async (req, res) => {
   }
 };
 
-export const get_doctor_articles = async (req, res) => {
-  try {
-    const doctorId = req.user.id;
-    const { page = 1, limit = 10 } = req.query;
-    const offset = (page - 1) * limit;
-
-    const result = await pool.query(
-      `SELECT 
-          a.*,
-          (SELECT COUNT(*) FROM article_likes WHERE article_id = a.id) as likes_count,
-          (SELECT COUNT(*) FROM article_comments WHERE article_id = a.id) as comments_count
-        FROM articles a
-        WHERE a.doctor_id = $1
-        ORDER BY a.created_at DESC
-        LIMIT $2 OFFSET $3`,
-      [doctorId, limit, offset]
-    );
-
-    const countResult = await pool.query(
-      "SELECT COUNT(*) FROM articles WHERE doctor_id = $1",
-      [doctorId]
-    );
-
-    res.json({
-      articles: result.rows,
-      total: parseInt(countResult.rows[0].count),
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(parseInt(countResult.rows[0].count) / limit),
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
-  }
-};

@@ -5,7 +5,6 @@ import {
   get_article,
   get_articles,
   get_comments,
-  get_doctor_articles,
   like_article,
   post_article,
   update_article,
@@ -53,11 +52,6 @@ router.post(
 
 router.get("/:id/comments", get_comments);
 
-router.get(
-  "/api/doctor/articles",
-  authenticateToken,
-  authorizeDoctor,
-  get_doctor_articles
-);
+
 
 export default router;

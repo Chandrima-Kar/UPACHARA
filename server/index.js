@@ -5,6 +5,10 @@ import pkg from "pg";
 import initDB from "./db/index.js";
 import authRouter from "./routes/auth.js";
 import articleRouter from "./routes/article.js";
+import appointmentRouter from "./routes/appointment.js";
+import doctorRouter from "./routes/doctor.js";
+import dashboardRouter from "./routes/dashboard.js";
+import prescriptionRouter from "./routes/prescription.js";
 
 const app = express();
 dotenv.config();
@@ -29,6 +33,14 @@ initDB(pool);
 app.use("/api/auth", authRouter);
 
 app.use("/api/article", articleRouter);
+
+app.use("/api/appointments", appointmentRouter);
+
+app.use("/api/doctor", doctorRouter);
+
+app.use("/api/dashboard", dashboardRouter);
+
+app.use("/api/prescription", prescriptionRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
