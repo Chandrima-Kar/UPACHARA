@@ -31,7 +31,7 @@ export default function AlternativeDrugPage() {
       // if (!response.ok) throw new Error("Failed to fetch medicines");
       // const data = await response.json();
 
-      const { data } = await flaskapi.post(
+      const { data } = await flaskapi.get(
         "http://127.0.0.1:5000/alternativedrug",
         formData
       );
