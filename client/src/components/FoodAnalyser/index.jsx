@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import flaskapi from "@/utils/flaskapi";
 
 const TypeWriter = ({ text }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -30,6 +31,8 @@ export default function FoodAnalyzerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isClient, setIsClient] = useState(false);
+  const parsedResponse = response ? response : null;
+  // const parsedResponse = response;
 
   useEffect(() => {
     setIsClient(true);
@@ -62,23 +65,16 @@ export default function FoodAnalyzerPage() {
     formData.append("disease", disease);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/food", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to analyze the meal.");
-      }
-
-      const data = await res.json();
-      setResponse(data?.report);
+      const res = await flaskapi.post("/food", formData);
+      setResponse(res.data?.report);
     } catch (error) {
       setError(error.message);
     } finally {
       setIsLoading(false);
     }
   };
+
+  console.log(response);
 
   return (
     <section className="flex flex-col mb-16 gap-5 items-center justify-center">
@@ -190,18 +186,92 @@ export default function FoodAnalyzerPage() {
           )}
 
           {response && (
+            // <motion.div
+            //   className="mt-6 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 text-gray-800 px-6 py-4 rounded-lg shadow-md"
+            //   initial={{ opacity: 0, y: 20 }}
+            //   animate={{ opacity: 1, y: 0 }}
+            //   exit={{ opacity: 0, y: -20 }}
+            //   transition={{ duration: 0.5 }}
+            // >
+            //   <h4 className=" font-semibold mb-7 text-3xl font-montserrat text-black text-center">
+            //     Food Analysis Report
+            //   </h4>
+            //   <div className="space-y-2">
+            //     <TypeWriter text={response} />
+            //   </div>
+            // </motion.div>
+
             <motion.div
-              className="mt-6 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 text-gray-800 px-6 py-4 rounded-lg shadow-md"
+              className="mt-6 text-gray-800 px-6 py-4  "
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
             >
-              <h4 className="text-xl font-semibold mb-3 text-blue-600">
+              <h4 className="font-semibold mb-7 text-3xl font-montserrat text-black text-center">
                 Food Analysis Report
               </h4>
-              <div className="space-y-2">
-                <TypeWriter text={response} />
+
+              {/** MealAnalysis */}
+              <div className="space-y-4">
+                {/* Meal Breakdown Section */}
+                <div className=" p-4  ">
+                  <h5 className="text-lg font-mono font-semibold text-blue-700 mb-7 text-center">
+                    🍽️ Meal Breakdown 🍽️
+                  </h5>
+                  <div className="grid grid-cols-2 gap-7">
+                    {response?.meal?.map((item, index) => (
+                      <div
+                        key={index}
+                        className="mb-3 p-3 border rounded-lg bg-blue-100 text-center font-lato"
+                      >
+                        <h6 className="font-semibold text-lg text-gray-900">
+                          {item.item}
+                        </h6>
+
+                        {/* Macronutrients */}
+                        <ul className="text-sm text-gray-700 mt-5">
+                          <li>
+                            <strong>Carbohydrates:</strong>{" "}
+                            {item.nutritional_value.macros.carbohydrates}
+                          </li>
+                          <li>
+                            <strong>Fat:</strong>{" "}
+                            {item.nutritional_value.macros.fat}
+                          </li>
+                          <li>
+                            <strong>Protein:</strong>{" "}
+                            {item.nutritional_value.macros.protein}
+                          </li>
+                        </ul>
+
+                        {/* Micronutrients */}
+                        <ul className="text-sm text-gray-700 mt-2">
+                          {Object.entries(
+                            item.nutritional_value.micronutrients
+                          ).map(([key, value]) => (
+                            <li key={key}>
+                              <strong>{key.replace(/_/g, " ")}:</strong> {value}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Meal Analysis Section */}
+                <div className="p-4 text-center flex flex-col items-center justify-center gap-3 ">
+                  <h5 className="text-lg font-mono font-semibold text-blue-700  ">
+                    🍽️ Meal Analysis 🍽️
+                  </h5>
+                  <p className="text-black font-bold font-playfair justify-center capitalize items-center">
+                    {response?.meal_assessment?.overall}
+                  </p>
+                  <p className="text-gray-700 font-lato">
+                    {response?.meal_assessment?.reasoning}
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}

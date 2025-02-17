@@ -50,12 +50,12 @@ export default function DrugResponsePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <section className="relative w-full mb-12">
           <div className="absolute inset-0">
             <Image
-              src="/diseaseMain.png"
+              src="/dResponse.png"
               alt="Commercial Real Estate"
               layout="fill"
               objectFit="cover"
@@ -223,9 +223,9 @@ export default function DrugResponsePage() {
         )}
 
         {response && (
-          <div className="mb-12">
-            <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">
-              Drug Side Effects
+          <div className="mb-12 max-w-5xl">
+            <h1 className="text-3xl font-montserrat text-black text-center mb-10">
+              🚨 Drug Side Effects 🚨
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {response.map((effect, index) => (
@@ -237,10 +237,12 @@ export default function DrugResponsePage() {
                   className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
                 >
                   <div className="p-6">
-                    <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                      {effect.side_effect}
+                    <h2 className="text-lg font-semibold font-mono text-black mb-2">
+                      {effect.side_effect} 😷
                     </h2>
-                    <p className="text-gray-600">{effect.description}</p>
+                    <p className="text-gray-700 font-lato">
+                      {effect.description}
+                    </p>
                   </div>
                 </motion.div>
               ))}

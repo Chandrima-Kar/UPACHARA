@@ -222,13 +222,15 @@ const InsurancePage = () => {
 
       {result && (
         <motion.div
-          className="mt-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md"
+          className="mt-6 p-5 flex flex-col items-center justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         >
-          <h4 className="font-semibold mb-2">Recommended Insurance Policy:</h4>
-          <p>{result}</p>
+          <h4 className="text-3xl font-montserrat text-black text-center mb-5">
+            🛡️ Recommended Insurance Policy 🛡️
+          </h4>
+          <p className="text-gray-700 font-lato">Monthly - {result}</p>
         </motion.div>
       )}
     </section>

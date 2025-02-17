@@ -5,6 +5,7 @@ import { IoMic, IoMicOff } from "react-icons/io5";
 import Image from "next/image";
 import { BsRobot } from "react-icons/bs";
 import { motion } from "framer-motion";
+import flaskapi from "@/utils/flaskapi";
 
 const ChatInterface = ({ onClose }) => {
   const [question, setQuestion] = useState(""); // State for user input
@@ -17,20 +18,35 @@ const ChatInterface = ({ onClose }) => {
   };
 
   // Handle Submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!question.trim()) return; // Prevent empty submissions
 
     // Append new message to chat history
-    setMessages([...messages, { text: question, sender: "user" }]);
+    const newMessages = [...messages, { text: question, sender: "user" }];
+    setMessages(newMessages);
 
     // Simulate bot response (You can integrate an AI chatbot here)
-    setTimeout(() => {
+    //setTimeout(() => {
+    //  setMessages((prevMessages) => [
+    //    ...prevMessages,
+    //    { text: "I'm here to assist you!", sender: "bot" },
+    //  ]);
+    //}, 1000);
+
+    try {
+      const response = await flaskapi.post("/chat", {
+        question: question,
+        history: newMessages,
+      });
+
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: "I'm here to assist you!", sender: "bot" },
+        { text: response.data.answer, sender: "bot" },
       ]);
-    }, 1000);
+    } catch (error) {
+      console.error("Error:", error);
+    }
 
     setQuestion(""); // Clear input after submission
   };

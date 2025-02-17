@@ -5,27 +5,20 @@ import Link from "next/link";
 import api from "@/utils/api";
 import flaskapi from "@/utils/flaskapi";
 import PostBlogModal from "@/components/PostBlogModal/PostBlogModal.jsx";
+import { useUser } from "@/context/UserContext";
 
 export default function BlogsPage() {
+  const { user } = useUser();
   const [articles, setArticles] = useState([]);
   const [recommendedArticles, setRecommendedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [role, setRole] = useState(null);
 
   // Fix for Next.js hydration error
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
-  }, []);
-
-  // Fetch role from localStorage AFTER the component mounts
-  useEffect(() => {
-    const storedRole = localStorage.getItem("role");
-    if (storedRole) {
-      setRole(storedRole);
-    }
   }, []);
 
   // Fetch latest articles
@@ -36,22 +29,19 @@ export default function BlogsPage() {
     return data;
   };
 
+  //FIXME:
   // Fetch recommended articles only if user profile exists in localStorage(i.e patient logged in)
-  const fetchRecommendedArticles = async () => {
+  const fetchRecommendedArticles = async (user) => {
     try {
       setLoadingRecommendations(true);
-      const storedProfile = localStorage.getItem("profile");
-      const role = localStorage.getItem("role");
+      //console.log("Value of user here: ", user);
 
-      if (!storedProfile) {
-        console.warn(
-          "No profile found in localStorage. Skipping recommendations."
-        );
+      if (!user) {
+        console.warn("No user logged in. Skipping recommendations.");
         return [];
       }
 
-      const profile = JSON.parse(storedProfile);
-      if (!role || role !== "patient" || !profile.medical_history) {
+      if (user.role !== "patient" || !user.medical_history) {
         console.warn(
           "User is not a patient or has no medical history. Skipping recommendations."
         );
@@ -59,7 +49,7 @@ export default function BlogsPage() {
       }
 
       const response = await flaskapi.post("/recommend-articles", {
-        user_history: profile.medical_history,
+        user_history: user.medical_history,
       });
 
       console.log("Recommended Articles:", response.data.recommendations);
@@ -75,13 +65,14 @@ export default function BlogsPage() {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => { //FIXME:
+    //console.log("User at the time of fetching recommendations:", user);
     async function fetchData() {
       try {
         const articlesData = await fetchArticles();
         setArticles(articlesData.articles);
 
-        const recommendedData = await fetchRecommendedArticles();
+        const recommendedData = await fetchRecommendedArticles(user);
         setRecommendedArticles(recommendedData);
       } catch (error) {
         console.error("Error loading articles:", error);
@@ -91,19 +82,17 @@ export default function BlogsPage() {
     }
 
     fetchData();
-  }, []);
+  }, [user]);
 
   if (loading) {
     return <p>Loading articles...</p>;
   }
 
-  console.log(role);
-
   // Fix for Next.js hydration error
   if (!isClient) {
     return null;
   }
-  
+
   return (
     <div className="container mx-auto px-4">
       {/* Recommended Articles Section */}
@@ -147,7 +136,7 @@ export default function BlogsPage() {
       <div className="flex justify-between items-center my-4">
         <h1 className="text-3xl font-bold">Latest Articles</h1>
         {/* Show Post Article button only if the user is a doctor */}
-        {role === "doctor" && (
+        {user?.role === "doctor" && (
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded">
@@ -174,7 +163,7 @@ export default function BlogsPage() {
       </div>
 
       {/* Post Article Modal */}
-      {role === "doctor" && (
+      {user?.role === "doctor" && (
         <PostBlogModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

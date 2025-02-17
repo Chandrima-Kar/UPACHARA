@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, X, ExternalLink } from "lucide-react";
+import flaskapi from "@/utils/flaskapi";
 
 const ITEMS_PER_PAGE = 16;
 
@@ -23,12 +24,17 @@ export default function AlternativeDrugPage() {
 
   const fetchMedicines = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/alternativedrug", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) throw new Error("Failed to fetch medicines");
-      const data = await response.json();
+      // const response = await fetch("http://127.0.0.1:5000/alternativedrug", {
+      //   method: "GET",
+      //   headers: { "Content-Type": "application/json" },
+      // });
+      // if (!response.ok) throw new Error("Failed to fetch medicines");
+      // const data = await response.json();
+
+      const { data } = await flaskapi.get(
+        "http://127.0.0.1:5000/alternativedrug",
+        formData
+      );
       setMedicines(data.medicines || []);
     } catch (error) {
       setError("An error occurred while fetching medicines.");
@@ -47,14 +53,18 @@ export default function AlternativeDrugPage() {
     setRecommendations(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/alternativedrug", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      // const response = await fetch("http://127.0.0.1:5000/alternativedrug", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(formData),
+      // });
 
-      if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
+      // if (!response.ok) throw new Error("Network response was not ok");
+      // const data = await response.json();
+      const { data } = await flaskapi.post(
+        "http://127.0.0.1:5000/alternativedrug",
+        formData
+      );
       setRecommendations(data);
     } catch (error) {
       setError("An error occurred while fetching alternative drugs.");
@@ -214,8 +224,8 @@ export default function AlternativeDrugPage() {
       )}
 
       <div className="w-full max-w-4xl mt-8">
-        <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">
-          Available Medicines
+        <h3 className="text-3xl font-montserrat text-black text-center mb-10">
+          💊 Available Medicines 💊
         </h3>
         <div className="relative mb-6">
           <div className="relative">
@@ -227,7 +237,7 @@ export default function AlternativeDrugPage() {
                 setCurrentPage(1);
               }}
               placeholder="Search medicines..."
-              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 font-mono placeholder:font-mono"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             {searchQuery && (
@@ -246,7 +256,7 @@ export default function AlternativeDrugPage() {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute -top-8 right-0 text-sm text-gray-500"
+              className="absolute -top-6 right-0 text-xs font-montserrat text-gray-500"
             >
               Found {filteredMedicines.length} results
             </motion.div>
@@ -261,9 +271,7 @@ export default function AlternativeDrugPage() {
               transition={{ duration: 0.5, delay: index * 0.05 }}
               className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
-              <p className="text-center text-gray-800 font-medium">
-                {medicine}
-              </p>
+              <p className="text-center text-gray-700 font-lato">{medicine}</p>
             </motion.div>
           ))}
         </div>
@@ -277,7 +285,7 @@ export default function AlternativeDrugPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-center text-gray-500 mt-8"
+            className="text-center text-gray-500 mt-8 font-lato"
           >
             No medicines found matching your search.
           </motion.div>
@@ -309,7 +317,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 
   return (
     <motion.nav
-      className="flex justify-center items-center gap-2 mt-8"
+      className="flex justify-center items-center gap-2 mt-8 font-mono"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -319,16 +327,16 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         disabled={currentPage <= 1}
         className="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
       >
-        Previous 5
+        {"<<<<<"}
       </button>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 ">
         {currentPage > 3 && (
           <>
             <motion.button
               whileHover={{ scale: 1.05 }}
               onClick={() => onPageChange(1)}
-              className="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-200"
+              className="px-3 py-1 rounded-md bg-white border border-gray-300 text-black hover:bg-gray-50 transition-all duration-200"
             >
               1
             </motion.button>
@@ -371,7 +379,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         disabled={currentPage >= totalPages}
         className="px-3 py-1 rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
       >
-        Next 5
+        {">>>>>"}
       </button>
     </motion.nav>
   );

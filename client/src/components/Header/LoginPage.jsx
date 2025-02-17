@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { SlRefresh } from "react-icons/sl";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
+import { useUser } from "@/context/UserContext";
 
 const generateCaptcha = () => {
   const characters =
@@ -17,6 +18,8 @@ const generateCaptcha = () => {
 
 const LoginPage = () => {
   const router = useRouter();
+  const { login } = useUser(); 
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [captcha, setCaptcha] = useState(generateCaptcha());
   const [captchaInput, setCaptchaInput] = useState("");
@@ -42,19 +45,23 @@ const LoginPage = () => {
     try {
       const loginRoute = `/auth/${userType}/login`;
       const profileRoute = `/auth/${userType}/profile`;
-      
+
       const response = await api.post(loginRoute, formData);
       console.log(response);
-      
+
       const data = response.data;
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
-      
+
       const profileResponse = await api.get(profileRoute);
       console.log(profileResponse.data);
       localStorage.setItem("profile", JSON.stringify(profileResponse.data));
 
+      // Update Context with user data
+      login(profileResponse.data);
+
       toast.success("Login successful!");
+      router.push("/");
     } catch (error) {
       toast.error("Login failed");
     }
@@ -124,9 +131,12 @@ const LoginPage = () => {
                   <button
                     type="button"
                     className="absolute right-3 top-[10px] text-blue-500 hover:text-blue-800"
-                    onClick={() => setPasswordVisible(!passwordVisible)}
-                  >
-                    {passwordVisible ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                    onClick={() => setPasswordVisible(!passwordVisible)}>
+                    {passwordVisible ? (
+                      <FaEyeSlash size={18} />
+                    ) : (
+                      <FaEye size={18} />
+                    )}
                   </button>
                 )}
               </div>
@@ -138,8 +148,7 @@ const LoginPage = () => {
               <button
                 type="button"
                 onClick={() => setCaptcha(generateCaptcha())}
-                className="text-blue-950 rounded-md hover:text-blue-500 transition"
-              >
+                className="text-blue-950 rounded-md hover:text-blue-500 transition">
                 <SlRefresh className="w-5 h-5" />
               </button>
               <span className="bg-blue-700 text-white font-medium font-mono px-4 py-1 rounded-md cursor-not-allowed">
@@ -159,8 +168,7 @@ const LoginPage = () => {
           <div className="flex items-center justify-center">
             <button
               type="submit"
-              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 uppercase"
-            >
+              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 uppercase">
               Login
             </button>
           </div>
