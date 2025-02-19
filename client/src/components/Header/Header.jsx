@@ -113,11 +113,18 @@ const Header = () => {
               </Link>
             </>
           ) : (
-            <Link
-              href="/doctor-dashboard"
-              className="header_links transition-transform duration-700 ease transform hover:scale-125">
-              Doctor Dashboard
-            </Link>
+            <>
+              <Link
+                href="/dashboard"
+                className="header_links transition-transform duration-700 ease transform hover:scale-125">
+                Doctor Dashboard
+              </Link>
+              <Link
+                href="/appointments"
+                className="header_links transition-transform duration-700 ease transform hover:scale-125">
+                Appointments
+              </Link>
+            </>
           )}
 
           <Link
