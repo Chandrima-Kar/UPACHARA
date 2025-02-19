@@ -160,6 +160,13 @@ const Header = () => {
                 )}
                 <DropdownMenuItem
                   onClick={() => {
+                    router.push("/my-profile"); // Redirect to profile page
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-red-500 hover:bg-gray-100">
+                  My Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
                     logout();
                     router.push("/login"); // Redirect to login page
                   }}
