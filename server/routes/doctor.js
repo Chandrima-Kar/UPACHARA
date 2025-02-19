@@ -7,6 +7,7 @@ import {
 import { validateAvailability } from "../validators/appointment.js";
 import {
   add_doctor_rating,
+  get_all_doctors,
   get_doctor_appointments,
   get_doctor_articles,
   get_doctor_avaiblity,
@@ -58,5 +59,7 @@ router.get(
   authorizeDoctor,
   get_doctor_articles
 );
+
+router.get("/", get_all_doctors);
 
 export default router;

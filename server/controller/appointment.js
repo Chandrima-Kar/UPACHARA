@@ -204,7 +204,7 @@ export const request_emergency_consultation = async (req, res) => {
 
     const doctor = availableDoctors.rows[0];
     const currentTime = new Date();
-    const endTime = new Date(currentTime.getTime() + 30 * 60000); 
+    const endTime = new Date(currentTime.getTime() + 30 * 60000);
 
     const result = await pool.query(
       `INSERT INTO appointments 
@@ -228,6 +228,39 @@ export const request_emergency_consultation = async (req, res) => {
       doctorName: `${doctor.first_name} ${doctor.last_name}`,
       startTime: currentTime.toISOString(),
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const get_appointment_details = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const query = `
+      SELECT 
+        a.*, 
+        d.first_name AS doctor_first_name, 
+        d.last_name AS doctor_last_name, 
+        p.first_name AS patient_first_name, 
+        p.last_name AS patient_last_name
+      FROM appointments a
+      JOIN doctors d ON a.doctor_id = d.id
+      JOIN patients p ON a.patient_id = p.id
+      WHERE a.id = $1
+      AND (${userRole === "doctor" ? "a.doctor_id" : "a.patient_id"} = $2)
+    `;
+
+    const result = await pool.query(query, [id, userId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });

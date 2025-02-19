@@ -6,6 +6,7 @@ import {
 } from "../middleware/index.js";
 import { validateAppointment } from "../validators/appointment.js";
 import {
+  get_appointment_details,
   get_follow_ups,
   request_appointment,
   request_emergency_consultation,
@@ -45,5 +46,7 @@ router.post(
   authorizePatient,
   request_emergency_consultation
 );
+
+router.get("/:id", authenticateToken, authorizeDoctor, get_appointment_details);
 
 export default router;

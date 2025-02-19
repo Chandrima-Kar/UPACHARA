@@ -29,5 +29,6 @@ export default async function appointmentTable(pool) {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
   `);
 }

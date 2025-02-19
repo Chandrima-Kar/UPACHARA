@@ -303,3 +303,45 @@ export const get_doctor_articles = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+export const get_all_doctors = async (req, res) => {
+  try {
+    const { specialization, page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+
+    let query = `
+      SELECT 
+        id, first_name, last_name, specialization, experience_years, phone, address, image_url, created_at 
+      FROM doctors
+    `;
+    const params = [];
+
+    if (specialization) {
+      query += ` WHERE specialization ILIKE $1`;
+      params.push(`%${specialization}%`);
+    }
+
+    query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${
+      params.length + 2
+    }`;
+    params.push(limit, offset);
+
+    const result = await pool.query(query, params);
+
+    const countQuery = `SELECT COUNT(*) FROM doctors ${
+      specialization ? "WHERE specialization ILIKE $1" : ""
+    }`;
+    const countParams = specialization ? [`%${specialization}%`] : [];
+    const countResult = await pool.query(countQuery, countParams);
+
+    res.json({
+      doctors: result.rows,
+      total: parseInt(countResult.rows[0].count),
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(parseInt(countResult.rows[0].count) / limit),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
