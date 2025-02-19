@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Loader } from "lucide-react";
 import api from "@/utils/api";
@@ -8,6 +9,7 @@ import api from "@/utils/api";
 export default function AllAppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -45,7 +47,8 @@ export default function AllAppointmentsPage() {
           {appointments.map((appointment) => (
             <div
               key={appointment.id}
-              className="border rounded-lg p-6 shadow-md bg-white">
+              onClick={() => router.push(`/appointments/${appointment.id}`)}
+              className="border rounded-lg p-6 shadow-md bg-white cursor-pointer hover:shadow-lg transition">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">
                   {appointment.patient_first_name}{" "}

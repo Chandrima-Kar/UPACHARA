@@ -16,6 +16,11 @@ router.post(
 );
 
 router.get("/:appointmentId", authenticateToken, get_prescription);
-router.put("/:id", authenticateToken, authorizeDoctor, update_prescription);
+router.put(
+  "/:prescriptionId",
+  authenticateToken,
+  authorizeDoctor,
+  update_prescription
+);
 
 export default router;
