@@ -44,16 +44,24 @@ const DoctorProfile = () => {
   };
 
   const handleAvailabilitySubmit = async (e) => {
-    // e.preventDefault();
-    // try {
-    //   const res = await api.post("/doctor/availability", {
-    //     dayOfWeek: selectedDate.getDay(),
-    //     ...availability,
-    //   });
-    //   alert("Availability updated successfully");
-    // } catch (error) {
-    //   console.error("Error updating availability:", error);
-    // }
+    e.preventDefault();
+
+    // Get the numeric day of the week (0-6)
+    const dayOfWeek = selectedDate.getDay();
+
+    try {
+      const res = await api.post("/doctor/availability", {
+        dayOfWeek,
+        ...availability,
+      });
+
+      if (res.status === 200) {
+        alert("Availability updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating availability:", error);
+      alert("Failed to update availability. Try again.");
+    }
   };
 
   const handleChange = (e) => {
@@ -119,51 +127,83 @@ const DoctorProfile = () => {
         </button>
       </div>
 
-      <div className="mt-6 flex flex-col items-center">
-        <h3 className="text-lg font-semibold mb-2">
-          Select a Date to Update Availability
+      <div className="mt-6 flex flex-col items-center bg-gray-50 p-6 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold mb-4">
+          Set Availability for This Week
         </h3>
-        <Calendar onChange={handleDateChange} value={selectedDate} />
+
+        <Calendar
+          onChange={handleDateChange}
+          value={selectedDate}
+          minDate={new Date()}
+          maxDate={
+            new Date(
+              new Date().setDate(
+                new Date().getDate() + (6 - new Date().getDay())
+              )
+            )
+          }
+          tileDisabled={({ date }) =>
+            date < new Date() ||
+            date >
+              new Date(
+                new Date().setDate(
+                  new Date().getDate() + (6 - new Date().getDay())
+                )
+              )
+          }
+        />
+
         <form
           onSubmit={handleAvailabilitySubmit}
           className="mt-4 space-y-2 w-full max-w-md">
-          <label>Start Time</label>
-          <input
-            type="time"
-            name="startTime"
-            value={availability.startTime}
-            onChange={handleAvailabilityChange}
-            className="w-full p-2 border rounded"
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700">Start Time</label>
+              <input
+                type="time"
+                name="startTime"
+                value={availability.startTime}
+                onChange={handleAvailabilityChange}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">End Time</label>
+              <input
+                type="time"
+                name="endTime"
+                value={availability.endTime}
+                onChange={handleAvailabilityChange}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          </div>
 
-          <label>End Time</label>
-          <input
-            type="time"
-            name="endTime"
-            value={availability.endTime}
-            onChange={handleAvailabilityChange}
-            className="w-full p-2 border rounded"
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-700">Break Start</label>
+              <input
+                type="time"
+                name="breakStart"
+                value={availability.breakStart}
+                onChange={handleAvailabilityChange}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">Break End</label>
+              <input
+                type="time"
+                name="breakEnd"
+                value={availability.breakEnd}
+                onChange={handleAvailabilityChange}
+                className="w-full p-2 border rounded"
+              />
+            </div>
+          </div>
 
-          <label>Break Start</label>
-          <input
-            type="time"
-            name="breakStart"
-            value={availability.breakStart}
-            onChange={handleAvailabilityChange}
-            className="w-full p-2 border rounded"
-          />
-
-          <label>Break End</label>
-          <input
-            type="time"
-            name="breakEnd"
-            value={availability.breakEnd}
-            onChange={handleAvailabilityChange}
-            className="w-full p-2 border rounded"
-          />
-
-          <label>Slot Duration (minutes)</label>
+          <label className="block text-gray-700">Slot Duration (minutes)</label>
           <input
             type="number"
             name="slotDuration"
@@ -174,7 +214,7 @@ const DoctorProfile = () => {
 
           <button
             type="submit"
-            className="w-full p-2 bg-blue-500 text-white rounded">
+            className="w-full p-3 mt-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600">
             Save Availability
           </button>
         </form>
