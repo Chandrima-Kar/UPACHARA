@@ -1,4 +1,5 @@
 "use client";
+import api from "@/utils/api";
 import { createContext, useContext, useState, useEffect } from "react";
 
 const UserContext = createContext();
@@ -14,14 +15,27 @@ export const UserProvider = ({ children }) => {
 
   const login = (userData) => {
     setUser(userData);
-    localStorage.setItem("profile", JSON.stringify(userData)); 
+    localStorage.setItem("profile", JSON.stringify(userData));
   };
 
   const logout = () => {
-    setUser(null); 
-    localStorage.removeItem("profile"); 
+    setUser(null);
+    localStorage.removeItem("profile");
     localStorage.removeItem("token");
     localStorage.removeItem("role");
+  };
+
+  const updateProfile = async () => {
+    try {
+      const res = await api.get("/auth/doctor/profile");
+
+      if (res.status === 200) {
+        setUser(res.data);
+        localStorage.setItem("profile", JSON.stringify(res.data)); 
+      }
+    } catch (error) {
+      console.error("Error fetching updated profile:", error);
+    }
   };
 
   // Load user data from localStorage when app starts
@@ -33,7 +47,8 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider
+      value={{ user, login, logout, updateProfile }}>
       {children}
     </UserContext.Provider>
   );

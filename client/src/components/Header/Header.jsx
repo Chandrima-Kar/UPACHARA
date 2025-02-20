@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useUser } from "@/context/UserContext";
@@ -15,12 +15,18 @@ import { useRouter } from "next/navigation";
 
 const Header = () => {
   const router = useRouter();
-
   const { user, logout } = useUser();
-  const role = localStorage.getItem("role");
+  const [role, setRole] = useState(null);
   const [multiDiseaseOpen, setMultiDiseaseOpen] = useState(false);
   const [drugOpen, setDrugOpen] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // This ensures localStorage is only accessed in the browser
+      const storedRole = localStorage.getItem("role");
+      setRole(storedRole);
+    }
+  }, []);
   console.log("USERRRRRRRR: ", user);
 
   return (

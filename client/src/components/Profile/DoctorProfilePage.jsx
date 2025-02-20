@@ -1,19 +1,20 @@
 "use client";
 
 import { useUser } from "@/context/UserContext";
+import api from "@/utils/api";
 import Image from "next/image";
 import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 const DoctorProfile = () => {
-  const { user, setUser } = useUser();
+  const { user, updateProfile } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    first_name: user?.first_name || "",
-    last_name: user?.last_name || "",
+    firstName: user?.first_name || "",
+    lastName: user?.last_name || "",
     specialization: user?.specialization || "",
-    experience_years: user?.experience_years || "",
+    experienceYears: user?.experience_years || "",
     phone: user?.phone || "",
     address: user?.address || "",
   });
@@ -60,15 +61,20 @@ const DoctorProfile = () => {
   };
 
   const handleUpdateSubmit = async (e) => {
-    // e.preventDefault();
-    // try {
-    //   const res = await api.put("/doctor/profile", formData);
-    //   const updatedUser = res.data.user;
-    //   setUser(updatedUser);
-    //   setIsEditing(false);
-    // } catch (error) {
-    //   console.error("Error updating profile:", error);
-    // }
+    e.preventDefault();
+    try {
+      const res = await api.put("/doctor/profile", formData);
+      console.log(res);
+
+      if (res.status === 200) {
+        // Fetch latest profile data after update
+        await updateProfile();
+        setIsEditing(false);
+      }
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   return (
@@ -176,21 +182,21 @@ const DoctorProfile = () => {
 
       {isEditing && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
             <form onSubmit={handleUpdateSubmit} className="space-y-4">
               <label className="block text-gray-700">First Name</label>
               <input
-                name="first_name"
-                value={formData.first_name}
+                name="firstName"
+                value={formData.firstName}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
 
               <label className="block text-gray-700">Last Name</label>
               <input
-                name="last_name"
-                value={formData.last_name}
+                name="lastName"
+                value={formData.lastName}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
@@ -205,9 +211,9 @@ const DoctorProfile = () => {
 
               <label className="block text-gray-700">Experience (Years)</label>
               <input
-                name="experience_years"
+                name="experienceYears"
                 type="number"
-                value={formData.experience_years}
+                value={formData.experienceYears}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
               />
