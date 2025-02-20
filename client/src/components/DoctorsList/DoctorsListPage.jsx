@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/utils/api";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -17,11 +18,10 @@ const DoctorsList = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/doctor?specialization=${specialization}&page=${page}&limit=${limit}`
+      const response = await api.get(
+        `doctor?specialization=${specialization}&page=${page}&limit=${limit}`
       );
-      const data = await response.json();
-      setDoctors(data.doctors);
+      setDoctors(response.data.doctors);
       setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching doctors:", error);

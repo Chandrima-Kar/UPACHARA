@@ -11,7 +11,7 @@ export const useUser = () => {
 
 // UserProvider component to wrap the app
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Stores logged-in user profile
+  const [user, setUser] = useState(null); // Stores logged-in user profile data
 
   const login = (userData) => {
     setUser(userData);

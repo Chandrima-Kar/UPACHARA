@@ -29,19 +29,18 @@ export default function BlogsPage() {
     return data;
   };
 
-  //FIXME:
-  // Fetch recommended articles only if user profile exists in localStorage(i.e patient logged in)
-  const fetchRecommendedArticles = async (user) => {
+  // Fetch recommended articles only if patient logged in.
+  // FIXME: But here the  value of user from global state is initially fetched as null.
+  const fetchRecommendedArticles = async () => {
     try {
       setLoadingRecommendations(true);
-      //console.log("Value of user here: ", user);
 
       if (!user) {
         console.warn("No user logged in. Skipping recommendations.");
         return [];
       }
 
-      if (user.role !== "patient" || !user.medical_history) {
+      if (user.role !== "patient" || !user.medical_history) { //FIXME: There is nothing such as user.role
         console.warn(
           "User is not a patient or has no medical history. Skipping recommendations."
         );
@@ -66,14 +65,12 @@ export default function BlogsPage() {
   };
 
   useEffect(() => {
-    //FIXME:
-    //console.log("User at the time of fetching recommendations:", user);
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         const articlesData = await fetchArticles();
         setArticles(articlesData.articles);
 
-        const recommendedData = await fetchRecommendedArticles(user);
+        const recommendedData = await fetchRecommendedArticles();
         setRecommendedArticles(recommendedData);
       } catch (error) {
         console.error("Error loading articles:", error);
@@ -164,7 +161,7 @@ export default function BlogsPage() {
       </div>
 
       {/* Post Article Modal */}
-      {user?.role === "doctor" && (
+      {user?.role === "doctor" && ( //FIXME: There is nothing such as user.role
         <PostBlogModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

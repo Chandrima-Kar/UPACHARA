@@ -6,10 +6,11 @@ import Image from "next/image";
 import { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { toast } from "react-toastify";
 
 const DoctorProfile = () => {
   const { user, updateProfile } = useUser();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // Changes the format of modal when it is in editing state
   const [formData, setFormData] = useState({
     firstName: user?.first_name || "",
     lastName: user?.last_name || "",
@@ -43,10 +44,17 @@ const DoctorProfile = () => {
     setAvailability({ ...availability, [e.target.name]: e.target.value });
   };
 
+  
+  const handleUpdateProfileInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Setting Doctor Schedule or availability of doctor for any of the days of THE CURRENT WEEK only
   const handleAvailabilitySubmit = async (e) => {
     e.preventDefault();
 
     // Get the numeric day of the week (0-6)
+    // 0 - Sunday, 1 - Monday, etc...
     const dayOfWeek = selectedDate.getDay();
 
     try {
@@ -56,18 +64,15 @@ const DoctorProfile = () => {
       });
 
       if (res.status === 200) {
-        alert("Availability updated successfully!");
+        toast.success("Availability updated successfully!");
       }
     } catch (error) {
       console.error("Error updating availability:", error);
-      alert("Failed to update availability. Try again.");
+      toast.error("Failed to update availability! Try again.");
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+  // Updating the profile of the logged-in doctor
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -229,7 +234,7 @@ const DoctorProfile = () => {
               <input
                 name="firstName"
                 value={formData.firstName}
-                onChange={handleChange}
+                onChange={handleUpdateProfileInputChange}
                 className="w-full p-2 border rounded"
               />
 
@@ -237,7 +242,7 @@ const DoctorProfile = () => {
               <input
                 name="lastName"
                 value={formData.lastName}
-                onChange={handleChange}
+                onChange={handleUpdateProfileInputChange}
                 className="w-full p-2 border rounded"
               />
 
@@ -245,7 +250,7 @@ const DoctorProfile = () => {
               <input
                 name="specialization"
                 value={formData.specialization}
-                onChange={handleChange}
+                onChange={handleUpdateProfileInputChange}
                 className="w-full p-2 border rounded"
               />
 
@@ -254,7 +259,7 @@ const DoctorProfile = () => {
                 name="experienceYears"
                 type="number"
                 value={formData.experienceYears}
-                onChange={handleChange}
+                onChange={handleUpdateProfileInputChange}
                 className="w-full p-2 border rounded"
               />
 
@@ -262,7 +267,7 @@ const DoctorProfile = () => {
               <input
                 name="phone"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={handleUpdateProfileInputChange}
                 className="w-full p-2 border rounded"
               />
 
@@ -270,7 +275,7 @@ const DoctorProfile = () => {
               <input
                 name="address"
                 value={formData.address}
-                onChange={handleChange}
+                onChange={handleUpdateProfileInputChange}
                 className="w-full p-2 border rounded"
               />
 

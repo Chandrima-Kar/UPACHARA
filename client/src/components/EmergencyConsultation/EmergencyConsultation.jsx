@@ -10,10 +10,9 @@ export default function EmergencyConsultation() {
   const [emergencyy, setEmergencyy] = useState("");
   const [preferredSpecialization, setPreferredSpecialization] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
   const router = useRouter();
 
+  // Preparing the symptoms input as an array
   const handleSymptomsChange = (e) => {
     setSymptoms(e.target.value.split(",").map((symptom) => symptom.trim()));
   };
@@ -30,12 +29,14 @@ export default function EmergencyConsultation() {
         emergencyy,
         preferredSpecialization,
       });
-      toast.success("Emergency appointment scheduled");
-      setTimeout(() => router.push("/my-appointments"), 3000);
+      if (response.status === 200) {
+        toast.success("Emergency appointment scheduled");
+        setTimeout(() => router.push("/my-appointments"), 3000);
+      }
     } catch (err) {
       console.log(err.response?.data?.error || "Something went wrong");
       toast.error(
-        "Cannot schedule emergency appointment. Please try again later."
+        "Cannot schedule emergency appointment! Please try again later."
       );
     } finally {
       setLoading(false);
@@ -47,8 +48,6 @@ export default function EmergencyConsultation() {
       <h2 className="text-2xl font-bold mb-4">
         Request Emergency Consultation
       </h2>
-      {error && <p className="text-red-500">{error}</p>}
-      {successMessage && <p className="text-green-500">{successMessage}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-semibold">

@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import Image from "next/image";
+import flaskapi from "@/utils/flaskapi";
 
 export default function DrugResponsePage() {
   const [formData, setFormData] = useState({
@@ -30,18 +31,9 @@ export default function DrugResponsePage() {
     setResponse(null);
 
     try {
-      const res = await fetch("http://127.0.0.1:5000/drugs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await flaskapi.post("/drugs", formData);
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch report.");
-      }
-
-      const data = await res.json();
-      setResponse(data);
+      setResponse(response.data);
     } catch (error) {
       setError(error.message);
     } finally {

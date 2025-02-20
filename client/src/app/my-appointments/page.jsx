@@ -1,3 +1,3 @@
-import MyAppointments from "@/components/MyAppointments/MyAppointmentsPage";
+import MyAppointmentsAndFollowUps from "@/components/MyAppointmentsAndFollowUps/MyAppointmentsAndFollowUps";
 
-export default MyAppointments;
+export default MyAppointmentsAndFollowUps;

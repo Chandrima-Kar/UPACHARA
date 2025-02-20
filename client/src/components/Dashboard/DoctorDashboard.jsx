@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 const DoctorDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [formattedAppointments, setFormattedAppointments] = useState([]);
+
+  //FIXME: isAvailable should not be declared initially as false state, Instead it should be fetched from the backend
   const [isAvailable, setIsAvailable] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -24,12 +26,14 @@ const DoctorDashboard = () => {
         setLoading(false);
       }
     };
+    // Fix for hydration error
     if (typeof window !== "undefined") {
       fetchDashboardData();
     }
   }, []);
 
   useEffect(() => {
+    // Formatting dates formats for appointments
     if (dashboardData?.upcomingAppointments) {
       setFormattedAppointments(
         dashboardData.upcomingAppointments.map((appointment) => ({
