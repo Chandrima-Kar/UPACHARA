@@ -65,7 +65,8 @@ export default function BlogsPage() {
     }
   };
 
-  useEffect(() => { //FIXME:
+  useEffect(() => {
+    //FIXME:
     //console.log("User at the time of fetching recommendations:", user);
     async function fetchData() {
       try {

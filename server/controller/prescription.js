@@ -110,7 +110,7 @@ export const get_prescription = async (req, res) => {
       return res.status(404).json({ error: "Prescription not found" });
     }
 
-    res.json(prescription.rows[0]);
+    res.json(prescription.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });

@@ -18,6 +18,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "blogs.biomedcentral.com", // Add iStockPhoto
       },
+      {
+        protocol: "https",
+        hostname: "content.jdmagicbox.com", // Add iStockPhoto
+      },
     ],
   },
 };

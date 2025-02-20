@@ -113,11 +113,18 @@ const Header = () => {
               </Link>
             </>
           ) : (
-            <Link
-              href="/doctor-dashboard"
-              className="header_links transition-transform duration-700 ease transform hover:scale-125">
-              Doctor Dashboard
-            </Link>
+            <>
+              <Link
+                href="/dashboard"
+                className="header_links transition-transform duration-700 ease transform hover:scale-125">
+                Doctor Dashboard
+              </Link>
+              <Link
+                href="/appointments"
+                className="header_links transition-transform duration-700 ease transform hover:scale-125">
+                Appointments
+              </Link>
+            </>
           )}
 
           <Link
@@ -151,6 +158,13 @@ const Header = () => {
                     Dashboard
                   </DropdownMenuItem>
                 )}
+                <DropdownMenuItem
+                  onClick={() => {
+                    router.push("/my-profile"); // Redirect to profile page
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-red-500 hover:bg-gray-100">
+                  My Profile
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
                     logout();
