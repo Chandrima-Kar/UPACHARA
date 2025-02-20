@@ -41,19 +41,22 @@ export default function AllAppointmentsPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-gray-50 min-h-screen rounded-lg shadow-lg">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+    <div className="p-6 max-w-4xl mx-auto bg-blue-50 rounded-lg shadow-xl my-10">
+      <h1 className="text-3xl font-bold mb-6 text-center text-black font-montserrat">
         Appointments
       </h1>
       {appointments.length === 0 ? (
-        <p className="text-center text-gray-600">No appointments found.</p>
+        <p className="text-center text-gray-600 font-mono">
+          No appointments found.
+        </p>
       ) : (
         <div className="space-y-6">
           {appointments.map((appointment) => (
             <div
               key={appointment.id}
               onClick={() => router.push(`/appointments/${appointment.id}`)}
-              className="border rounded-lg p-6 shadow-md bg-white cursor-pointer hover:shadow-lg transition">
+              className="border rounded-lg p-6 shadow-md bg-white cursor-pointer hover:shadow-lg transition"
+            >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">
                   {appointment.patient_first_name}{" "}
@@ -64,7 +67,8 @@ export default function AllAppointmentsPage() {
                     appointment.status === "approved"
                       ? "bg-green-200 text-green-800"
                       : "bg-gray-200 text-gray-800"
-                  }`}>
+                  }`}
+                >
                   {appointment.status}
                 </span>
               </div>
@@ -100,7 +104,8 @@ export default function AllAppointmentsPage() {
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50">
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+        >
           Previous
         </button>
         <span className="px-4 py-2 bg-white text-gray-800 font-semibold">
@@ -111,7 +116,8 @@ export default function AllAppointmentsPage() {
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))
           }
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50">
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+        >
           Next
         </button>
       </div>
