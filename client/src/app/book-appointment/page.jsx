@@ -1,3 +1,3 @@
-import AppointmentBooking from "@/components/BookAppointmentForm";
+import DoctorsList from "@/components/DoctorsList/DoctorsListPage";
 
-export default AppointmentBooking;
+export default DoctorsList;
