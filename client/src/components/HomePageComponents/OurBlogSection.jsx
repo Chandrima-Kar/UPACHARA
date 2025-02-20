@@ -19,13 +19,15 @@ const OurBlogSection = () => {
       try {
         setLoading(true);
 
+        //FIXME: This have to be changed to fetch "user" from global context instead of localStorage. This will eliminate any lag in rendering.
+
         // Check if profile exists in localStorage
         const storedProfile = localStorage.getItem("profile");
 
         if (storedProfile) {
           const profile = JSON.parse(storedProfile);
           if (profile?.medical_history) {
-            // Fetch recommended blogs from Flask API
+            // Fetch recommended blogs based on user's medical history
             const response = await flaskapi.post("/recommend-articles", {
               user_history: profile.medical_history,
             });
@@ -35,7 +37,7 @@ const OurBlogSection = () => {
           }
         }
 
-        // If no profile, fetch normal blogs
+        // If user is not logged in, fetch normal blogs
         const { data } = await api.get("/article");
         setBlogs(data.articles);
       } catch (error) {

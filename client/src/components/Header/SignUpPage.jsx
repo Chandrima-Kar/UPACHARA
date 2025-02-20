@@ -46,7 +46,7 @@ const SignUpPage = () => {
   }, []);
 
   const handleSignUp = async (e) => {
-    e.preventDefault(); // Prevent page refresh
+    e.preventDefault();
 
     const userData = {
       email,

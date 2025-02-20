@@ -18,7 +18,7 @@ const generateCaptcha = () => {
 
 const LoginPage = () => {
   const router = useRouter();
-  const { login } = useUser(); 
+  const { login } = useUser();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [captcha, setCaptcha] = useState(generateCaptcha());
@@ -49,7 +49,7 @@ const LoginPage = () => {
       const response = await api.post(loginRoute, formData);
       console.log(response);
 
-      const data = response.data;
+      const { data } = response;
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.role);
 

@@ -41,24 +41,8 @@ export default function DiseasePage() {
     setError(null);
     console.log(formData);
     try {
-      // const response = await fetch("http://127.0.0.1:5000/predict", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
+      const { data } = await flaskapi.post("/predict", formData);
 
-      const { data } = await flaskapi.post(
-        "http://127.0.0.1:5000/predict",
-        formData
-      );
-
-      // if (!response.ok) {
-      //   throw new Error("Network response was not ok");
-      // }
-
-      // const data = await response.json();
       data.medications = convertStringList(data.medications);
       data.myDiet = convertStringList(data.myDiet);
       setPredictionResult(data);
@@ -140,8 +124,7 @@ export default function DiseasePage() {
                   id={`symptom_${num}`}
                   value={formData[`symptom_${num}`]}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm "
-                >
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm ">
                   <option value="">Select a symptom</option>
 
                   {/* Sorting the options alphabetically */}
@@ -151,8 +134,7 @@ export default function DiseasePage() {
                       <option
                         key={symptoms[symptom]}
                         value={symptom}
-                        className="overflow-y-auto"
-                      >
+                        className="overflow-y-auto">
                         {symptom
                           .split("_") // Split words
                           .map(
@@ -176,8 +158,7 @@ export default function DiseasePage() {
               rows={4}
               value={formData.message}
               onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
-            ></textarea>
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"></textarea>
           </div>
 
           {/* Submit Button */}
@@ -199,8 +180,7 @@ export default function DiseasePage() {
                   !formData.symptom_4)
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              }`}
-            >
+              }`}>
               {isLoading ? "Predicting..." : "Predict"}
             </button>
           </div>
@@ -212,8 +192,7 @@ export default function DiseasePage() {
         {error && (
           <div
             className="mt-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
+            role="alert">
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline"> {error}</span>
           </div>
@@ -260,14 +239,13 @@ export default function DiseasePage() {
                 ))}
               </div>
             </div>
-            <div className="mt-6 text-center">
+            {/* <div className="mt-6 text-center">
               <a
                 href="/findpatient"
-                className="inline-flex items-center px-4 py-2 border border-transparent font-medium rounded-xl shadow-sm  transition-transform duration-700 ease transform  font-ubuntu w-fit cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
+                className="inline-flex items-center px-4 py-2 border border-transparent font-medium rounded-xl shadow-sm  transition-transform duration-700 ease transform  font-ubuntu w-fit cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Send For Review
               </a>
-            </div>
+            </div> */}
           </div>
         )}
       </div>

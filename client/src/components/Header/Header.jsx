@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useUser } from "@/context/UserContext";
@@ -15,13 +15,21 @@ import { useRouter } from "next/navigation";
 
 const Header = () => {
   const router = useRouter();
-
   const { user, logout } = useUser();
-  const role = localStorage.getItem("role");
+  const [role, setRole] = useState(null);
   const [multiDiseaseOpen, setMultiDiseaseOpen] = useState(false);
   const [drugOpen, setDrugOpen] = useState(false);
 
-  console.log("USERRRRRRRR: ", user);
+  //FIXME: Need to declare a global state for role. Fetching it from localStorage is not updating the header in real time upon login.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // This ensures localStorage is only accessed in the browser
+      const storedRole = localStorage.getItem("role");
+      setRole(storedRole);
+    }
+  }, []);
+
+  console.log("CURRENT GLOBAL USER: ", user);
 
   return (
     <header className="relative w-full z-50">
@@ -149,7 +157,7 @@ const Header = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-white shadow-lg rounded-md py-2 w-40">
-                {/* Only show Dashboard if user is not a doctor */}
+                {/* Only show Dashboard if user is not a doctor (Patient Dashboard) */}
                 {role !== "doctor" && (
                   <DropdownMenuItem
                     onClick={() => router.push("/dashboard")}
@@ -160,9 +168,9 @@ const Header = () => {
                 )}
                 <DropdownMenuItem
                   onClick={() => {
-                    router.push("/my-profile"); // Redirect to profile page
+                    router.push("/my-profile"); // Redirect to Page for Doctor Profile OR Patient Profile
                   }}
-                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-red-500 hover:bg-gray-100">
+                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-blue-500 hover:bg-gray-100">
                   My Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem

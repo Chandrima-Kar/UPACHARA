@@ -28,7 +28,6 @@ router.post(
 router.get(
   "/availability/:doctorId",
   authenticateToken,
-  authorizeDoctor,
   get_doctor_avaiblity
 );
 

@@ -9,14 +9,19 @@ import api from "@/utils/api";
 export default function AllAppointmentsPage() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         setLoading(true);
-        const response = await api.get("/doctor/appointments");
+        const response = await api.get(
+          `/doctor/appointments?page=${currentPage}`
+        );
         setAppointments(response.data.appointments);
+        setTotalPages(response.data.totalPages);
       } catch (error) {
         console.error("Error fetching appointments:", error);
       } finally {
@@ -25,7 +30,7 @@ export default function AllAppointmentsPage() {
     };
 
     fetchAppointments();
-  }, []);
+  }, [currentPage]);
 
   if (loading) {
     return (
@@ -89,6 +94,27 @@ export default function AllAppointmentsPage() {
           ))}
         </div>
       )}
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-6 space-x-4">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50">
+          Previous
+        </button>
+        <span className="px-4 py-2 bg-white text-gray-800 font-semibold">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded disabled:opacity-50">
+          Next
+        </button>
+      </div>
     </div>
   );
 }

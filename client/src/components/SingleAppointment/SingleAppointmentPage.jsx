@@ -23,26 +23,33 @@ export default function SingleAppointmentPage() {
 
   // Fetch Appointment & Prescriptions
   useEffect(() => {
-    api
-      .get(`/appointments/${appointmentId}`)
-      .then(({ data }) => {
+    const fetchData = async () => {
+      try {
+        const { data } = await api.get(`/appointments/${appointmentId}`);
         setAppointment(data);
         setStatus(data.status);
         setLoading(false);
-      })
-      .catch((err) => console.error("Error fetching appointment:", err));
+      } catch (err) {
+        console.error("Error fetching appointment:", err);
+      }
 
-    api
-      .get(`/prescription/${appointmentId}`)
-      .then(({ data }) => setPrescriptions(data))
-      .catch((err) => console.error("Error fetching prescriptions:", err));
+      try {
+        const { data } = await api.get(`/prescription/${appointmentId}`);
+        setPrescriptions(data);
+      } catch (err) {
+        console.error("Error fetching prescriptions:", err);
+      }
+    };
+
+    fetchData();
   }, [appointmentId]);
+
+  // =========== THESE ARE FOR UPDATING PRESCRIPTION ================
 
   const updateSelectedPrescription = (field, value) => {
     setSelectedPrescription((prev) => ({ ...prev, [field]: value }));
   };
 
-  // =========== THESE ARE FOR UPDATING PRESCRIPTION ================
   const updateMedicine = (index, field, value) => {
     setSelectedPrescription((prev) => {
       const updatedMedicines = [...prev.medicines];
@@ -88,73 +95,79 @@ export default function SingleAppointmentPage() {
     });
   };
 
+  //TODO: Remove medicine functionality not kept for "Create Prescription" form.
+
   // ===================================================================
 
   // Update Appointment Status
-  const updateStatus = () => {
-    api
-      .put(`/appointments/${appointmentId}/status`, { status })
-      .then(() => alert("Status updated successfully!"))
-      .catch((err) => alert("Error updating status"));
+  const updateStatus = async () => {
+    try {
+      await api.put(`/appointments/${appointmentId}/status`, { status });
+      alert("Status updated successfully!");
+    } catch (err) {
+      alert("Error updating status");
+    }
   };
 
   // Add New Prescription for this appointment
-  const addPrescription = () => {
+  const addPrescription = async () => {
     if (!newPrescription.diagnosis || !newPrescription.notes) {
       alert("Please fill in the diagnosis and notes.");
       return;
     }
 
-    api
-      .post(`/prescription/appointments/${appointmentId}`, newPrescription)
-      .then(({ data }) => {
-        setPrescriptions([...prescriptions, data]);
-        alert("Prescription added successfully!");
+    try {
+      const { data } = await api.post(
+        `/prescription/appointments/${appointmentId}`,
+        newPrescription
+      );
+      setPrescriptions([...prescriptions, data]);
+      alert("Prescription added successfully!");
 
-        // Reset the form after submission
-        setNewPrescription({
-          diagnosis: "",
-          notes: "",
-          medicines: [
-            {
-              name: "",
-              dosage: "",
-              frequency: "",
-              duration: "",
-              instructions: "",
-            },
-          ],
-        });
-      })
-      .catch((err) => {
-        console.error("Error adding prescription:", err);
-        alert("Failed to add prescription.");
+      // Reset the form after submission
+      setNewPrescription({
+        diagnosis: "",
+        notes: "",
+        medicines: [
+          {
+            name: "",
+            dosage: "",
+            frequency: "",
+            duration: "",
+            instructions: "",
+          },
+        ],
       });
+    } catch (err) {
+      console.error("Error adding prescription:", err);
+      alert("Failed to add prescription.");
+    }
   };
 
   // Update a prescription for this appointment
-  const updatePrescription = () => {
+  const updatePrescription = async () => {
     if (!selectedPrescription) return;
 
-    api
-      .put(`/prescription/${selectedPrescription.id}`, selectedPrescription)
-      .then(() => {
-        setPrescriptions((prev) =>
-          prev.map((p) =>
-            p.id === selectedPrescription.id ? selectedPrescription : p
-          )
-        );
-        alert("Prescription updated successfully!");
-        setIsEditing(false);
-        closePrescriptionModal();
-      })
-      .catch((err) => {
-        console.error("Error updating prescription:", err);
-        alert("Failed to update prescription.");
-      });
+    try {
+      await api.put(
+        `/prescription/${selectedPrescription.id}`,
+        selectedPrescription
+      );
+      setPrescriptions((prev) =>
+        prev.map((p) =>
+          p.id === selectedPrescription.id ? selectedPrescription : p
+        )
+      );
+      alert("Prescription updated successfully!");
+      setIsEditing(false);
+      closePrescriptionModal();
+    } catch (err) {
+      console.error("Error updating prescription:", err);
+      alert("Failed to update prescription.");
+    }
   };
 
-  // ===================================================================
+  // ====================== MODALS OPEN/CLOSE ========================
 
   const openPrescriptionModal = (prescription) => {
     setSelectedPrescription(prescription);
@@ -201,6 +214,8 @@ export default function SingleAppointmentPage() {
     doc.save(`Prescription-${selectedPrescription.id}.pdf`);
   };
 
+  // ===================================================================
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -209,7 +224,6 @@ export default function SingleAppointmentPage() {
     );
   }
 
-  console.log("PRES: ", prescriptions);
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Appointment Details</h1>

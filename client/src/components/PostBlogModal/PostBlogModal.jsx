@@ -36,7 +36,7 @@ const PostBlogModal = ({ isOpen, onClose, refreshArticles }) => {
     try {
       await api.post("/article", formattedData);
       toast.success("Post Successful !!");
-      refreshArticles();
+      refreshArticles(); // All articles automatically refreshed
       onClose();
     } catch (err) {
       setError("Failed to post article. Please try again.");

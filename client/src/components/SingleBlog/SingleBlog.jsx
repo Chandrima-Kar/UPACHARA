@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import api from "@/utils/api";
+import { toast } from "react-toastify";
 
 export default function SingleBlogPage() {
   const { id } = useParams();
@@ -20,20 +21,35 @@ export default function SingleBlogPage() {
   const fetchArticle = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/article/${id}`);
-      setArticle(res.data);
+      const response = await api.get(`/article/${id}`);
+      if (response.status === 200) {
+        setArticle(response.data);
+      }
     } catch (err) {
       setError("Failed to load article.");
     }
     setLoading(false);
   };
 
+  const fetchComments = async () => {
+    try {
+      const res = await api.get(`/article/${id}/comments`);
+      setComments(res.data.comments);
+    } catch (err) {
+      console.error("Failed to load comments", err);
+    }
+  };
+
   const handleLike = async () => {
     try {
-      await api.post(`/article/${id}/like`);
-      setArticle((prev) => ({ ...prev, likes_count: prev.likes_count + 1 }));
-    } catch {
-      setError("Failed to like article.");
+      const response = await api.post(`/article/${id}/like`);
+      if (response.status === 200) {
+        setArticle((prev) => ({ ...prev, likes_count: prev.likes_count + 1 }));
+        toast.success("Article liked successfully!");
+      }
+    } catch (err) {
+      console.error("Error liking article.", err);
+      toast.error("Failed to like article! Try again.");
     }
   };
 
@@ -46,15 +62,6 @@ export default function SingleBlogPage() {
       } catch {
         setError("Failed to post comment.");
       }
-    }
-  };
-
-  const fetchComments = async () => {
-    try {
-      const res = await api.get(`/article/${id}/comments`);
-      setComments(res.data.comments);
-    } catch (err) {
-      console.error("Failed to load comments", err);
     }
   };
 
