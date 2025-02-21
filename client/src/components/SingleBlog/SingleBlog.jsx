@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import ReactMarkdown from "react-markdown";
 
 export default function SingleBlogPage() {
   const { id } = useParams();
@@ -78,7 +79,6 @@ export default function SingleBlogPage() {
           {article.title}
         </h1>
         <p className="text-base font-mono text-gray-700">{article.category}</p>
-
         {article.image_url && (
           <img
             src={article.image_url}
@@ -86,8 +86,7 @@ export default function SingleBlogPage() {
             className="w-full my-4 rounded-lg"
           />
         )}
-
-        <p className="text-gray-800 font-lato">{article.content}</p>
+        <ReactMarkdown>{article.content}</ReactMarkdown>{" "}
         <div className="flex flex-col mt-4 justify-start w-full gap-4">
           <p className="text-sm  font-lato ">
             By{" "}
@@ -103,10 +102,9 @@ export default function SingleBlogPage() {
           <div className="flex items-center space-x-4 font-ubuntu">
             <button
               onClick={handleLike}
-              className="flex items-center justify-center gap-1"
-            >
+              className="flex items-center justify-center gap-1">
               {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />} (
-              {article.likes_count})
+              {liked ? 1 : 0})
             </button>
             <span className="text-gray-500">{article.views} Views</span>
           </div>
@@ -128,8 +126,7 @@ export default function SingleBlogPage() {
               />
               <button
                 onClick={handleComment}
-                className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 "
-              >
+                className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 ">
                 Comment
               </button>
             </div>

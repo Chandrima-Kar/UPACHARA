@@ -42,18 +42,20 @@ export default function BlogsPage() {
     return data;
   };
 
+  console.log("KJHIIWE: ", user);
   // Fetch recommended articles only if patient logged in.
   // FIXME: But here the  value of user from global state is initially fetched as null.
-  const fetchRecommendedArticles = async () => {
+  const fetchRecommendedArticles = async (user, role) => {
     try {
       setLoadingRecommendations(true);
+      console.log("NOLNL: ", user);
 
       if (!user) {
         console.warn("No user logged in. Skipping recommendations.");
         return [];
       }
 
-      if (user.role !== "patient" || !user.medical_history) {
+      if (role !== "patient" || !user.medical_history) {
         //FIXME: There is nothing such as user.role
         console.warn(
           "User is not a patient or has no medical history. Skipping recommendations."
@@ -84,7 +86,7 @@ export default function BlogsPage() {
         const articlesData = await fetchArticles();
         setArticles(articlesData.articles);
 
-        const recommendedData = await fetchRecommendedArticles();
+        const recommendedData = await fetchRecommendedArticles(user, role);
         setRecommendedArticles(recommendedData);
       } catch (error) {
         console.error("Error loading articles:", error);
@@ -120,26 +122,39 @@ export default function BlogsPage() {
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {recommendedArticles.map((article) => (
-                <div
+                <Tilt
                   key={article.id}
-                  className="p-4 shadow-md border rounded-lg"
-                >
-                  <h2 className="text-xl font-semibold">{article.title}</h2>
-                  <p className="text-gray-600">{article.category}</p>
+                  className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards">
                   <img
-                    src={article.image_url}
-                    className="w-full h-72 rounded-md"
+                    src={article.image_url || "/default-image.jpg"}
+                    alt={article.title || "Blog Image"}
+                    className="w-full h-full rounded-2xl object-cover"
                   />
-                  <p className="text-sm">
-                    {article.doctor_first_name} {article.doctor_last_name}
-                  </p>
-                  <Link
-                    href={`/blogs/${article.id}`}
-                    className="text-blue-500 mt-2 block"
-                  >
-                    Read More
-                  </Link>
-                </div>
+                  <div className="text-dark_primary_text flex flex-col items-center justify-end gap-1 overflow-hidden left-0 bottom-0 absolute h-full w-full rounded-2xl px-3 py-10 blogCardsContents">
+                    <h3 className="text-center text-white font-bold font-playfair text-2xl">
+                      {article.title}
+                    </h3>
+
+                    <div className="absolute bottom-3 right-5 italic text-sm tracking-wider font-playfair">
+                      <p className="text-sm text-gray-100">
+                        <b>Category:</b> {article.category}
+                      </p>
+                    </div>
+
+                    <div className="absolute bottom-3 left-5 italic text-sm tracking-wider font-playfair">
+                      <p className="text-sm text-gray-100">
+                        <b>Author:</b> {article.doctor_first_name}{" "}
+                        {article.doctor_last_name}
+                      </p>
+                    </div>
+
+                    <Link
+                      href={`/blogs/${article.id}`}
+                      className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110">
+                      Read More
+                    </Link>
+                  </div>
+                </Tilt>
               ))}
             </div>
           </div>
@@ -155,44 +170,16 @@ export default function BlogsPage() {
         {role === "doctor" && (
           <button
             onClick={() => setIsModalOpen(true)}
-            className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 "
-          >
+            className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 ">
             Post Article
           </button>
         )}
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7 ">
         {articles.map((article) => (
-          // <div
-          //   key={article.id}
-          //   className="flex flex-col items-center justify-center font-lato gap-1"
-          // >
-          //   <img src={article.image_url} className="w-full h-72 rounded-md" />
-          //   <h2 className="text-lg font-semibold text-center">
-          //     {article.title}
-          //   </h2>
-          //   <div className="flex justify-between w-full px-2">
-          //     <p className="text-sm text-gray-700">
-          //       <b>Category:</b> {article.category}
-          //     </p>
-          //     <p className="text-sm text-gray-700">
-          //       <b>Author:</b> {article.doctor_first_name}{" "}
-          //       {article.doctor_last_name}
-          //     </p>
-          //   </div>
-
-          //   <Link
-          //     href={`/blogs/${article.id}`}
-          //     className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
-          //   >
-          //     Read More
-          //   </Link>
-          // </div>
-
           <Tilt
             key={article.id}
-            className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards"
-          >
+            className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards">
             <img
               src={article.image_url || "/default-image.jpg"}
               alt={article.title || "Blog Image"}
@@ -218,8 +205,7 @@ export default function BlogsPage() {
 
               <Link
                 href={`/blogs/${article.id}`}
-                className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
-              >
+                className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110">
                 Read More
               </Link>
             </div>

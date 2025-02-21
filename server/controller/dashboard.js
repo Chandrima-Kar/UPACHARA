@@ -249,13 +249,12 @@ export const get_doctor_analytics = async (req, res) => {
 
     const ratingStats = await pool.query(
       `SELECT 
-        COUNT(*) as total_ratings,
-        AVG(rating)::DECIMAL(3,2) as average_rating,
-        COUNT(*) FILTER (WHERE rating = 5) as five_star_ratings
-       FROM doctor_ratings
-       WHERE doctor_id = $1
-       AND created_at::DATE BETWEEN $2 AND $3`,
-      [doctorId, startDate, endDate]
+      COUNT(*) as total_ratings,
+      AVG(rating)::DECIMAL(3,2) as average_rating,
+      COUNT(*) FILTER (WHERE rating = 5) as five_star_ratings
+      FROM doctor_ratings
+      WHERE doctor_id = $1`,
+      [doctorId]
     );
 
     const reviews = await pool.query(
@@ -267,9 +266,8 @@ export const get_doctor_analytics = async (req, res) => {
        FROM doctor_ratings r
        JOIN patients p ON r.patient_id = p.id
        WHERE r.doctor_id = $1
-       AND r.created_at::DATE BETWEEN $2 AND $3
        ORDER BY r.created_at DESC`,
-      [doctorId, startDate, endDate]
+      [doctorId]
     );
 
     const patientDemographics = await pool.query(
@@ -285,6 +283,7 @@ export const get_doctor_analytics = async (req, res) => {
       [doctorId, startDate, endDate]
     );
 
+    console.log(reviews);
     res.json({
       appointmentStats: appointmentStats.rows[0],
       ratingStats: ratingStats.rows[0],
