@@ -23,7 +23,7 @@ const OurBlogSection = () => {
         if (user && user.medical_history) {
           // Fetch recommended blogs based on user's medical history
           const response = await flaskapi.post("/recommend-articles", {
-            user_history: profile.medical_history,
+            user_history: user.medical_history,
           });
           setBlogs(response.data.recommendations || []);
           setLoading(false);

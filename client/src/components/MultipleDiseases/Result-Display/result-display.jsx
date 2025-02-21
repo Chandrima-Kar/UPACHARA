@@ -29,7 +29,7 @@ export function ResultDisplay({ data }) {
     <div className="w-full max-w-5xl mx-auto space-y-6 p-4">
       <div className="text-center space-y-4 mb-8">
         <h2 className="text-3xl font-montserrat text-black text-center">
-          ⚕️{data?.report.name_of_disease[0]}⚕️
+          ⚕️{data?.report?.name_of_disease[0]}⚕️
         </h2>
       </div>
 

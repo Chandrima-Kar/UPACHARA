@@ -38,6 +38,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.pexels.com", // Added new image source
       },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com", // Added new image source
+      },
     ],
   },
 };
