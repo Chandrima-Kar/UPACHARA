@@ -22,6 +22,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "content.jdmagicbox.com", // Add iStockPhoto
       },
+      {
+        protocol: "https",
+        hostname: "mymind.org", // Added new image source
+      },
+      {
+        protocol: "https",
+        hostname: "www.bls.gov", // Added new image source
+      },
+      {
+        protocol: "https",
+        hostname: "www.verywellfit.com", // Added new image source
+      },
     ],
   },
 };

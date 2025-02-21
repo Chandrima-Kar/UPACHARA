@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import api from "@/utils/api";
 import { toast } from "react-toastify";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 export default function SingleBlogPage() {
   const { id } = useParams();
@@ -12,6 +13,7 @@ export default function SingleBlogPage() {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     fetchArticle();
@@ -42,6 +44,7 @@ export default function SingleBlogPage() {
 
   const handleLike = async () => {
     try {
+      setLiked(!liked);
       const response = await api.post(`/article/${id}/like`);
       if (response.status === 200) {
         setArticle((prev) => ({ ...prev, likes_count: prev.likes_count + 1 }));
@@ -70,9 +73,11 @@ export default function SingleBlogPage() {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold">{article.title}</h1>
-        <p className="text-sm text-gray-500">{article.category}</p>
+      <div className="max-w-3xl flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold text-center font-montserrat mb-3">
+          {article.title}
+        </h1>
+        <p className="text-base font-mono text-gray-700">{article.category}</p>
 
         {article.image_url && (
           <img
@@ -82,60 +87,65 @@ export default function SingleBlogPage() {
           />
         )}
 
-        <p className="text-gray-700">{article.content}</p>
-        <p className="text-sm mt-2">
-          By{" "}
-          <span className="font-bold">
-            {article.doctor_first_name} {article.doctor_last_name}
-          </span>
-          <span className="text-gray-500">
-            {" "}
-            ({article.doctor_specialization})
-          </span>
-        </p>
+        <p className="text-gray-800 font-lato">{article.content}</p>
+        <div className="flex flex-col mt-4 justify-start w-full gap-4">
+          <p className="text-sm  font-lato ">
+            By{" "}
+            <span className="font-bold">
+              Dr. {article.doctor_first_name} {article.doctor_last_name}
+            </span>
+            <span className="text-gray-500">
+              {" "}
+              ({article.doctor_specialization})
+            </span>
+          </p>
 
-        <div className="mt-4 flex items-center space-x-4">
-          <button
-            onClick={handleLike}
-            className="bg-blue-500 text-white px-4 py-2 rounded">
-            Like ({article.likes_count})
-          </button>
-          <span className="text-gray-500">{article.views} Views</span>
-        </div>
-
-        {/* Comments Section */}
-        <div className="mt-6">
-          <h3 className="text-lg font-bold">
-            Comments ({article.comments_count})
-          </h3>
-
-          {/* Add Comment */}
-          <div className="mt-2 flex">
-            <input
-              type="text"
-              placeholder="Add a comment..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className="border p-2 flex-1 rounded-l"
-            />
+          <div className="flex items-center space-x-4 font-ubuntu">
             <button
-              onClick={handleComment}
-              className="bg-green-500 text-white px-4 py-2 rounded-r">
-              Comment
+              onClick={handleLike}
+              className="flex items-center justify-center gap-1"
+            >
+              {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />} (
+              {article.likes_count})
             </button>
+            <span className="text-gray-500">{article.views} Views</span>
           </div>
 
-          {/* Display Comments */}
-          <div className="mt-4 space-y-2">
-            {comments && comments.length > 0 ? (
-              comments.map((c) => (
-                <div key={c.id} className="border-b py-2">
-                  <p className="text-gray-700">{c.comment}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No comments yet.</p>
-            )}
+          {/* Comments Section */}
+          <div className="mt-6">
+            <h3 className="text-lg font-mono font-bold">
+              Comments ({article.comments_count})
+            </h3>
+
+            {/* Add Comment */}
+            <div className="mt-2 flex items-center justify-center gap-3">
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
+              />
+              <button
+                onClick={handleComment}
+                className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 "
+              >
+                Comment
+              </button>
+            </div>
+
+            {/* Display Comments */}
+            <div className="mt-4 space-y-2">
+              {comments && comments.length > 0 ? (
+                comments.map((c) => (
+                  <div key={c.id} className="border-b py-2">
+                    <p className="text-gray-700 font-lato px-1">{c.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No comments yet.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

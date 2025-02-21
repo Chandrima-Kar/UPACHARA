@@ -74,9 +74,11 @@ const DoctorDashboard = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+    <div className="p-6 space-y-6 bg-blue-50 shadow-xl rounded-lg my-10">
       <div className="flex justify-between">
-        <h1 className="text-2xl font-bold text-gray-800">Doctor Dashboard</h1>
+        <h1 className="text-2xl font-bold text-black font-montserrat">
+          Doctor Dashboard
+        </h1>
         <div className="flex justify-center ">
           <label className="inline-flex items-center cursor-pointer">
             <input
@@ -89,11 +91,13 @@ const DoctorDashboard = () => {
             <div
               className={`w-14 h-8 rounded-full relative transition-colors ${
                 isAvailable ? "bg-green-500" : "bg-gray-300"
-              }`}>
+              }`}
+            >
               <div
                 className={`absolute w-6 h-6 bg-white rounded-full shadow-md transition-transform top-1 ${
                   isAvailable ? "translate-x-6" : "translate-x-1"
-                }`}></div>
+                }`}
+              ></div>
             </div>
             <span className="ml-3 text-lg font-semibold text-gray-700">
               {isAvailable ? "Available" : "Unavailable"}
@@ -104,7 +108,7 @@ const DoctorDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="p-6 bg-white border rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-lg font-semibold font-mono text-gray-700">
             Today's Appointments
           </h2>
           <p className="text-xl font-bold text-blue-600">
@@ -112,7 +116,7 @@ const DoctorDashboard = () => {
           </p>
         </div>
         <div className="p-6 bg-white border rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-lg font-semibold font-mono text-gray-700">
             Pending Appointments
           </h2>
           <p className="text-xl font-bold text-yellow-600">
@@ -120,7 +124,7 @@ const DoctorDashboard = () => {
           </p>
         </div>
         <div className="p-6 bg-white border rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold text-gray-700">
+          <h2 className="text-lg font-semibold font-mono text-gray-700">
             Total Patients
           </h2>
           <p className="text-xl font-bold text-green-600">
@@ -130,14 +134,15 @@ const DoctorDashboard = () => {
       </div>
 
       <div className="p-6 bg-white border rounded-lg shadow-md">
-        <h2 className="text-lg font-semibold text-gray-700">
+        <h2 className="text-lg font-semibold font-mono text-gray-700">
           Upcoming Appointments
         </h2>
         <ul className="mt-2 space-y-2">
           {formattedAppointments.map((appointment) => (
             <li
               key={appointment.id}
-              className="p-4 border rounded-md bg-gray-100">
+              className="p-4 border rounded-md bg-gray-100"
+            >
               <span className="font-medium">
                 {appointment.patient_first_name} {appointment.patient_last_name}
               </span>{" "}
@@ -147,14 +152,15 @@ const DoctorDashboard = () => {
         </ul>
       </div>
 
-      <div className="p-6 bg-white border rounded-lg shadow-md">
+      <div className="p-6 bg-white border  font-mono rounded-lg shadow-md">
         <h2 className="text-lg font-semibold text-gray-700">Recent Articles</h2>
         {dashboardData.recentArticles.length > 0 ? (
           <ul className="mt-2 space-y-2">
             {dashboardData.recentArticles.map((article) => (
               <li
                 key={article.id}
-                className="p-4 border rounded-md bg-gray-100">
+                className="p-4 border rounded-md bg-gray-100"
+              >
                 {article.title} ({article.likes_count} likes)
               </li>
             ))}

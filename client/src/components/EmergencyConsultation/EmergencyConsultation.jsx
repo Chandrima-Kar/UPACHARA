@@ -44,50 +44,55 @@ export default function EmergencyConsultation() {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">
+    <div className="max-w-5xl mx-auto my-10 p-6 bg-blue-50 shadow-xl rounded-2xl border ">
+      <h2 className="text-2xl font-bold font-montserrat mb-4">
         Request Emergency Consultation
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-semibold">
+          <label className="block text-gray-700 font-serif">
             Symptoms (comma separated)
           </label>
           <textarea
-            className="w-full p-2 border rounded"
+            className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
             value={symptoms.join(", ")}
             onChange={handleSymptomsChange}
             required
           />
         </div>
         <div>
-          <label className="block font-semibold">Emergency Details</label>
+          <label className="block text-gray-700 font-serif">
+            Emergency Details
+          </label>
           <input
             type="text"
-            className="w-full p-2 border rounded"
+            className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
             value={emergencyy}
             onChange={(e) => setEmergencyy(e.target.value)}
             required
           />
         </div>
         <div>
-          <label className="block font-semibold">
+          <label className="block text-gray-700 font-serif">
             Preferred Specialization
           </label>
           <input
             type="text"
-            className="w-full p-2 border rounded"
+            className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
             value={preferredSpecialization}
             onChange={(e) => setPreferredSpecialization(e.target.value)}
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-          disabled={loading}>
-          {loading ? "Submitting..." : "Request Consultation"}
-        </button>
+        <div className="flex items-center justify-center">
+          <button
+            type="submit"
+            className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110 "
+            disabled={loading}
+          >
+            {loading ? "Submitting..." : "Request Consultation"}
+          </button>
+        </div>
       </form>
     </div>
   );
