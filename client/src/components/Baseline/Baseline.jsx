@@ -61,11 +61,11 @@ const Baseline = () => {
 
       {/* Center Book Appointment Button */}
       <Link
-        href="/book-appointment"
+        href="/emergency-consultation"
         className="absolute mb-14 flex items-center justify-center w-[6.8rem] h-[6.8rem] border-[6px]  border-white bg-blue-950 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-90 hover:bg-blue-500 cursor-pointer"
       >
         <h1 className="text-center text-sm whitespace-nowrap font-ubuntu">
-          Book <br /> Appointment
+          Emergency <br /> Consultation
         </h1>
       </Link>
 

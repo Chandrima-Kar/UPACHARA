@@ -48,16 +48,16 @@ const Header = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex space-x-10 text-gray-700 font-ubuntu text-base">
+        <nav className="flex space-x-7 text-gray-700 font-ubuntu text-base">
           <Link
             href="/"
-            className="header_links transition-transform duration-700 ease transform hover:scale-125"
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
           >
             Home
           </Link>
           <Link
             href="/about"
-            className="header_links transition-transform duration-700 ease transform hover:scale-125"
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
           >
             About
           </Link>
@@ -93,9 +93,16 @@ const Header = () => {
               </div>
               <Link
                 href="/disease-prediction"
-                className="header_links transition-transform duration-700 ease transform hover:scale-125"
+                className="header_links transition-transform duration-700 ease transform hover:scale-110"
               >
                 Disease Prediction
+              </Link>
+
+              <Link
+                href="/book-appointment"
+                className="header_links transition-transform duration-700 ease transform hover:scale-110"
+              >
+                Book Appointment
               </Link>
 
               {/* Drug Dropdown */}
@@ -125,7 +132,7 @@ const Header = () => {
 
               <Link
                 href="/insurance"
-                className="header_links transition-transform duration-700 ease transform hover:scale-125"
+                className="header_links transition-transform duration-700 ease transform hover:scale-110"
               >
                 Insurance
               </Link>
@@ -134,13 +141,13 @@ const Header = () => {
             <>
               <Link
                 href="/dashboard"
-                className="header_links transition-transform duration-700 ease transform hover:scale-125"
+                className="header_links transition-transform duration-700 ease transform hover:scale-110"
               >
                 Doctor Dashboard
               </Link>
               <Link
                 href="/appointments"
-                className="header_links transition-transform duration-700 ease transform hover:scale-125"
+                className="header_links transition-transform duration-700 ease transform hover:scale-110"
               >
                 Appointments
               </Link>
@@ -149,7 +156,7 @@ const Header = () => {
 
           <Link
             href="/blogs"
-            className="header_links transition-transform duration-700 ease transform hover:scale-125"
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
           >
             Blogs
           </Link>
