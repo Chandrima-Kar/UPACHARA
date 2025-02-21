@@ -1,19 +1,21 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import api from "@/utils/api";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
+import { Activity, Calendar, Clock, Star, Users } from "lucide-react";
+
+import api from "@/utils/api";
 
 const DoctorDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [formattedAppointments, setFormattedAppointments] = useState([]);
-
-  //FIXME: isAvailable should not be declared initially as false state, Instead it should be fetched from the backend
+  const [analyticsData, setAnalyticsData] = useState(null);
   const [isAvailable, setIsAvailable] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("analytics");
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -26,14 +28,28 @@ const DoctorDashboard = () => {
         setLoading(false);
       }
     };
-    // Fix for hydration error
+
+    const fetchAnalyticsData = async () => {
+      try {
+        const response = await api.get("/dashboard/analytics", {
+          params: {
+            startDate: "2024-01-01",
+            endDate: "2024-12-31",
+          },
+        });
+        setAnalyticsData(response.data);
+      } catch (err) {
+        console.error("Error fetching analytics", err);
+      }
+    };
+
     if (typeof window !== "undefined") {
       fetchDashboardData();
+      fetchAnalyticsData();
     }
   }, []);
 
   useEffect(() => {
-    // Formatting dates formats for appointments
     if (dashboardData?.upcomingAppointments) {
       setFormattedAppointments(
         dashboardData.upcomingAppointments.map((appointment) => ({
@@ -48,7 +64,6 @@ const DoctorDashboard = () => {
     if (isToggling) return;
     setIsToggling(true);
 
-    // Get the current day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
     const dayOfWeek = new Date().getDay();
 
     try {
@@ -60,11 +75,7 @@ const DoctorDashboard = () => {
       }
     } catch (error) {
       console.error("Error toggling availability", error);
-      if (error.response.data.error === "Schedule not found for this day") {
-        toast.error("No schedule found for today!");
-      } else {
-        toast.error("Error toggling availability. Try again later!");
-      }
+      toast.error("Error toggling availability. Try again later!");
     } finally {
       setIsToggling(false);
     }
@@ -74,13 +85,11 @@ const DoctorDashboard = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 space-y-6 bg-blue-50 shadow-xl rounded-lg my-10">
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-bold text-black font-montserrat">
-          Doctor Dashboard
-        </h1>
-        <div className="flex justify-center ">
-          <label className="inline-flex items-center cursor-pointer">
+    <div className="p-6 space-y-6 bg-gray-100">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-800">Doctor Dashboard</h1>
+        <div className="flex items-center space-x-2">
+          <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
               className="sr-only peer"
@@ -89,85 +98,194 @@ const DoctorDashboard = () => {
               disabled={isToggling}
             />
             <div
-              className={`w-14 h-8 rounded-full relative transition-colors ${
-                isAvailable ? "bg-green-500" : "bg-gray-300"
-              }`}
-            >
-              <div
-                className={`absolute w-6 h-6 bg-white rounded-full shadow-md transition-transform top-1 ${
-                  isAvailable ? "translate-x-6" : "translate-x-1"
-                }`}
-              ></div>
-            </div>
-            <span className="ml-3 text-lg font-semibold text-gray-700">
-              {isAvailable ? "Available" : "Unavailable"}
-            </span>
+              className={`w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600`}></div>
           </label>
+          <span className="text-lg font-semibold">
+            {isAvailable ? "Available" : "Unavailable"}
+          </span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-white border rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold font-mono text-gray-700">
-            Today's Appointments
-          </h2>
-          <p className="text-xl font-bold text-blue-600">
-            {dashboardData?.stats?.todayAppointments ?? 0}
-          </p>
-        </div>
-        <div className="p-6 bg-white border rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold font-mono text-gray-700">
-            Pending Appointments
-          </h2>
-          <p className="text-xl font-bold text-yellow-600">
-            {dashboardData?.stats?.pendingAppointments ?? 0}
-          </p>
-        </div>
-        <div className="p-6 bg-white border rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold font-mono text-gray-700">
-            Total Patients
-          </h2>
-          <p className="text-xl font-bold text-green-600">
-            {dashboardData?.stats?.totalPatients ?? 0}
-          </p>
-        </div>
+        {[
+          {
+            title: "Today's Appointments",
+            value: dashboardData?.stats?.todayAppointments ?? 0,
+            icon: Calendar,
+          },
+          {
+            title: "Pending Appointments",
+            value: dashboardData?.stats?.pendingAppointments ?? 0,
+            icon: Clock,
+          },
+          {
+            title: "Total Patients",
+            value: dashboardData?.stats?.totalPatients ?? 0,
+            icon: Users,
+          },
+        ].map((stat, index) => (
+          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-medium text-gray-500">
+                {stat.title}
+              </h2>
+              <stat.icon className="h-5 w-5 text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-semibold text-gray-900">
+              {stat.value}
+            </p>
+          </div>
+        ))}
       </div>
 
-      <div className="p-6 bg-white border rounded-lg shadow-md">
-        <h2 className="text-lg font-semibold font-mono text-gray-700">
-          Upcoming Appointments
-        </h2>
-        <ul className="mt-2 space-y-2">
-          {formattedAppointments.map((appointment) => (
-            <li
-              key={appointment.id}
-              className="p-4 border rounded-md bg-gray-100"
-            >
-              <span className="font-medium">
-                {appointment.patient_first_name} {appointment.patient_last_name}
-              </span>{" "}
-              - {appointment.formattedDate} at {appointment.start_time}
-            </li>
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="flex border-b">
+          {["analytics", "demographics", "reviews"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 font-medium ${
+                activeTab === tab
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-500"
+              }`}>
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
           ))}
-        </ul>
-      </div>
-
-      <div className="p-6 bg-white border  font-mono rounded-lg shadow-md">
-        <h2 className="text-lg font-semibold text-gray-700">Recent Articles</h2>
-        {dashboardData.recentArticles.length > 0 ? (
-          <ul className="mt-2 space-y-2">
-            {dashboardData.recentArticles.map((article) => (
-              <li
-                key={article.id}
-                className="p-4 border rounded-md bg-gray-100"
-              >
-                {article.title} ({article.likes_count} likes)
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No recent articles available.</p>
-        )}
+        </div>
+        <div className="p-6">
+          {activeTab === "analytics" && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">
+                  Appointment Statistics
+                </h3>
+                <div className="space-y-2">
+                  {[
+                    {
+                      label: "Total Appointments",
+                      value: analyticsData?.appointmentStats.total_appointments,
+                    },
+                    {
+                      label: "Completed",
+                      value:
+                        analyticsData?.appointmentStats.completed_appointments,
+                    },
+                    {
+                      label: "Cancelled",
+                      value:
+                        analyticsData?.appointmentStats.cancelled_appointments,
+                    },
+                    {
+                      label: "Unique Patients",
+                      value: analyticsData?.appointmentStats.unique_patients,
+                    },
+                    {
+                      label: "Avg. Consultation Time",
+                      value: `${analyticsData?.appointmentStats.avg_consultation_minutes || 0} mins`,
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center">
+                      <span className="text-gray-600">{item.label}</span>
+                      <span className="font-semibold">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Rating Overview</h3>
+                <div className="flex items-center space-x-2">
+                  <Star className="h-5 w-5 text-yellow-400" />
+                  <span className="text-2xl font-bold">
+                    {analyticsData?.ratingStats?.average_rating?.toFixed(1)}
+                  </span>
+                  <span className="text-gray-500">
+                    ({analyticsData?.ratingStats.total_ratings} ratings)
+                  </span>
+                </div>
+                <div className="mt-2 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                  <div
+                    className="bg-yellow-400 h-2.5 rounded-full"
+                    style={{
+                      width: `${
+                        (analyticsData?.ratingStats.average_rating / 5) * 100
+                      }%`,
+                    }}></div>
+                </div>
+              </div>
+            </div>
+          )}
+          {activeTab === "demographics" && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4">
+                Patient Demographics
+              </h3>
+              {analyticsData?.patientDemographics.length > 0 ? (
+                <div className="space-y-4">
+                  {analyticsData.patientDemographics.map(
+                    (demographic, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center">
+                        <span className="text-gray-600">
+                          {demographic.gender}
+                        </span>
+                        <div className="text-right">
+                          <span className="font-semibold">
+                            {demographic.count}
+                          </span>{" "}
+                          patients
+                          <br />
+                          <span className="text-sm text-gray-500">
+                            Avg. Age: {demographic.avg_age}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-500">
+                  No patient demographics data available.
+                </p>
+              )}
+            </div>
+          )}
+          {activeTab === "reviews" && (
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Patient Reviews</h3>
+              {analyticsData?.reviews.length > 0 ? (
+                <div className="space-y-4">
+                  {analyticsData.reviews.map((review, index) => (
+                    <div key={index} className="border-b pb-4 last:border-b-0">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium">
+                          {review.patient_name}
+                        </span>
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 text-yellow-400 mr-1" />
+                          <span>{review.rating}</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-1">
+                        {review.review}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {format(new Date(review.created_at), "PPP")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">
+                  No patient reviews data available.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
