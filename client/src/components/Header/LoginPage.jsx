@@ -58,7 +58,7 @@ const LoginPage = () => {
       localStorage.setItem("profile", JSON.stringify(profileResponse.data));
 
       // Update Context with user data
-      login(profileResponse.data);
+      login(profileResponse.data, data.role);
 
       toast.success("Login successful!");
       router.push("/");
