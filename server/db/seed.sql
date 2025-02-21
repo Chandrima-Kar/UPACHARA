@@ -57,11 +57,11 @@ INSERT INTO follow_ups (original_appointment_id, follow_up_appointment_id, recom
 (9, NULL, '2024-08-22', 'Post-fracture checkup', 'pending'), 
 (10, NULL, '2024-08-29', 'Investigate stomach ache', 'pending'); 
 INSERT INTO articles (doctor_id, title, content, image_url, category, tags, status, views, created_at, updated_at) VALUES
-(1, 'Understanding Hypertension', 'An overview of causes, symptoms, and treatment.', 'https://randomuser.me/api/portraits/med/1.jpg', 'Cardiology', ARRAY['hypertension', 'heart'], 'published', 0, NOW(), NOW()),
-(2, 'Advancements in Neurology', 'Latest research on brain disorders.', 'https://randomuser.me/api/portraits/med/2.jpg', 'Neurology', ARRAY['brain', 'neuroscience'], 'published', 0, NOW(), NOW()),
-(3, 'Orthopedic Surgery: What to Expect', 'A guide to recovery and rehabilitation.', 'https://randomuser.me/api/portraits/med/3.jpg', 'Orthopedics', ARRAY['surgery', 'recovery'], 'published', 0, NOW(), NOW()),
-(4, 'Pediatrics and Child Health', 'Tips for parents on raising healthy children.', 'https://randomuser.me/api/portraits/med/4.jpg', 'Pediatrics', ARRAY['children', 'health'], 'published', 0, NOW(), NOW()),
-(5, 'Skin Care Tips from a Dermatologist', 'How to maintain healthy skin.', 'https://randomuser.me/api/portraits/med/5.jpg', 'Dermatology', ARRAY['skincare', 'beauty'], 'published', 0, NOW(), NOW());
+(1, 'Understanding Hypertension', 'An overview of causes, symptoms, and treatment.', 'https://images.pexels.com/photos/7659573/pexels-photo-7659573.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 'Cardiology', ARRAY['hypertension', 'heart'], 'published', 0, NOW(), NOW()),
+(2, 'Advancements in Neurology', 'Latest research on brain disorders.', 'https://images.pexels.com/photos/7089020/pexels-photo-7089020.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 'Neurology', ARRAY['brain', 'neuroscience'], 'published', 0, NOW(), NOW()),
+(3, 'Orthopedic Surgery: What to Expect', 'A guide to recovery and rehabilitation.', 'https://images.pexels.com/photos/30797771/pexels-photo-30797771/free-photo-of-precision-wrist-surgery-in-operating-room.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 'Orthopedics', ARRAY['surgery', 'recovery'], 'published', 0, NOW(), NOW()),
+(4, 'Pediatrics and Child Health', 'Tips for parents on raising healthy children.', 'https://images.pexels.com/photos/4005611/pexels-photo-4005611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 'Pediatrics', ARRAY['children', 'health'], 'published', 0, NOW(), NOW()),
+(5, 'Skin Care Tips from a Dermatologist', 'How to maintain healthy skin.', 'https://images.pexels.com/photos/3785806/pexels-photo-3785806.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', 'Dermatology', ARRAY['skincare', 'beauty'], 'published', 0, NOW(), NOW());
 INSERT INTO article_likes (article_id, user_type, user_id, created_at) VALUES
 (1, 'patient', 1, NOW()),
 (2, 'doctor', 2, NOW()),
