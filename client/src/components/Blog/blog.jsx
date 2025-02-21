@@ -8,7 +8,7 @@ import PostBlogModal from "@/components/PostBlogModal/PostBlogModal.jsx";
 import { useUser } from "@/context/UserContext";
 
 export default function BlogsPage() {
-  const { user } = useUser();
+  const { user, role } = useUser();
   const [articles, setArticles] = useState([]);
   const [recommendedArticles, setRecommendedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -134,7 +134,7 @@ export default function BlogsPage() {
       <div className="flex justify-between items-center my-4">
         <h1 className="text-3xl font-bold">Latest Articles</h1>
         {/* Show Post Article button only if the user is a doctor */}
-        {user?.role === "doctor" && (
+        {role === "doctor" && (
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 bg-blue-500 text-white rounded">
@@ -161,7 +161,7 @@ export default function BlogsPage() {
       </div>
 
       {/* Post Article Modal */}
-      {user?.role === "doctor" && ( //FIXME: There is nothing such as user.role
+      {role === "doctor" && ( 
         <PostBlogModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

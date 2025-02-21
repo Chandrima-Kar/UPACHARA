@@ -12,9 +12,11 @@ export const useUser = () => {
 // UserProvider component to wrap the app
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Stores logged-in user profile data
+  const [role, setRole] = useState(null); // Stores user role
 
-  const login = (userData) => {
+  const login = (userData, userRole) => {
     setUser(userData);
+    setRole(userRole);
     localStorage.setItem("profile", JSON.stringify(userData));
   };
 
@@ -31,7 +33,7 @@ export const UserProvider = ({ children }) => {
 
       if (res.status === 200) {
         setUser(res.data);
-        localStorage.setItem("profile", JSON.stringify(res.data)); 
+        localStorage.setItem("profile", JSON.stringify(res.data));
       }
     } catch (error) {
       console.error("Error fetching updated profile:", error);
@@ -41,14 +43,18 @@ export const UserProvider = ({ children }) => {
   // Load user data from localStorage when app starts
   useEffect(() => {
     const storedUser = localStorage.getItem("profile");
+    const storedRole = localStorage.getItem("role");
+
     if (storedUser) {
       setUser(JSON.parse(storedUser));
+    }
+    if (storedRole) {
+      setRole(storedRole);
     }
   }, []);
 
   return (
-    <UserContext.Provider
-      value={{ user, login, logout, updateProfile }}>
+    <UserContext.Provider value={{ user, role, login, logout, updateProfile }}>
       {children}
     </UserContext.Provider>
   );
