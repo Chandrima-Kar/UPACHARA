@@ -116,6 +116,24 @@ abbr[title] {
 }
 
 
+.blogCards {
+  box-shadow: 20px 5px 50px rgb(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.blogCards .blogCardsContents {
+  background: linear-gradient(transparent, #1c1c1c 58%);
+  transition: 0.5s;
+  transform: translateY(100px);
+  opacity: 0;
+}
+
+.blogCards:hover .blogCardsContents {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+
 /* header */
 
 .header_links {
