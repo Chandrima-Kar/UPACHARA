@@ -8,7 +8,7 @@ import fs from "fs";
 import path from "path";
 import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize("upachara_db", "postgres", "tulshi paul", {
+const sequelize = new Sequelize("upachara_db", "postgres", "mathphysics100", {
   host: "localhost",
   dialect: "postgres",
   logging: false,

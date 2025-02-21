@@ -6,40 +6,33 @@ import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import api from "@/utils/api";
 import flaskapi from "@/utils/flaskapi";
+import { useUser } from "@/context/UserContext";
 
 const OurBlogSection = () => {
+  const { user } = useUser();
   const router = useRouter();
   const [startIndex, setStartIndex] = useState(0);
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const containerRef = useRef(null);
-
   useEffect(() => {
     async function fetchBlogs() {
       try {
         setLoading(true);
 
-        //FIXME: This have to be changed to fetch "user" from global context instead of localStorage. This will eliminate any lag in rendering.
-
-        // Check if profile exists in localStorage
-        const storedProfile = localStorage.getItem("profile");
-
-        if (storedProfile) {
-          const profile = JSON.parse(storedProfile);
-          if (profile?.medical_history) {
-            // Fetch recommended blogs based on user's medical history
-            const response = await flaskapi.post("/recommend-articles", {
-              user_history: profile.medical_history,
-            });
-            setBlogs(response.data.recommendations);
-            setLoading(false);
-            return;
-          }
+        if (user && user.medical_history) {
+          // Fetch recommended blogs based on user's medical history
+          const response = await flaskapi.post("/recommend-articles", {
+            user_history: profile.medical_history,
+          });
+          setBlogs(response.data.recommendations || []);
+          setLoading(false);
+          return;
         }
 
-        // If user is not logged in, fetch normal blogs
+        // If user is not logged in, fetch only normal blogs
         const { data } = await api.get("/article");
-        setBlogs(data.articles);
+        setBlogs(data.articles || []);
       } catch (error) {
         console.error("Error fetching blogs:", error);
       } finally {
@@ -51,11 +44,11 @@ const OurBlogSection = () => {
   }, []);
 
   // Pagination Logic
-  const visiblePosts = blogs.slice(startIndex, startIndex + 4); // Show 3 cards + View More
+  const visiblePosts = blogs.slice(startIndex, startIndex + 4);
 
   // Handle Next
   const handleNext = () => {
-    if (startIndex + 3 < blogs.length) {
+    if (startIndex + 4 < blogs.length) {
       setStartIndex((prev) => prev + 4);
     }
   };
@@ -105,19 +98,25 @@ const OurBlogSection = () => {
               staggerChildren: 0.2,
             }}
             className="flex gap-7">
-            {visiblePosts.map((post) => (
+            {visiblePosts?.map((post) => (
               <div
                 key={post.id}
                 className="relative bg-[#75d0ea1b] shadow-lg rounded-xl overflow-hidden cursor-pointer w-[300px] h-[300px] flex flex-col items-center justify-center group transition-all duration-500 transform hover:scale-105"
                 onClick={() => router.push(`/blogs/${post.id}`)}>
-                {/* Image */}
-                <Image
-                  src={post.image_url}
-                  alt={post.title}
-                  width={400}
-                  height={400}
-                  className="w-full h-full rounded-xl"
-                />
+                {/* Image with Fallback */}
+                {post.image_url ? (
+                  <Image
+                    src={post.image_url}
+                    alt={post.title}
+                    width={400}
+                    height={400}
+                    className="w-full h-full rounded-xl"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                    <p className="text-gray-600">No Image Available</p>
+                  </div>
+                )}
 
                 {/* Title Overlay */}
                 <div className="absolute inset-0 flex items-end justify-center bg-gray-800 bg-opacity-0 transition-all duration-500 group-hover:bg-opacity-50">
@@ -128,7 +127,7 @@ const OurBlogSection = () => {
               </div>
             ))}
 
-            {/* View More Card - Now in the Same Row */}
+            {/* View More Card */}
             {startIndex + 3 >= blogs.length && (
               <div
                 className="flex justify-center items-center bg-[#75d0ea1b] text-black font-ubuntu font-medium text-xl shadow-lg rounded-xl w-[300px] h-[300px] cursor-pointer transition-all duration-500 transform hover:scale-105"
@@ -152,12 +151,12 @@ const OurBlogSection = () => {
 
           <button
             className={`absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white p-3 rounded-full shadow-lg ${
-              startIndex + 3 >= blogs.length
+              startIndex + 4 >= blogs.length
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-gray-600"
             }`}
             onClick={handleNext}
-            disabled={startIndex + 3 >= blogs.length}>
+            disabled={startIndex + 4 >= blogs.length}>
             <FaChevronRight />
           </button>
         </div>
