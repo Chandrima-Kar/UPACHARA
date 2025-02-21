@@ -266,3 +266,63 @@ export const get_appointment_details = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+export const get_patient_appointments = async (req, res) => {
+  try {
+    const patientId = req.user.id;
+    const { status, date, page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+
+    let query = `
+      SELECT 
+        a.*, 
+        d.first_name AS doctor_first_name, 
+        d.last_name AS doctor_last_name
+      FROM appointments a
+      JOIN doctors d ON a.doctor_id = d.id
+      WHERE a.patient_id = $1
+    `;
+
+    const params = [patientId];
+    let paramIndex = 2;
+
+    if (status) {
+      query += ` AND a.status = $${paramIndex}`;
+      params.push(status);
+      paramIndex++;
+    }
+
+    if (date) {
+      query += ` AND a.appointment_date = $${paramIndex}`;
+      params.push(date);
+      paramIndex++;
+    }
+
+    query += ` ORDER BY a.appointment_date DESC, a.start_time
+               LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+    params.push(limit, offset);
+
+    const result = await pool.query(query, params);
+
+    const countQuery = `
+      SELECT COUNT(*) FROM appointments WHERE patient_id = $1
+      ${status ? "AND status = $2" : ""}
+      ${date ? `AND appointment_date = $${status ? 3 : 2}` : ""}
+    `;
+    const countParams = [patientId];
+    if (status) countParams.push(status);
+    if (date) countParams.push(date);
+
+    const countResult = await pool.query(countQuery, countParams);
+
+    res.json({
+      appointments: result.rows,
+      total: parseInt(countResult.rows[0].count),
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(parseInt(countResult.rows[0].count) / limit),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};

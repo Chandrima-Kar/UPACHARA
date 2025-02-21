@@ -63,33 +63,36 @@ export const set_doctor_avavaiblity = async (req, res) => {
   }
 };
 
-export const get_doctor_avaiblity = async (req, res) => {
+export const get_doctor_availability = async (req, res) => {
   try {
     const { doctorId } = req.params;
     const { date } = req.query;
 
-    const availability = await pool.query(
-      `SELECT * FROM doctor_availability 
-           WHERE doctor_id = $1 AND day_of_week = EXTRACT(DOW FROM $2::date)`,
+    const doctorInfo = await pool.query(
+      `SELECT d.first_name, d.last_name, d.specialization, d.image_url, da.*
+       FROM doctors d
+       JOIN doctor_availability da ON d.id = da.doctor_id
+       WHERE da.doctor_id = $1 AND da.day_of_week = EXTRACT(DOW FROM $2::date)`,
       [doctorId, date]
     );
 
-    if (availability.rows.length === 0) {
+    if (doctorInfo.rows.length === 0) {
       return res
         .status(404)
-        .json({ error: "No availability found for this day" });
+        .json({ error: "No availability found for this doctor on this day" });
     }
+
+    const doctorSchedule = doctorInfo.rows[0];
 
     const appointments = await pool.query(
       `SELECT start_time, end_time 
-           FROM appointments 
-           WHERE doctor_id = $1 
-           AND appointment_date = $2 
-           AND status IN ('pending', 'approved')`,
+       FROM appointments 
+       WHERE doctor_id = $1 
+       AND appointment_date = $2 
+       AND status IN ('pending', 'approved')`,
       [doctorId, date]
     );
 
-    const doctorSchedule = availability.rows[0];
     const slotDuration = doctorSchedule.slot_duration;
     const slots = [];
 
@@ -121,7 +124,20 @@ export const get_doctor_avaiblity = async (req, res) => {
     }
 
     res.json({
-      availability: doctorSchedule,
+      doctor: {
+        firstName: doctorSchedule.first_name,
+        lastName: doctorSchedule.last_name,
+        specialization: doctorSchedule.specialization,
+        imageUrl: doctorSchedule.image_url,
+      },
+      availability: {
+        dayOfWeek: doctorSchedule.day_of_week,
+        startTime: doctorSchedule.start_time,
+        endTime: doctorSchedule.end_time,
+        breakStart: doctorSchedule.break_start,
+        breakEnd: doctorSchedule.break_end,
+        slotDuration: doctorSchedule.slot_duration,
+      },
       availableSlots: slots,
     });
   } catch (err) {

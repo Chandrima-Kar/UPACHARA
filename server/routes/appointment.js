@@ -8,6 +8,7 @@ import { validateAppointment } from "../validators/appointment.js";
 import {
   get_appointment_details,
   get_follow_ups,
+  get_patient_appointments,
   request_appointment,
   request_emergency_consultation,
   schedule_follow_up,
@@ -48,5 +49,12 @@ router.post(
 );
 
 router.get("/:id", authenticateToken, authorizeDoctor, get_appointment_details);
+
+router.get(
+  "/patient",
+  authenticateToken,
+  authorizePatient,
+  get_patient_appointments
+);
 
 export default router;
