@@ -10,7 +10,7 @@ import {
   get_all_doctors,
   get_doctor_appointments,
   get_doctor_articles,
-  get_doctor_avaiblity,
+  get_doctor_availability,
   set_doctor_avavaiblity,
   update_doctor_profile,
 } from "../controller/doctor.js";
@@ -28,7 +28,7 @@ router.post(
 router.get(
   "/availability/:doctorId",
   authenticateToken,
-  get_doctor_avaiblity
+  get_doctor_availability
 );
 
 router.get(

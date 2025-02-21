@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import pkg from "pg";
-import initDB from "./db/index.js";
+import { initDB, runSeedScript } from "./db/index.js";
 import authRouter from "./routes/auth.js";
 import articleRouter from "./routes/article.js";
 import appointmentRouter from "./routes/appointment.js";
@@ -29,6 +29,7 @@ export const pool = new Pool({
 });
 
 initDB(pool);
+runSeedScript(pool);
 
 app.use("/api/auth", authRouter);
 
