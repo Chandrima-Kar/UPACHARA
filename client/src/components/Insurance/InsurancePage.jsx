@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import flaskapi from "@/utils/flaskapi";
+import InsuranceResults from "./Insurance-result";
 
 const InsurancePage = () => {
   const [formData, setFormData] = useState({
@@ -44,9 +45,9 @@ const InsurancePage = () => {
 
     try {
       const response = await flaskapi.post("/insurance", formData);
-
+      console.log(response);
       if (response.status === 200) {
-        setResult(response.data.result);
+        setResult(response.data);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -56,17 +57,17 @@ const InsurancePage = () => {
     }
   };
 
-  // Fix hydration error
   if (!isClient) {
     return null;
   }
-
+  console.log(result);
   return (
     <section className="flex flex-col mb-16 gap-5 items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}>
+        transition={{ duration: 0.5 }}
+      >
         <Image
           src="/insuranceBG.png"
           alt="Commercial Real Estate"
@@ -79,7 +80,8 @@ const InsurancePage = () => {
         className="flex justify-between w-full px-20 gap-20"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}>
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
         <h1 className="text-5xl uppercase font-extrabold text-gray-900 font-montserrat">
           Discover the Future of
           <br /> <span className="text-blue-500">Proactive Healthcare</span>
@@ -94,7 +96,8 @@ const InsurancePage = () => {
         className="mt-7 w-full max-w-2xl bg-blue-50 shadow-xl rounded-lg p-6"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}>
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
         <h3 className="text-lg font-medium font-mono text-gray-900 mb-4 text-center">
           -- Fill Your Information Here --
         </h3>
@@ -157,7 +160,8 @@ const InsurancePage = () => {
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm"
-                  required>
+                  required
+                >
                   <option value="" disabled>
                     {field.label}
                   </option>
@@ -197,7 +201,8 @@ const InsurancePage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110">
+              className="w-fit py-2 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
+            >
               {isLoading ? "Processing..." : "Find Best Insurance Policy"}
             </button>
           </div>
@@ -209,23 +214,13 @@ const InsurancePage = () => {
           className="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}>
+          transition={{ duration: 0.3 }}
+        >
           <p>{error}</p>
         </motion.div>
       )}
 
-      {result && (
-        <motion.div
-          className="mt-6 p-5 flex flex-col items-center justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}>
-          <h4 className="text-3xl font-montserrat text-black text-center mb-5">
-            🛡️ Recommended Insurance Policy 🛡️
-          </h4>
-          <p className="text-gray-700 font-lato">Monthly - {result}</p>
-        </motion.div>
-      )}
+      {result && <InsuranceResults data={result} />}
     </section>
   );
 };

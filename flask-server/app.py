@@ -350,7 +350,13 @@ def insurance():
 
         insurance_price = calculate_insurance_price(data) / 20
 
-        return jsonify({"result": insurance_price}), 200
+        generator = report_generator()
+        insurance_report = generator.insurance_report(insurance_price, data)
+
+        return jsonify({
+            "insurance_price": insurance_price,
+            "insurance_report": insurance_report
+        }), 200
 
     except Exception as e:
         print(f"Error in /insurance route: {e}")
