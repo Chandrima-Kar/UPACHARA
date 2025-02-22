@@ -5,6 +5,8 @@ import symptoms from "../../utils/symptoms.json";
 import convertStringList from "@/utils/helper";
 import Image from "next/image";
 import flaskapi from "@/utils/flaskapi";
+import api from "@/utils/api";
+import { toast } from "react-toastify";
 
 export default function DiseasePage() {
   const [formData, setFormData] = useState({
@@ -67,10 +69,28 @@ export default function DiseasePage() {
     }
   };
 
+  const handleSendForReview = async (doctorId) => {
+    try {
+      const response = await api.post(
+        `/review/${doctorId}?diseaseId=${predictionResult.diseaseId}`
+      );
+      console.log(response);
+
+      if (response.status === 201) {
+        toast.success("Review request sent successfully!");
+      } else {
+        toast.error("Failed to send review request.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred while sending the review request.");
+    }
+  };
+
   if (!isClient) {
     return null;
   }
-  console.log(predictionResult);
+
   return (
     <section className="flex flex-col relative  my-10  items-center justify-center ">
       <div className="absolute inset-0">
@@ -223,18 +243,18 @@ export default function DiseasePage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="col-span-full text-center mb-6">
-                <h3 className="text-2xl font-bold font-montserrat text-blue-800">
-                  🩺 Recommended Doctors for Your Condition 🩺
-                </h3>
-                <p className="text-gray-600 font-lato mt-2">
-                  Based on your symptoms, here are some highly qualified doctors
-                  who can help you.
-                </p>
-              </div>
-              {recommendedDoctors.length > 0 ? (
-                recommendedDoctors.map((doc, id) => (
+            {recommendedDoctors.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="col-span-full text-center mb-6">
+                  <h3 className="text-2xl font-bold font-montserrat text-blue-800">
+                    🩺 Recommended Doctors for Your Condition 🩺
+                  </h3>
+                  <p className="text-gray-600 font-lato mt-2">
+                    Based on your symptoms, here are some highly qualified
+                    doctors who can help you.
+                  </p>
+                </div>
+                {recommendedDoctors.map((doc, id) => (
                   <div
                     key={id}
                     className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards">
@@ -254,27 +274,27 @@ export default function DiseasePage() {
                         </p>
                       </div>
 
-                      <a
-                        // href={`/blogs/${doc.id}`}
+                      <button
+                        onClick={() => handleSendForReview(doc.id)}
                         className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu cursor-pointer focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110">
                         Send For Review
-                      </a>
+                      </button>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="col-span-full text-center mb-6">
-                  <h3 className="text-2xl font-bold font-montserrat text-blue-800">
-                    🩺 No Recommended Doctors Found 🩺
-                  </h3>
-                  <p className="text-gray-600 font-lato mt-2">
-                    We couldn't find any doctors matching your condition at the
-                    moment. Don't worry! Please check back later or consult a
-                    general physician for further assistance.
-                  </p>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="col-span-full text-center mb-6">
+                <h3 className="text-2xl font-bold font-montserrat text-blue-800">
+                  🩺 No Recommended Doctors Found 🩺
+                </h3>
+                <p className="text-gray-600 font-lato mt-2">
+                  We couldn't find any doctors matching your condition at the
+                  moment. Don't worry! Please check back later or consult a
+                  general physician for further assistance.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
