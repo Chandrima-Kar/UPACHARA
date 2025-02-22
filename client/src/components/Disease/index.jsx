@@ -6,6 +6,27 @@ import convertStringList from "@/utils/helper";
 import Image from "next/image";
 import flaskapi from "@/utils/flaskapi";
 
+const docList = [
+  {
+    name: "Pratik Biswas",
+    specialist: "General Physician",
+    number: "+91 7845945778",
+    image: "/pb27.jpg",
+  },
+  {
+    name: "Chandrima Kar",
+    specialist: "General Physician",
+    number: "+91 7845945778",
+    image: "/ck.png",
+  },
+  {
+    name: "Md. Zaib Reyaz",
+    specialist: "General Physician",
+    number: "+91 7845945778",
+    image: "/mzr.png",
+  },
+];
+
 export default function DiseasePage() {
   const [formData, setFormData] = useState({
     // fname: "",
@@ -124,7 +145,8 @@ export default function DiseasePage() {
                   id={`symptom_${num}`}
                   value={formData[`symptom_${num}`]}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm ">
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm "
+                >
                   <option value="">Select a symptom</option>
 
                   {/* Sorting the options alphabetically */}
@@ -134,7 +156,8 @@ export default function DiseasePage() {
                       <option
                         key={symptoms[symptom]}
                         value={symptom}
-                        className="overflow-y-auto">
+                        className="overflow-y-auto"
+                      >
                         {symptom
                           .split("_") // Split words
                           .map(
@@ -158,7 +181,8 @@ export default function DiseasePage() {
               rows={4}
               value={formData.message}
               onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"></textarea>
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
+            ></textarea>
           </div>
 
           {/* Submit Button */}
@@ -180,7 +204,8 @@ export default function DiseasePage() {
                   !formData.symptom_4)
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              }`}>
+              }`}
+            >
               {isLoading ? "Predicting..." : "Predict"}
             </button>
           </div>
@@ -192,7 +217,8 @@ export default function DiseasePage() {
         {error && (
           <div
             className="mt-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert">
+            role="alert"
+          >
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline"> {error}</span>
           </div>
@@ -246,6 +272,48 @@ export default function DiseasePage() {
                 Send For Review
               </a>
             </div> */}
+
+            <div className=" flex flex-col items-center justify-center mb-5">
+              <button
+                type="submit"
+                className="w-fit py-2 px-4 shadow-md font-medium font-ubuntu transition-all duration-500 transform bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-lg"
+              >
+                Send For Review
+              </button>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {docList.map((doc, id) => (
+                <div
+                  key={id}
+                  className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards"
+                >
+                  <img
+                    src={doc.image}
+                    alt={"Blog Image"}
+                    className="w-full h-full rounded-2xl object-cover"
+                  />
+                  <div className="text-dark_primary_text flex flex-col items-center justify-end gap-3 overflow-hidden left-0 bottom-0 absolute h-full w-full rounded-2xl px-3 py-10 blogCardsContents">
+                    <h3 className="text-center text-white font-bold font-playfair text-2xl">
+                      Dr. {doc.name}
+                    </h3>
+
+                    <div className="italic text-sm tracking-wider font-playfair">
+                      <p className="text-sm text-gray-100">
+                        <b>Specialist:</b> {doc.specialist}
+                      </p>
+                    </div>
+
+                    <a
+                      // href={`/blogs/${doc.id}`}
+                      className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu cursor-pointer focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
+                    >
+                      Connect
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
