@@ -45,7 +45,11 @@ const HeaderDoctor = () => {
             className="header_links transition-transform duration-700 ease transform hover:scale-110">
             Appointments
           </Link>
-
+          <Link
+            href="/review"
+            className="header_links transition-transform duration-700 ease transform hover:scale-110">
+            Reviews
+          </Link>
           <Link
             href="/blogs"
             className="header_links transition-transform duration-700 ease transform hover:scale-110">
