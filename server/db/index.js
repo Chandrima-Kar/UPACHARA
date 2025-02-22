@@ -4,11 +4,12 @@ import articleTable from "./tables/article.js";
 import authTable from "./tables/auth.js";
 import doctorTable from "./tables/doctor.js";
 import prescriptionTable from "./tables/prescription.js";
+import initPatientManagementTables from "./tables/patientManagementTable.js";
 import fs from "fs";
 import path from "path";
 import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize("upachara_db", "postgres", "mathphysics100", {
+const sequelize = new Sequelize("upachara_db", "postgres", "tulshi paul", {
   host: "localhost",
   dialect: "postgres",
   logging: false,
@@ -19,6 +20,7 @@ export async function initDB(pool) {
     await authTable(pool);
     await articleTable(pool);
     await appointmentTable(pool);
+    await initPatientManagementTables(pool);
     await doctorTable(pool);
     await prescriptionTable(pool);
     console.log("Database initialized successfully");

@@ -27,7 +27,6 @@ export default async function authTable(pool) {
         phone VARCHAR(20),
         address TEXT,
         image_url TEXT,
-        medical_history TEXT[],
         emergency_contact VARCHAR(100),
         emergency_phone VARCHAR(20),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

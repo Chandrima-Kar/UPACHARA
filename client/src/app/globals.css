@@ -1,24 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@700&family=Open+Sans&family=Roboto&family=Ubuntu:wght@400;500&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 :root {
   --background: white;
   --foreground: black;
   --gradient-bg: linear-gradient(135deg, #3b83f64a 0%, #ffffff 100%);
-
 }
 
 body {
   color: var(--foreground);
   background: var(--gradient-bg);
   font-family: Arial, Helvetica, sans-serif;
-
 }
 
 /* scrollbar */
@@ -36,8 +32,6 @@ body {
   background: #3b82f6;
   border-radius: 50px;
 }
-
-
 
 .react-calendar {
   width: 550px;
@@ -115,7 +109,6 @@ abbr[title] {
   color: white;
 }
 
-
 .blogCards {
   box-shadow: 20px 5px 50px rgb(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
@@ -133,18 +126,14 @@ abbr[title] {
   opacity: 1;
 }
 
-
 /* header */
-
 .header_links {
   position: relative;
-  /* color: #3b82f6; */
   text-decoration: none;
 }
 
 .header_links:hover {
   color: #3b82f6;
-  /* font-weight: bold; */
 }
 
 .header_links::before {
@@ -164,9 +153,7 @@ abbr[title] {
   transform: scaleX(1);
 }
 
-
 /* Footer */
-
 .underline-animation {
   position: relative;
 }
@@ -186,7 +173,6 @@ abbr[title] {
   width: 100%;
 }
 
-
 /* Home page */
 .perspective {
   perspective: 1000px;
@@ -205,7 +191,6 @@ abbr[title] {
 .testimonial-card {
   background-color: #75d0ea1b;
   box-shadow: 0 20px 30px rgba(129, 124, 124, 0.2);
-
   backdrop-filter: blur(14px);
 }
 
@@ -233,5 +218,35 @@ abbr[title] {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }

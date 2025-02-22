@@ -149,7 +149,6 @@ def predict():
             'predictedDisease': predicted_disease,
             'disDes': dis_des,
             'myPrecautions': my_precautions,
-            'medications': medications,
             'myDiet': rec_diet,
             'myWorkout': rec_workout
         }), 200
