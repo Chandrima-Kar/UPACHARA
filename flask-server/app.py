@@ -34,7 +34,8 @@ from src.ImagePrediction.image_prediction import ImagePrediction
 from src.DrugResponse.drugresponse import report_generator2
 from src.llm_report.Report import report_generator
 from src.Food.food import food_report_generator
-from src.ChatBot.chatbot import ingest_data,user_input
+#from src.ChatBot.chatbot import ingest_data,user_input
+from src.ChatBot.chatbot import get_gemini_response
 from src.recommendarticles.articles_recommendation import recommend_articles
 from utils.helper import get_patient_id_from_token
 
@@ -420,26 +421,38 @@ def chatbot():
     #     return redirect(url_for('chatbot'))
     # return render_template('chatbot.html')
 
-@app.route('/chat', methods=['POST'])
-# @cross_origin()  # Explicitly allowing CORS for this endpoint
+# @app.route('/chat', methods=['POST'])
+# # @cross_origin()  # Explicitly allowing CORS for this endpoint
+# def chat():
+#     print("BACKEND REQUEST RECEIVED .............")
+#     print(request)
+#     print("================================================")
+#     # Get JSON data from request
+#     # Log the raw request and the data extracted from it
+#     print(f"Request Data: {request.data}")  # This logs the raw data (just to confirm it's coming through)
+#     data = request.get_json()
+    
+#     print(f"Received data (JSON): {data}")  # This will print the parsed JSON
+    
+#     user_question = data.get("question", "")
+#     chat_history = data.get("history", [])
+    
+#     print(f"User Question: {user_question}")  # Logs the extracted user question
+#     print(f"Chat History: {chat_history}")  # Logs the extracted chat history
+#     response = asyncio.run(user_input(user_question, chat_history))
+#     return jsonify(response)
+
+@app.route("/chat", methods=["POST"])
 def chat():
-    print("BACKEND REQUEST RECEIVED .............")
-    print(request)
-    print("================================================")
-    # Get JSON data from request
-    # Log the raw request and the data extracted from it
-    print(f"Request Data: {request.data}")  # This logs the raw data (just to confirm it's coming through)
-    data = request.get_json()
+    data = request.json
+    question = data.get("question")
+    chat_history = data.get("chat_history", [])
     
-    print(f"Received data (JSON): {data}")  # This will print the parsed JSON
+    if not question:
+        return jsonify({"error": "Question is required"}), 400
     
-    user_question = data.get("question", "")
-    chat_history = data.get("history", [])
-    
-    print(f"User Question: {user_question}")  # Logs the extracted user question
-    print(f"Chat History: {chat_history}")  # Logs the extracted chat history
-    response = asyncio.run(user_input(user_question, chat_history))
-    return jsonify(response)
+    response = get_gemini_response(question, chat_history)
+    return jsonify({"response": response})
 
 @app.route("/recommend-articles", methods=["POST"])
 def get_recommendations():
