@@ -6,33 +6,8 @@ import convertStringList from "@/utils/helper";
 import Image from "next/image";
 import flaskapi from "@/utils/flaskapi";
 
-const docList = [
-  {
-    name: "Pratik Biswas",
-    specialist: "General Physician",
-    number: "+91 7845945778",
-    image: "/pb27.jpg",
-  },
-  {
-    name: "Chandrima Kar",
-    specialist: "General Physician",
-    number: "+91 7845945778",
-    image: "/ck.png",
-  },
-  {
-    name: "Md. Zaib Reyaz",
-    specialist: "General Physician",
-    number: "+91 7845945778",
-    image: "/mzr.png",
-  },
-];
-
 export default function DiseasePage() {
   const [formData, setFormData] = useState({
-    // fname: "",
-    // lname: "",
-    // phone: "",
-    // email: "",
     symptom_1: "",
     symptom_2: "",
     symptom_3: "",
@@ -40,6 +15,7 @@ export default function DiseasePage() {
     message: "",
   });
   const [predictionResult, setPredictionResult] = useState(null);
+  const [recommendedDoctors, setRecommendedDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isClient, setIsClient] = useState(false);
@@ -56,6 +32,20 @@ export default function DiseasePage() {
     }));
   };
 
+  const fetchRecommendedDoctors = async (predictedDisease) => {
+    try {
+      const response = await flaskapi.post("/recommend-doctors", {
+        predicted_disease: predictedDisease,
+      });
+      if (response.status === 200) {
+        setRecommendedDoctors(response.data.doctors);
+      }
+    } catch (error) {
+      setError("An error occurred while fetching recommended doctors.");
+      console.error("Error:", error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -66,6 +56,9 @@ export default function DiseasePage() {
 
       data.myDiet = convertStringList(data.myDiet);
       setPredictionResult(data);
+
+      // Fetch recommended doctors based on the predicted disease
+      await fetchRecommendedDoctors(data.predictedDisease);
     } catch (error) {
       setError("An error occurred while fetching the prediction.");
       console.error("Error:", error);
@@ -109,32 +102,6 @@ export default function DiseasePage() {
           -- Fill Your Information Here --
         </h3>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name & Contact Fields */}
-          {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {["fname", "lname", "phone", "email"].map((field) => (
-              <div key={field}>
-                <input
-                  type={
-                    field === "email"
-                      ? "email"
-                      : field === "phone"
-                      ? "tel"
-                      : "text"
-                  }
-                  name={field}
-                  id={field}
-                  placeholder={
-                    field.charAt(0).toUpperCase() +
-                    field.slice(1).replace("name", " Name")
-                  }
-                  value={formData[field]}
-                  onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
-                />
-              </div>
-            ))}
-          </div> */}
-
           {/* Symptom Selection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map((num) => (
@@ -144,8 +111,7 @@ export default function DiseasePage() {
                   id={`symptom_${num}`}
                   value={formData[`symptom_${num}`]}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm "
-                >
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm ">
                   <option value="">Select a symptom</option>
 
                   {/* Sorting the options alphabetically */}
@@ -155,8 +121,7 @@ export default function DiseasePage() {
                       <option
                         key={symptoms[symptom]}
                         value={symptom}
-                        className="overflow-y-auto"
-                      >
+                        className="overflow-y-auto">
                         {symptom
                           .split("_") // Split words
                           .map(
@@ -180,8 +145,7 @@ export default function DiseasePage() {
               rows={4}
               value={formData.message}
               onChange={handleInputChange}
-              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"
-            ></textarea>
+              className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm"></textarea>
           </div>
 
           {/* Submit Button */}
@@ -203,8 +167,7 @@ export default function DiseasePage() {
                   !formData.symptom_4)
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              }`}
-            >
+              }`}>
               {isLoading ? "Predicting..." : "Predict"}
             </button>
           </div>
@@ -216,8 +179,7 @@ export default function DiseasePage() {
         {error && (
           <div
             className="mt-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
+            role="alert">
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline"> {error}</span>
           </div>
@@ -260,126 +222,62 @@ export default function DiseasePage() {
                 ))}
               </div>
             </div>
-            {/* <div className="mt-6 text-center">
-              <a
-                href="/findpatient"
-                className="inline-flex items-center px-4 py-2 border border-transparent font-medium rounded-xl shadow-sm  transition-transform duration-700 ease transform  font-ubuntu w-fit cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Send For Review
-              </a>
-            </div> */}
-
-            <div className=" flex flex-col items-center justify-center mb-5">
-              <button
-                type="submit"
-                className="w-fit py-2 px-4 shadow-md font-medium font-ubuntu transition-all duration-500 transform bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-lg"
-              >
-                Send For Review
-              </button>
-            </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {docList.map((doc, id) => (
-                <div
-                  key={id}
-                  className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards"
-                >
-                  <img
-                    src={doc.image}
-                    alt={"Blog Image"}
-                    className="w-full h-full rounded-2xl object-cover"
-                  />
-                  <div className="text-dark_primary_text flex flex-col items-center justify-end gap-3 overflow-hidden left-0 bottom-0 absolute h-full w-full rounded-2xl px-3 py-10 blogCardsContents">
-                    <h3 className="text-center text-white font-bold font-playfair text-2xl">
-                      Dr. {doc.name}
-                    </h3>
+              <div className="col-span-full text-center mb-6">
+                <h3 className="text-2xl font-bold font-montserrat text-blue-800">
+                  🩺 Recommended Doctors for Your Condition 🩺
+                </h3>
+                <p className="text-gray-600 font-lato mt-2">
+                  Based on your symptoms, here are some highly qualified doctors
+                  who can help you.
+                </p>
+              </div>
+              {recommendedDoctors.length > 0 ? (
+                recommendedDoctors.map((doc, id) => (
+                  <div
+                    key={id}
+                    className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards">
+                    <img
+                      src={doc.image_url}
+                      alt={"Doctor Image"}
+                      className="w-full h-full rounded-2xl object-cover"
+                    />
+                    <div className="text-dark_primary_text flex flex-col items-center justify-end gap-3 overflow-hidden left-0 bottom-0 absolute h-full w-full rounded-2xl px-3 py-10 blogCardsContents">
+                      <h3 className="text-center text-white font-bold font-playfair text-2xl">
+                        Dr. {doc.first_name} {doc.last_name}
+                      </h3>
 
-                    <div className="italic text-sm tracking-wider font-playfair">
-                      <p className="text-sm text-gray-100">
-                        <b>Specialist:</b> {doc.specialist}
-                      </p>
+                      <div className="italic text-sm tracking-wider font-playfair">
+                        <p className="text-sm text-gray-100">
+                          <b>Specialist:</b> {doc.specialization}
+                        </p>
+                      </div>
+
+                      <a
+                        // href={`/blogs/${doc.id}`}
+                        className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu cursor-pointer focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110">
+                        Send For Review
+                      </a>
                     </div>
-
-                    <a
-                      // href={`/blogs/${doc.id}`}
-                      className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu cursor-pointer focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
-                    >
-                      Connect
-                    </a>
                   </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center mb-6">
+                  <h3 className="text-2xl font-bold font-montserrat text-blue-800">
+                    🩺 No Recommended Doctors Found 🩺
+                  </h3>
+                  <p className="text-gray-600 font-lato mt-2">
+                    We couldn't find any doctors matching your condition at the
+                    moment. Don't worry! Please check back later or consult a
+                    general physician for further assistance.
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}
       </div>
-
-      {/* <div className=" mx-auto flex flex-col items-center">
-        {error && (
-          <div
-            className="mt-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
-            role="alert"
-          >
-            <strong className="font-bold">Error!</strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
-        {predictionResult && (
-          <div className="mt-[20rem] bg-white shadow-md rounded-lg ">
-            <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                {predictionResult.predictedDisease}
-              </h3>
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-lg font-medium text-gray-900 mb-2">
-                    Description
-                  </h4>
-                  <p className="text-gray-600">{predictionResult.disDes}</p>
-                </div>
-                {[
-                  {
-                    title: "Precautions",
-                    items: predictionResult.myPrecautions,
-                  },
-                  {
-                    title: "Medications",
-                    items: predictionResult.medications,
-                  },
-                  {
-                    title: "Workouts",
-                    items: predictionResult.myWorkout,
-                  },
-                  {
-                    title: "Diet",
-                    items: predictionResult.myDiet,
-                  },
-                ].map((section, index) => (
-                  <div key={index}>
-                    <h4 className="text-lg font-medium text-gray-900 mb-2">
-                      {section.title}
-                    </h4>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {section.items.map((item, itemIndex) => (
-                        <li key={itemIndex} className="text-gray-600">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6">
-                <a
-                  href="/findpatient"
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  Send For Review
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
-      </div> */}
     </section>
   );
 }
