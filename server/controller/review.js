@@ -70,7 +70,7 @@ export const getSentReviews = async (req, res) => {
     const result = await pool.query(
       `SELECT r.id AS review_id, r.created_at, r.status,
                 d.id AS disease_id, d.predicted_disease,
-                p.id AS patient_id, p.first_name, p.last_name, p.phone
+                p.id AS patient_id, p.first_name, p.last_name, p.phone , p.image_url
          FROM reviews r
          JOIN disease d ON r.disease_id = d.id
          JOIN patients p ON d.patient_id = p.id

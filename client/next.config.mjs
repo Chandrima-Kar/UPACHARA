@@ -32,6 +32,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "images.unsplash.com", // Added new image source
+      },
+      {
+        protocol: "https",
         hostname: "www.verywellfit.com", // Added new image source
       },
       {
