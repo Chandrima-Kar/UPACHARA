@@ -8,6 +8,8 @@ import { DoctorHeader, PatientHeader } from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import Baseline from "@/components/Baseline/Baseline";
 import { UserProvider, useUser } from "@/context/UserContext";
+import HeaderDoctor from "@/components/Header/HeaderDoctor";
+import HeaderPatient from "@/components/Header/HeaderPatient";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,11 +30,11 @@ function LayoutContent({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground min-h-screen flex flex-col items-center justify-center`}>
         <ToastContainer />
         {role === "doctor" ? (
-          <DoctorHeader />
+          <HeaderDoctor />
         ) : (
           <>
             {" "}
-            <PatientHeader /> <Baseline />
+            <HeaderPatient /> <Baseline />
           </>
         )}
 
