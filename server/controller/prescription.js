@@ -73,6 +73,7 @@ export const create_prescription = async (req, res) => {
 export const get_prescription = async (req, res) => {
   try {
     const { appointmentId } = req.params;
+    console.log(appointmentId);
     const userId = req.user.id;
     const userRole = req.user.role;
 
@@ -143,7 +144,7 @@ export const update_prescription = async (req, res) => {
         .json({ error: "Unauthorized to update this prescription" });
     }
 
-    await pool.query("BEGIN"); 
+    await pool.query("BEGIN");
 
     const updateFields = [];
     const values = [];
@@ -201,11 +202,11 @@ export const update_prescription = async (req, res) => {
       }
     }
 
-    await pool.query("COMMIT"); 
+    await pool.query("COMMIT");
 
     res.json({ message: "Prescription updated successfully" });
   } catch (err) {
-    await pool.query("ROLLBACK"); 
+    await pool.query("ROLLBACK");
     console.error(err);
     res.status(500).json({ error: err.message || "Server error" });
   }

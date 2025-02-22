@@ -5,6 +5,9 @@ export default {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -14,7 +17,6 @@ export default {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -50,6 +52,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       animation: {
+        "pulse-slow": "pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        float: "float 3s ease-in-out infinite",
         "fade-in": "fadeIn 0.6s ease-out forwards",
       },
       keyframes: {
@@ -59,11 +63,11 @@ export default {
         },
       },
       fontFamily: {
-        open_sans: ["Open Sans", "sans-serif"], // normal text
+        open_sans: ["Open Sans", "sans-serif"],
         playfair: ["Playfair Display", "serif"],
-        lato: ["Lato", "sans-serif"], // secondary heading
-        montserrat: ["Montserrat", "sans-serif"], // primary heading
-        ubuntu: ["Ubuntu", "sans-serif"], // buttons
+        lato: ["Lato", "sans-serif"],
+        montserrat: ["Montserrat", "sans-serif"],
+        ubuntu: ["Ubuntu", "sans-serif"],
       },
     },
   },

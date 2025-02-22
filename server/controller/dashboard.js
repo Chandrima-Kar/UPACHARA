@@ -295,3 +295,48 @@ export const get_doctor_analytics = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+export const patientManagement = async (req, res) => {
+  const { patientId } = req.params;
+
+  try {
+    const [
+      medicalHistory,
+      allergies,
+      previousMedications,
+      vitalsHistory,
+      doctorNotes,
+    ] = await Promise.all([
+      pool.query(
+        "SELECT * FROM patient_medical_history WHERE patient_id = $1",
+        [patientId]
+      ),
+      pool.query("SELECT * FROM patient_allergies WHERE patient_id = $1", [
+        patientId,
+      ]),
+      pool.query(
+        "SELECT * FROM patient_previous_medications WHERE patient_id = $1",
+        [patientId]
+      ),
+      pool.query("SELECT * FROM patient_vitals_history WHERE patient_id = $1", [
+        patientId,
+      ]),
+      pool.query("SELECT * FROM doctor_notes WHERE patient_id = $1", [
+        patientId,
+      ]),
+    ]);
+
+    const response = {
+      medicalHistory: medicalHistory.rows,
+      allergies: allergies.rows,
+      previousMedications: previousMedications.rows,
+      vitalsHistory: vitalsHistory.rows,
+      doctorNotes: doctorNotes.rows,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Error fetching patient dashboard data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

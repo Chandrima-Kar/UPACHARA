@@ -117,3 +117,49 @@ INSERT INTO prescription_medicines (prescription_id, medicine_name, dosage, freq
 (5, 'Calcium', '1000mg', 'Once daily', 'Ongoing', 'Take with food.'),
 (5, 'Vitamin D', '1000 IU', 'Once daily', 'Ongoing', 'Take with food.'),
 (5, 'Physical Therapy Exercises', 'Perform daily', 'Ongoing', 'Ongoing', 'Follow instructions.');
+INSERT INTO patient_medical_history (patient_id, condition_name, diagnosis_date, status, notes) VALUES
+(6, 'Migraines', '2017-09-01', 'Chronic', 'Occasional migraines, managed with pain relievers.'),
+(7, 'None', NULL, 'None', 'No significant medical history.'),
+(8, 'Anemia', '2016-04-22', 'Chronic', 'Iron supplements prescribed.'),
+(9, 'Allergies', '2020-07-15', 'Chronic', 'Multiple environmental allergies.'),
+(10, 'None', NULL, 'None', 'No significant medical history.'),
+(1, 'Arthritis', '2022-01-10', 'Chronic', 'Pain management and physical therapy.'),
+(2, 'Depression', '2021-06-03', 'Chronic', 'Managing with medication and therapy.'),
+(3, 'GERD', '2023-03-18', 'Chronic', 'Dietary changes and medication prescribed.'),
+(4, 'Insomnia', '2022-09-25', 'Chronic', 'Sleep hygiene and occasional medication.');
+INSERT INTO patient_allergies (patient_id, allergen, severity, reaction, diagnosed_date) VALUES
+(1, 'Latex', 'Moderate', 'Rash, swelling', '2018-06-10'),
+(3, 'Soy', 'Mild', 'Upset stomach', '2022-02-14'),
+(7, 'Cats', 'Mild', 'Sneezing, itchy eyes', '2019-11-30'),
+(10, 'Peanuts', 'Severe', 'Anaphylaxis', '2014-08-05'),
+(4, 'Dogs', 'Mild', 'Sneezing', '2023-05-10'),
+(2, 'Grass', 'Moderate', 'Itchy skin, watery eyes', '2020-04-20'),
+(6, 'Eggs', 'Severe', 'Vomiting, hives', '2016-12-08'),
+(9, 'Mold', 'Mild', 'Coughing', '2021-09-15');
+INSERT INTO patient_previous_medications (patient_id, medication_name, dosage, frequency, start_date, end_date, prescribed_by, status, notes) VALUES
+(4, 'Ibuprofen', '200mg', 'As needed', '2023-01-20', NULL, 'Dr. Green', 'active', 'For pain relief.'),
+(5, 'Cetirizine', '10mg', 'Daily', '2021-03-05', NULL, 'Dr. Lee', 'active', 'For allergies.'),
+(7, 'Vitamin D', '1000 IU', 'Daily', '2022-05-01', NULL, 'Dr. Patel', 'active', 'Supplement.'),
+(8, 'Iron Supplements', '325mg', 'Daily', '2016-04-22', NULL, 'Dr. Kim', 'active', 'For anemia.'),
+(9, 'Fluticasone Nasal Spray', '2 sprays', 'Daily', '2020-07-15', NULL, 'Dr. Chen', 'active', 'For allergies.'),
+(10, 'EpiPen', '0.3mg', 'As needed', '2014-08-05', NULL, 'Dr. Rodriguez', 'active', 'For severe allergic reactions.'),
+(1, 'Celecoxib', '200mg', 'Twice daily', '2022-01-10', NULL, 'Dr. Wilson', 'active', 'For arthritis pain.'),
+(2, 'Sertraline', '50mg', 'Daily', '2021-06-03', NULL, 'Dr. Davis', 'active', 'For depression.');
+INSERT INTO patient_vitals_history (patient_id, appointment_id, blood_pressure, heart_rate, temperature, respiratory_rate, oxygen_saturation, weight, height, bmi, notes, recorded_by) VALUES
+(6, 4, '122/80', 70, 36.5, 16, 99, 68.0, 168.0, 24.1, 'Migraine checkup', 5),
+(7, 6, '115/75', 66, 36.7, 17, 98, 72.0, 172.0, 24.3, 'Routine checkup', 6),
+(8, 8, '128/82', 78, 36.9, 18, 97, 78.0, 178.0, 24.6, 'Anemia follow-up', 7),
+(9, 10, '120/80', 72, 36.8, 16, 99, 66.0, 165.0, 24.2, 'Allergy consultation', 8),
+(10, 2, '110/70', 64, 36.6, 15, 98, 70.0, 170.0, 24.2, 'General checkup', 9),
+(1, 1, '132/84', 74, 37.0, 17, 98, 71.0, 176.0, 22.9, 'Arthritis pain assessment', 1),
+(2, 3, '124/78', 69, 36.8, 16, 99, 81.0, 181.0, 24.7, 'Mental health follow-up', 2),
+(3, 5, '142/92', 82, 37.1, 19, 97, 91.0, 166.0, 33.1, 'GERD symptom review', 3);
+INSERT INTO doctor_notes (patient_id, doctor_id, appointment_id, note_type, notes) VALUES
+(6, 5, 4, 'Consultation', 'Reviewed migraine triggers and treatment options.'),
+(7, 6, 6, 'Checkup', 'Patient is in good health.'),
+(8, 7, 8, 'Follow-up', 'Iron levels improved, continue medication.'),
+(9, 8, 10, 'Allergy', 'Discussed environmental allergy management.'),
+(10, 9, 2, 'Checkup', 'General health assessment performed.'),
+(1, 1, 1, 'Assessment', 'Evaluating effectiveness of current arthritis treatment.'),
+(2, 2, 3, 'Therapy', 'Discussed coping strategies for depression.'),
+(3, 3, 5, 'Review', 'Adjusted GERD medication and dietary recommendations.');
