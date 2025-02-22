@@ -145,6 +145,7 @@ def predict():
         db.session.commit()
 
         return jsonify({
+            'diseaseId': disease_entry.id,
             'predictedDisease': predicted_disease,
             'disDes': dis_des,
             'myPrecautions': my_precautions,
