@@ -208,7 +208,7 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <>
+            <div className="flex items-center justify-center gap-2">
               <Link
                 href="/login"
                 className="transition-transform duration-700 ease font-medium text-blue-500 hover:text-blue-700 transform hover:scale-110"
@@ -221,7 +221,7 @@ const Header = () => {
               >
                 Sign Up
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>

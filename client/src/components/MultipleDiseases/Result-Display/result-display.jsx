@@ -2,6 +2,27 @@
 
 import { useEffect, useState } from "react";
 
+const docList = [
+  {
+    name: "Pratik Biswas",
+    specialist: "MBA, Md - Cardiologist",
+    number: "+91 7845945778",
+    image: "/doctor2.jpg",
+  },
+  {
+    name: "Chandrima Kar",
+    specialist: "MBA - Cardiologist",
+    number: "+91 7845945778",
+    image: "/doctor4.jpeg",
+  },
+  {
+    name: "Md. Zaib Reyaz",
+    specialist: "MBA, Md - Cardiologist",
+    number: "+91 7845945778",
+    image: "/doctor3.jpg",
+  },
+];
+
 export function ResultDisplay({ data }) {
   const [displayText, setDisplayText] = useState("");
   const [isTypingComplete, setIsTypingComplete] = useState(false);
@@ -26,7 +47,7 @@ export function ResultDisplay({ data }) {
   }, [description]);
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 p-4">
+    <div className="w-full max-w-5xl mx-auto space-y-6 p-4 flex flex-col items-center justify-center">
       <div className="text-center space-y-4 mb-8">
         <h2 className="text-3xl font-montserrat text-black text-center">
           ⚕️{data?.report?.name_of_disease[0]}⚕️
@@ -234,6 +255,44 @@ export function ResultDisplay({ data }) {
           </div>
         </div>
       )}
+
+      <div className="flex flex-col items-center justify-center gap-10 mt-10">
+        <h1 className="text-3xl font-bold font-montserrat">
+          Recommended Doctors - Cardiologist
+        </h1>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
+          {docList.map((doc, id) => (
+            <div
+              key={id}
+              className="relative w-full mb-7 h-auto rounded-2xl overflow-hidden shadow-lg blogCards"
+            >
+              <img
+                src={doc.image}
+                alt={"Blog Image"}
+                className="w-full h-full rounded-2xl object-cover"
+              />
+              <div className="text-dark_primary_text flex flex-col items-center justify-end gap-3 overflow-hidden left-0 bottom-0 absolute h-full w-full rounded-2xl px-3 py-10 blogCardsContents">
+                <h3 className="text-center text-white font-bold font-playfair text-2xl">
+                  Dr. {doc.name}
+                </h3>
+
+                <div className="italic text-sm tracking-wider font-playfair">
+                  <p className="text-sm text-gray-100">
+                    <b>Specialist:</b> {doc.specialist}
+                  </p>
+                </div>
+
+                <a
+                  // href={`/blogs/${doc.id}`}
+                  className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu cursor-pointer focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
+                >
+                  Connect
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -143,7 +143,7 @@ const DoctorDashboard = () => {
   ];
 
   return (
-    <div className="p-6 min-h-screen bg-gray-50">
+    <div className="p-6 mb-8 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-center">
