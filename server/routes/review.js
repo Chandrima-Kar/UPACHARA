@@ -6,7 +6,7 @@ import {
 } from "../middleware/index.js";
 import {
   getSentReviews,
-  getReviewByPatient,
+  getReviewById,
   sendReview,
   updateReviewStatus,
 } from "../controller/review.js";
@@ -17,18 +17,8 @@ router.post("/:doctorId", authenticateToken, authorizePatient, sendReview);
 
 router.get("/", authenticateToken, authorizeDoctor, getSentReviews);
 
-router.get(
-  "/:patientId",
-  authenticateToken,
-  authorizeDoctor,
-  getReviewByPatient
-);
+router.get("/:id", authenticateToken, authorizeDoctor, getReviewById);
 
-router.put(
-  "/:reviewId",
-  authenticateToken,
-  authorizeDoctor,
-  updateReviewStatus
-);
+router.put("/:id", authenticateToken, authorizeDoctor, updateReviewStatus);
 
 export default router;

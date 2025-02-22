@@ -24,14 +24,14 @@ export const sendReview = async (req, res) => {
   }
 };
 
-export const getReviewByPatient = async (req, res) => {
+export const getReviewById = async (req, res) => {
   try {
     const doctorId = req.user.id;
-    const { patientId } = req.params;
-
+    const { id } = req.params;
     const result = await pool.query(
       `SELECT 
           r.id AS review_id, 
+          r.status,
           r.created_at, 
           d.id AS disease_id, 
           d.predicted_disease, 
@@ -48,14 +48,12 @@ export const getReviewByPatient = async (req, res) => {
        FROM reviews r
        JOIN disease d ON r.disease_id = d.id
        JOIN patients p ON d.patient_id = p.id
-       WHERE r.doctor_id = $1 AND d.patient_id = $2`,
-      [doctorId, patientId]
+       WHERE r.doctor_id = $1 AND r.id = $2`,
+      [doctorId, id]
     );
 
     if (result.rows.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No review found for this patient" });
+      return res.status(404).json({ error: "No review found with this ID" });
     }
 
     res.json(result.rows[0]);
@@ -90,7 +88,7 @@ export const getSentReviews = async (req, res) => {
 
 export const updateReviewStatus = async (req, res) => {
   try {
-    const { reviewId } = req.params;
+    const { id } = req.params;
     const doctorId = req.user.id;
 
     const result = await pool.query(
@@ -98,7 +96,7 @@ export const updateReviewStatus = async (req, res) => {
          SET status = 'reviewed'
          WHERE id = $1 AND doctor_id = $2 AND status = 'sent'
          RETURNING *`,
-      [reviewId, doctorId]
+      [id, doctorId]
     );
 
     if (result.rows.length === 0) {
