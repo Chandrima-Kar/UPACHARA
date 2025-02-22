@@ -2,15 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaUser, FaPhone, FaCalendar, FaStethoscope } from "react-icons/fa";
-import { useRouter } from "next/navigation"; // Import useRouter
+import {
+  FaUser,
+  FaPhone,
+  FaCalendar,
+  FaStethoscope,
+} from "react-icons/fa";
 import api from "@/utils/api";
 
 export default function ReportReviewsPage() {
   const [reviews, setReviews] = useState([]);
+  const [selectedReview, setSelectedReview] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const router = useRouter(); // Initialize useRouter
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -27,10 +31,10 @@ export default function ReportReviewsPage() {
     fetchReviews();
   }, []);
 
-  const handleReviewClick = (reviewId) => {
-    // Redirect to the single review page
-    router.push(`/reviews/${reviewId}`);
+  const handleReviewClick = (review) => {
+    setSelectedReview(review);
   };
+
 
   if (isLoading) {
     return (
@@ -42,12 +46,13 @@ export default function ReportReviewsPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-r from-blue-50 to-purple-50">
+      <div className="flex items-center justify-center h-screen">
         <div className="text-red-500 text-2xl font-bold">{error}</div>
       </div>
     );
   }
 
+  console.log(selectedReview);
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -71,61 +76,41 @@ export default function ReportReviewsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer w-full max-w-2xl mx-auto" // Adjusted width
-                onClick={() => handleReviewClick(review.review_id)} // Pass review ID
-              >
-                <div className="p-8">
-                  {" "}
-                  {/* Increased padding */}
-                  <div className="flex items-center space-x-6 mb-6">
-                    {" "}
-                    {/* Increased spacing */}
-                    <div className="p-4 bg-blue-100 rounded-full">
-                      {" "}
-                      {/* Increased padding */}
-                      <FaUser className="text-blue-500 w-8 h-8" />{" "}
-                      {/* Increased icon size */}
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer"
+                onClick={() => handleReviewClick(review)}>
+                <div className="p-6">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="p-3 bg-blue-100 rounded-full">
+                      <FaUser className="text-blue-500 w-6 h-6" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-semibold text-gray-900">
-                        {" "}
-                        {/* Increased font size */}
+                      <h2 className="text-xl font-semibold text-gray-900">
                         {review.first_name} {review.last_name}
                       </h2>
-                      <p className="text-md text-gray-500 flex items-center">
-                        {" "}
-                        {/* Increased font size */}
+                      <p className="text-sm text-gray-500 flex items-center">
                         <FaPhone className="mr-2" />
                         {review.phone}
                       </p>
                     </div>
                   </div>
-                  <div className="space-y-4">
-                    {" "}
-                    {/* Increased spacing */}
+
+                  <div className="space-y-2">
                     <div>
-                      <h3 className="text-xl font-medium text-gray-800 flex items-center">
-                        {" "}
-                        {/* Increased font size */}
+                      <h3 className="text-lg font-medium text-gray-800 flex items-center">
                         <FaStethoscope className="mr-2 text-purple-500" />
                         Predicted Disease
                       </h3>
-                      <p className="text-gray-600 text-lg">
-                        {" "}
-                        {/* Increased font size */}
+                      <p className="text-gray-600">
                         {review.predicted_disease}
                       </p>
                     </div>
+
                     <div>
-                      <h3 className="text-xl font-medium text-gray-800 flex items-center">
-                        {" "}
-                        {/* Increased font size */}
+                      <h3 className="text-lg font-medium text-gray-800 flex items-center">
                         <FaCalendar className="mr-2 text-green-500" />
                         Review Created At
                       </h3>
-                      <p className="text-gray-600 text-lg">
-                        {" "}
-                        {/* Increased font size */}
+                      <p className="text-gray-600">
                         {new Date(review.created_at).toLocaleString()}
                       </p>
                     </div>
