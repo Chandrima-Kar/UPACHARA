@@ -1,5 +1,6 @@
 import os
 import sys
+import psycopg2
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
@@ -37,8 +38,9 @@ from src.Food.food import food_report_generator
 #from src.ChatBot.chatbot import ingest_data,user_input
 from src.ChatBot.chatbot import get_gemini_response
 from src.recommendarticles.articles_recommendation import recommend_articles
+from src.doctors_recommendation.doctors_recommendation import recommend_doctors
 from utils.helper import get_patient_id_from_token
-
+from psycopg2.extras import RealDictCursor
 
 current_dir = os.path.abspath(os.path.dirname(__file__))
 cors_origin = os.getenv("FLASK_CORS_ORIGIN", "*")
@@ -84,7 +86,10 @@ class Disease(db.Model):
 with app.app_context():
     Disease.__table__.create(db.engine, checkfirst=True)
 
-
+# Function to get a database connection
+def get_db_connection():
+    conn = psycopg2.connect(flask_postgres_connection)
+    return conn
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -471,6 +476,32 @@ def get_recommendations():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# Endpoint to recommend doctors based on predicted disease
+@app.route("/recommend-doctors", methods=["POST"])
+def recommend_doctors_endpoint():
+    # Get the predicted disease from the request
+    data = request.get_json()
+    predicted_disease = data.get("predicted_disease")
+
+    if not predicted_disease:
+        return jsonify({"error": "Predicted disease is required"}), 400
+    
+    # Get a database connection
+    conn = get_db_connection()
+    
+    try:
+        # Call the recommend_doctors function
+        # with db.engine.connect() as conn:  # Establish connection manually
+        return recommend_doctors(predicted_disease, conn)
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    finally:
+        # Ensure the connection is closed
+        if conn:
+            conn.close()
+    
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
