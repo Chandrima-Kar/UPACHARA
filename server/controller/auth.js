@@ -180,7 +180,7 @@ export const patient_login = async (req, res) => {
     const token = jwt.sign(
       { id: patient.id, role: "patient" },
       process.env.JWT_SECRET || "your-secret-key",
-      { expiresIn: "1h" }
+      { expiresIn: "10d" }
     );
 
     res.json({ token, role: "patient" });
