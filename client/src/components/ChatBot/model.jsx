@@ -8,7 +8,7 @@
  */
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = process.env.GOOGLE_API_KEY;
+const apiKey = "AIzaSyBLvGgf-IdpH2fakfG0O2aNHwMoCsdKp-A";
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -23,7 +23,7 @@ const generationConfig = {
   responseMimeType: "application/json",
 };
 
-// Define the prompt and session for the Heritage and Culture Expert
+// Define the prompt and session for the Biomedical and Healthcare Management System Expert
 export const chatSession = model.startChat({
   generationConfig,
   history: [
@@ -31,7 +31,7 @@ export const chatSession = model.startChat({
       role: "user",
       parts: [
         {
-          text: "You are an expert in heritage and culture. Act as an expert in {language} and answer all the questions in the same language. Keep information precise, and if someone asks something irrelevant, respond that it's irrelevant.",
+          text: "You are an expert in Biomedical and Healthcare Management System. Act as an expert in Biomedical and Healthcare and answer all the questions related only to this field. Keep information precise, and if someone asks something irrelevant, respond that it's irrelevant.",
         },
       ],
     },
@@ -41,8 +41,8 @@ export const chatSession = model.startChat({
         {
           text: `
 {
-  "response": "Sure, I can help with heritage and culture information in the specified language. Please ask your question.",
-  "irrelevantResponse": "The question asked is irrelevant to heritage and culture. Please ask a relevant question."
+  "response": "Sure, I can help with Biomedical and Healthcare Management System information in the specified language. Please ask your question.",
+  "irrelevantResponse": "The question asked is irrelevant to Biomedical and Healthcare Management System. Please ask a relevant question."
 }`,
         },
       ],
@@ -57,7 +57,9 @@ export const askExpert = async (question, language) => {
       {
         role: "user",
         parts: [
-          { text: `Please provide information about the cultural heritage of Egypt in ${language}.` },
+          {
+            text: `Please provide information about the cultural heritage of Egypt in ${language}.`,
+          },
         ],
       },
     ],
