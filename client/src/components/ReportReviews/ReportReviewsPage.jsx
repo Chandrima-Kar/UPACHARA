@@ -2,15 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  FaUser,
-  FaPhone,
-  FaCalendar,
-  FaStethoscope,
-} from "react-icons/fa";
+import { FaUser, FaPhone, FaCalendar, FaStethoscope } from "react-icons/fa";
 import api from "@/utils/api";
+import { useRouter } from "next/navigation";
 
 export default function ReportReviewsPage() {
+  const router = useRouter();
   const [reviews, setReviews] = useState([]);
   const [selectedReview, setSelectedReview] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,9 +29,8 @@ export default function ReportReviewsPage() {
   }, []);
 
   const handleReviewClick = (review) => {
-    setSelectedReview(review);
+    router.push(`/review/${review.review_id}`);
   };
-
 
   if (isLoading) {
     return (

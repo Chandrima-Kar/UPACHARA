@@ -24,7 +24,7 @@ export default function ReviewPage() {
     const fetchReview = async () => {
       try {
         const response = await api.get(
-          `http://localhost:8000/api/review/${id}`
+          `/review/${id}`
         );
         setReview(response.data);
         setLoading(false);
@@ -39,7 +39,7 @@ export default function ReviewPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+      <div className="flex justify-center items-center h-screen m-4">
         <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
       </div>
     );
@@ -50,7 +50,7 @@ export default function ReviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-8">
+    <div className="min-h-screen mb-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
