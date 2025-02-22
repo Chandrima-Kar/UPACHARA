@@ -41,6 +41,18 @@ export default function DrugResponsePage() {
     }
   };
 
+  const handleAutofill = () => {
+    setFormData({
+      drug_name: "Aspirin",
+      gender: "Male",
+      age: "45",
+      bmi: "24.5",
+      past_medical_conditions: "Hypertension, High Cholesterol",
+      existing_health_conditions: "Mild Arthritis",
+      allergies: "None",
+    });
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -72,6 +84,13 @@ export default function DrugResponsePage() {
           <h3 className="text-lg font-medium font-mono text-gray-900 mb-4 text-center">
             -- Fill Your Medication Information Here --
           </h3>
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={handleAutofill}
+              className="bg-green-500 text-white py-2 px-4 rounded-md shadow-md font-medium font-ubuntu transition-all duration-500 transform hover:bg-green-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+              Autofill Sample Data
+            </button>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 items-center justify-center gap-2">
@@ -95,8 +114,7 @@ export default function DrugResponsePage() {
                     value={formData.gender}
                     onChange={handleChange}
                     required
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm"
-                  >
+                    className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato sm:text-sm">
                     <option value="" disabled selected>
                       Select Gender
                     </option>
@@ -143,8 +161,7 @@ export default function DrugResponsePage() {
                   onChange={handleChange}
                   required
                   rows="3"
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm max-h-28"
-                ></textarea>
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm max-h-28"></textarea>
               </div>
 
               {/* Existing Health Conditions */}
@@ -156,8 +173,7 @@ export default function DrugResponsePage() {
                   onChange={handleChange}
                   required
                   rows="3"
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm max-h-28"
-                ></textarea>
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm max-h-28"></textarea>
               </div>
 
               {/* Allergies */}
@@ -169,8 +185,7 @@ export default function DrugResponsePage() {
                   onChange={handleChange}
                   required
                   rows="3"
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm max-h-28"
-                ></textarea>
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 font-lato placeholder:font-sans sm:text-sm max-h-28"></textarea>
               </div>
             </div>
 
@@ -199,8 +214,7 @@ export default function DrugResponsePage() {
                   !formData.past_medical_conditions
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-blue-500 text-white hover:bg-blue-700 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                }`}
-              >
+                }`}>
                 {isLoading ? "Submitting..." : "Submit"}
               </button>
             </div>
@@ -226,8 +240,7 @@ export default function DrugResponsePage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
-                >
+                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                   <div className="p-6">
                     <h2 className="text-lg font-semibold font-mono text-black mb-2">
                       {effect.side_effect} 😷

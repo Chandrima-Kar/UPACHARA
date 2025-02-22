@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import api from "@/utils/api";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function SingleAppointmentPage() {
   const { id: appointmentId } = useParams();

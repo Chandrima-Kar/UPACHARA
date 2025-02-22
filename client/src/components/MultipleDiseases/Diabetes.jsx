@@ -103,7 +103,7 @@ const DiabetesPredictor = () => {
             ))}
           </div>
 
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center space-x-4">
             <button
               type="submit"
               disabled={isLoading}
@@ -111,13 +111,13 @@ const DiabetesPredictor = () => {
             >
               {isLoading ? "Processing..." : "Predict"}
             </button>
-            {/* <button
+            <button
               type="button"
               onClick={autofillData}
               className="px-4 py-2 bg-gray-500 text-white rounded-md"
             >
               Autofill Test Data
-            </button> */}
+            </button>
           </div>
         </form>
       </div>
