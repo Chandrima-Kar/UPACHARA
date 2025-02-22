@@ -9,6 +9,7 @@ import appointmentRouter from "./routes/appointment.js";
 import doctorRouter from "./routes/doctor.js";
 import dashboardRouter from "./routes/dashboard.js";
 import prescriptionRouter from "./routes/prescription.js";
+import reviewRouter from "./routes/review.js";
 
 const app = express();
 dotenv.config();
@@ -42,6 +43,8 @@ app.use("/api/doctor", doctorRouter);
 app.use("/api/dashboard", dashboardRouter);
 
 app.use("/api/prescription", prescriptionRouter);
+
+app.use("/api/review", reviewRouter);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

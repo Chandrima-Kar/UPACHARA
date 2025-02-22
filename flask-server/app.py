@@ -76,7 +76,6 @@ class Disease(db.Model):
     predicted_disease = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(200))
     precautions = db.Column(db.JSON)
-    medications = db.Column(db.JSON)
     diet = db.Column(db.JSON)
     workout = db.Column(db.JSON)
     created_at = db.Column(db.TIMESTAMP, default=datetime.utcnow)
@@ -127,7 +126,6 @@ def predict():
             predicted_disease=predicted_disease,
             description=dis_des,
             precautions=my_precautions,
-            medications=medications,
             diet=rec_diet,
             workout=rec_workout
         )

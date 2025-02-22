@@ -8,6 +8,7 @@ import initPatientManagementTables from "./tables/patientManagementTable.js";
 import fs from "fs";
 import path from "path";
 import { Sequelize } from "sequelize";
+import reviewTable from "./tables/review.js";
 
 const sequelize = new Sequelize("upachara_db", "postgres", "tulshi paul", {
   host: "localhost",
@@ -23,6 +24,7 @@ export async function initDB(pool) {
     await initPatientManagementTables(pool);
     await doctorTable(pool);
     await prescriptionTable(pool);
+    await reviewTable(pool);
     console.log("Database initialized successfully");
     await sequelize.sync({ alter: true });
     console.log("✅ Database synchronized");

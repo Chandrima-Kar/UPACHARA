@@ -52,6 +52,47 @@ router.get(
   patientManagement
 );
 
+router.get(
+  "/doctor-patients",
+  authenticateToken,
+  authorizeDoctor,
+  async (req, res) => {
+    const doctor_id = req.user.id
+
+    try {
+      const patientIdsResult = await pool.query(
+        `SELECT DISTINCT patient_id 
+           FROM appointments 
+           WHERE doctor_id = $1`,
+        [doctor_id]
+      );
+
+      if (patientIdsResult.rows.length === 0) {
+        return res
+          .status(200)
+          .json({
+            message: "No patients found for this doctor.",
+            patients: [],
+          });
+      }
+
+      const patientIds = patientIdsResult.rows.map((row) => row.patient_id);
+
+      const patientsResult = await pool.query(
+        `SELECT id, first_name, last_name, email, date_of_birth, gender, blood_group, phone, address, image_url 
+           FROM patients 
+           WHERE id = ANY($1)`,
+        [patientIds]
+      );
+
+      res.status(200).json({ patients: patientsResult.rows });
+    } catch (error) {
+      console.error("Error fetching patient list for doctor:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
+
 router.post(
   "/medical-history",
   authenticateToken,

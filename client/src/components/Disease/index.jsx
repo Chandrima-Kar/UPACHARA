@@ -64,7 +64,6 @@ export default function DiseasePage() {
     try {
       const { data } = await flaskapi.post("/predict", formData);
 
-      data.medications = convertStringList(data.medications);
       data.myDiet = convertStringList(data.myDiet);
       setPredictionResult(data);
     } catch (error) {
@@ -242,10 +241,6 @@ export default function DiseasePage() {
                   {
                     title: "⚠️ Precautions",
                     items: predictionResult.myPrecautions,
-                  },
-                  {
-                    title: "💊 Medications",
-                    items: predictionResult.medications,
                   },
                   { title: "🏋🏻‍♂️ Workouts", items: predictionResult.myWorkout },
                   { title: "🍽️ Diet", items: predictionResult.myDiet },

@@ -42,6 +42,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "avatars.githubusercontent.com", // Added new image source
       },
+      {
+        protocol: "https",
+        hostname: "randomuser.me", // Added new image source
+      },
     ],
   },
 };
