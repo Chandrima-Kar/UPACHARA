@@ -296,47 +296,36 @@ export const get_doctor_analytics = async (req, res) => {
   }
 };
 
-export const patientManagement = async (req, res) => {
-  const { patientId } = req.params;
+export const doctor_patients = async (req, res) => {
+  const doctor_id = req.user.id;
 
   try {
-    const [
-      medicalHistory,
-      allergies,
-      previousMedications,
-      vitalsHistory,
-      doctorNotes,
-    ] = await Promise.all([
-      pool.query(
-        "SELECT * FROM patient_medical_history WHERE patient_id = $1",
-        [patientId]
-      ),
-      pool.query("SELECT * FROM patient_allergies WHERE patient_id = $1", [
-        patientId,
-      ]),
-      pool.query(
-        "SELECT * FROM patient_previous_medications WHERE patient_id = $1",
-        [patientId]
-      ),
-      pool.query("SELECT * FROM patient_vitals_history WHERE patient_id = $1", [
-        patientId,
-      ]),
-      pool.query("SELECT * FROM doctor_notes WHERE patient_id = $1", [
-        patientId,
-      ]),
-    ]);
+    const patientIdsResult = await pool.query(
+      `SELECT DISTINCT patient_id 
+           FROM appointments 
+           WHERE doctor_id = $1`,
+      [doctor_id]
+    );
 
-    const response = {
-      medicalHistory: medicalHistory.rows,
-      allergies: allergies.rows,
-      previousMedications: previousMedications.rows,
-      vitalsHistory: vitalsHistory.rows,
-      doctorNotes: doctorNotes.rows,
-    };
+    if (patientIdsResult.rows.length === 0) {
+      return res.status(200).json({
+        message: "No patients found for this doctor.",
+        patients: [],
+      });
+    }
 
-    res.status(200).json(response);
+    const patientIds = patientIdsResult.rows.map((row) => row.patient_id);
+
+    const patientsResult = await pool.query(
+      `SELECT id, first_name, last_name, email, date_of_birth, gender, blood_group, phone, address, image_url 
+           FROM patients 
+           WHERE id = ANY($1)`,
+      [patientIds]
+    );
+
+    res.status(200).json({ patients: patientsResult.rows });
   } catch (error) {
-    console.error("Error fetching patient dashboard data:", error);
+    console.error("Error fetching patient list for doctor:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

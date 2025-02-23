@@ -146,7 +146,7 @@ const ChatInterface = ({ onClose }) => {
 
       {/* Chat Header */}
       <div className="text-xl font-montserrat font-semibold flex gap-2  text-blue-900">
-        <BsRobot className="w-6 h-6 text-blue-950 " /> Chat with Swasthya Sathi
+        <BsRobot className="w-6 h-6 text-blue-950 " /> Chat with our assistant
       </div>
 
       {/* <div

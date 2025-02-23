@@ -5,19 +5,13 @@ import { useEffect, useState } from "react";
 const docList = [
   {
     name: "Pratik Biswas",
-    specialist: "MBA, Md - Cardiologist",
+    specialist: "MBA, Md - Neurologist",
     number: "+91 7845945778",
     image: "/doctor2.jpg",
   },
   {
-    name: "Chandrima Kar",
-    specialist: "MBA - Cardiologist",
-    number: "+91 7845945778",
-    image: "/doctor4.jpeg",
-  },
-  {
     name: "Md. Zaib Reyaz",
-    specialist: "MBA, Md - Cardiologist",
+    specialist: "MBA, Md - Neurologist",
     number: "+91 7845945778",
     image: "/doctor3.jpg",
   },
@@ -258,7 +252,7 @@ export function ResultDisplay({ data }) {
 
       <div className="flex flex-col items-center justify-center gap-10 mt-10">
         <h1 className="text-3xl font-bold font-montserrat">
-          Recommended Doctors - Cardiologist
+          Recommended Doctors - Neurologist
         </h1>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
           {docList.map((doc, id) => (
@@ -286,7 +280,7 @@ export function ResultDisplay({ data }) {
                   // href={`/blogs/${doc.id}`}
                   className="w-fit py-1 px-4 text-white bg-blue-500 rounded-md shadow-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 font-ubuntu cursor-pointer focus:ring-blue-500 disabled:opacity-50 transition-all duration-500 transform hover:scale-110"
                 >
-                  Connect
+                  Send for review
                 </a>
               </div>
             </div>

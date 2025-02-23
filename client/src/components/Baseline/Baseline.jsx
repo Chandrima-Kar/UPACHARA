@@ -105,7 +105,7 @@ const Baseline = () => {
               exit={{ opacity: 0, y: 10 }}
               className="absolute -top-0 bg-gray-700 text-white px-4 py-1 rounded-md text-xs shadow-lg whitespace-nowrap"
             >
-              Swasthya Sathi
+              Upachara Assistant
             </motion.div>
           )}
           <BsRobot className="w-6 h-6 text-blue-950 " />

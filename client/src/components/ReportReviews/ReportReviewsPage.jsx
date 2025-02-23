@@ -2,8 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaUser, FaPhone, FaCalendar, FaStethoscope } from "react-icons/fa";
+import {
+  Phone,
+  Calendar,
+  Stethoscope,
+  ChevronRight,
+  Search,
+} from "lucide-react";
 import api from "@/utils/api";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function ReportReviewsPage() {
@@ -50,66 +57,91 @@ export default function ReportReviewsPage() {
 
   console.log(selectedReview);
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-purple-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen  py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.h1
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-4xl font-bold text-center text-gray-900 mb-8">
-          🩺 Patient Reviews 🩺
+          transition={{ duration: 0.8, type: "spring", bounce: 0.5 }}
+          className="text-5xl font-extrabold text-center text-white mb-12 tracking-tight"
+        >
+          🩺 Patient Reviews Dashboard 🩺
         </motion.h1>
 
         {reviews?.length === 0 ? (
-          <div className="text-center text-gray-600">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center text-white text-xl bg-opacity-50 bg-white backdrop-filter backdrop-blur-lg rounded-xl p-8 shadow-xl"
+          >
+            <Search className="w-16 h-16 mx-auto mb-4 text-purple-200" />
             <p>No reviews found for this patient.</p>
-          </div>
+          </motion.div>
         ) : (
-          <div className="space-y-6">
-            {reviews?.map((review) => (
+          <div className="space-y-8">
+            {reviews?.map((review, index) => (
               <motion.div
                 key={review.review_id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 cursor-pointer"
-                onClick={() => handleReviewClick(review)}>
-                <div className="p-6">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="p-3 bg-blue-100 rounded-full">
-                      <FaUser className="text-blue-500 w-6 h-6" />
-                    </div>
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg rounded-2xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-300 transform hover:scale-105 cursor-pointer"
+                onClick={() => handleReviewClick(review)}
+              >
+                <div className="p-8">
+                  <div className="flex items-center space-x-6 mb-6">
+                    <Image
+                      src={review.image_url}
+                      alt="Profile"
+                      width={100}
+                      height={50}
+                      className="rounded-full object-cover"
+                    />
+
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-900">
+                      <h2 className="text-2xl font-bold text-gray-800">
                         {review.first_name} {review.last_name}
                       </h2>
-                      <p className="text-sm text-gray-500 flex items-center">
-                        <FaPhone className="mr-2" />
+                      <p className="text-md text-gray-600 flex items-center mt-1">
+                        <Phone className="mr-2 text-purple-500" />
                         {review.phone}
                       </p>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-800 flex items-center">
-                        <FaStethoscope className="mr-2 text-purple-500" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-blue-50 rounded-xl p-4 shadow-inner">
+                      <h3 className="text-lg font-semibold text-blue-800 flex items-center mb-2">
+                        <Stethoscope className="mr-2 text-blue-600" />
                         Predicted Disease
                       </h3>
-                      <p className="text-gray-600">
+                      <p className="text-gray-700 font-medium">
                         {review.predicted_disease}
                       </p>
                     </div>
 
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-800 flex items-center">
-                        <FaCalendar className="mr-2 text-green-500" />
+                    <div className="bg-purple-50 rounded-xl p-4 shadow-inner">
+                      <h3 className="text-lg font-semibold text-purple-800 flex items-center mb-2">
+                        <Calendar className="mr-2 text-purple-600" />
                         Review Created At
                       </h3>
-                      <p className="text-gray-600">
+                      <p className="text-gray-700 font-medium">
                         {new Date(review.created_at).toLocaleString()}
                       </p>
                     </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-end">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center text-purple-600 font-semibold hover:text-purple-800 transition-colors duration-300"
+                      onClick={() => handleReviewClick(review)}
+                    >
+                      View Details
+                      <ChevronRight className="ml-2" />
+                    </motion.button>
                   </div>
                 </div>
               </motion.div>

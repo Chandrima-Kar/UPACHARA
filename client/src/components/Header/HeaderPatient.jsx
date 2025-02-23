@@ -39,12 +39,14 @@ const HeaderPatient = () => {
         <nav className="flex space-x-7 text-gray-700 font-ubuntu text-base">
           <Link
             href="/"
-            className="header_links transition-transform duration-700 ease transform hover:scale-110">
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
+          >
             Home
           </Link>
           <Link
             href="/about"
-            className="header_links transition-transform duration-700 ease transform hover:scale-110">
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
+          >
             About
           </Link>
 
@@ -52,7 +54,8 @@ const HeaderPatient = () => {
           <div
             className="relative group"
             onMouseEnter={() => setMultiDiseaseOpen(true)}
-            onMouseLeave={() => setMultiDiseaseOpen(false)}>
+            onMouseLeave={() => setMultiDiseaseOpen(false)}
+          >
             <span className="header_links cursor-context-menu">
               Multi-diseases
             </span>
@@ -60,12 +63,14 @@ const HeaderPatient = () => {
               <div className="absolute left-0 w-44 z-50 bg-[#e4eefd] shadow-xl rounded-lg">
                 <Link
                   href="/predict-by-reports"
-                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90">
+                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
+                >
                   Predict by Reports
                 </Link>
                 <Link
                   href="/predict-by-images"
-                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90">
+                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
+                >
                   Predict by Images
                 </Link>
               </div>
@@ -73,13 +78,15 @@ const HeaderPatient = () => {
           </div>
           <Link
             href="/disease-prediction"
-            className="header_links transition-transform duration-700 ease transform hover:scale-110">
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
+          >
             Disease Prediction
           </Link>
 
           <Link
             href="/book-appointment"
-            className="header_links transition-transform duration-700 ease transform hover:scale-110">
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
+          >
             Book Appointment
           </Link>
 
@@ -87,18 +94,21 @@ const HeaderPatient = () => {
           <div
             className="relative group"
             onMouseEnter={() => setDrugOpen(true)}
-            onMouseLeave={() => setDrugOpen(false)}>
+            onMouseLeave={() => setDrugOpen(false)}
+          >
             <span className="header_links cursor-context-menu">Drug</span>
             {drugOpen && (
               <div className="absolute left-0 z-50 w-40 bg-[#e4eefd] shadow-xl rounded-lg">
                 <Link
                   href="/drug-alternative"
-                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90">
+                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
+                >
                   Drug Alternative
                 </Link>
                 <Link
                   href="/drug-response"
-                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90">
+                  className="block px-4 py-2 header_links transition-transform duration-700 ease transform hover:scale-90"
+                >
                   Drug Response
                 </Link>
               </div>
@@ -107,13 +117,15 @@ const HeaderPatient = () => {
 
           <Link
             href="/insurance"
-            className="header_links transition-transform duration-700 ease transform hover:scale-110">
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
+          >
             Insurance
           </Link>
 
           <Link
             href="/blogs"
-            className="header_links transition-transform duration-700 ease transform hover:scale-110">
+            className="header_links transition-transform duration-700 ease transform hover:scale-110"
+          >
             Blogs
           </Link>
         </nav>
@@ -133,17 +145,18 @@ const HeaderPatient = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-white flex flex-col my-1 shadow-lg rounded-md py-0 w-36">
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   onClick={() => router.push("/dashboard")}
                   className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-gray-200">
                   <LayoutDashboard className="w-4 h-4 text-blue-500" />
                   Dashboard
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem
                   onClick={() => {
                     router.push("/my-profile");
                   }}
-                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-blue-500 hover:bg-gray-200">
+                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-blue-500 hover:bg-gray-200"
+                >
                   👤 My Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -151,7 +164,8 @@ const HeaderPatient = () => {
                     logout();
                     router.push("/login");
                   }}
-                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-red-500 hover:bg-gray-200">
+                  className="flex items-center gap-2 px-4 py-2 cursor-pointer text-red-500 hover:bg-gray-200"
+                >
                   <LogOut className="w-4 h-4" />
                   Logout
                 </DropdownMenuItem>
@@ -161,12 +175,14 @@ const HeaderPatient = () => {
             <div className="flex items-center justify-center gap-2">
               <Link
                 href="/login"
-                className="transition-transform duration-700 ease font-medium text-blue-500 hover:text-blue-700 transform hover:scale-110">
+                className="transition-transform duration-700 ease font-medium text-blue-500 hover:text-blue-700 transform hover:scale-110"
+              >
                 Login
               </Link>
               <Link
                 href="/sign-up"
-                className="transition-transform duration-700 ease font-medium text-blue-500 hover:text-blue-700 transform hover:scale-110">
+                className="transition-transform duration-700 ease font-medium text-blue-500 hover:text-blue-700 transform hover:scale-110"
+              >
                 Sign Up
               </Link>
             </div>

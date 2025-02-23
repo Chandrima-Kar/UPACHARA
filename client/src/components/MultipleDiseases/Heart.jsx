@@ -6,16 +6,11 @@ import { useState } from "react";
 const docList = [
   {
     name: "Pratik Biswas",
-    specialist: "MBA, Md - Cardiologist",
+    specialist: "MBA, Md - Neurologist",
     number: "+91 7845945778",
     image: "/doctor4.jpeg",
   },
-  {
-    name: "Chandrima Kar",
-    specialist: "MBA - Cardiologist",
-    number: "+91 7845945778",
-    image: "/doctor6.jpg",
-  },
+
   {
     name: "Md. Zaib Reyaz",
     specialist: "MBA, Md - Cardiologist",

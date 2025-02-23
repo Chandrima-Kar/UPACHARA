@@ -10,6 +10,7 @@ import doctorRouter from "./routes/doctor.js";
 import dashboardRouter from "./routes/dashboard.js";
 import prescriptionRouter from "./routes/prescription.js";
 import reviewRouter from "./routes/review.js";
+import patientManagementRouter from "./routes/patientManagementDashboard.js";
 
 const app = express();
 dotenv.config();
@@ -41,6 +42,8 @@ app.use("/api/appointments", appointmentRouter);
 app.use("/api/doctor", doctorRouter);
 
 app.use("/api/dashboard", dashboardRouter);
+
+app.use("/api/dashboard", patientManagementRouter);
 
 app.use("/api/prescription", prescriptionRouter);
 
