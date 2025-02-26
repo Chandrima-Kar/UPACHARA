@@ -30,5 +30,13 @@ export default async function appointmentTable(pool) {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS video_consultations (
+        id SERIAL PRIMARY KEY,
+        appointment_id INTEGER REFERENCES appointments(id) ON DELETE CASCADE,
+        meeting_link TEXT,
+        status VARCHAR(20) DEFAULT 'scheduled',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
   `);
 }

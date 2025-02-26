@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import api from "@/utils/api";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -17,6 +17,7 @@ import {
   Edit2,
   Save,
   Trash2,
+  Video,
 } from "lucide-react";
 
 export default function SingleAppointmentPage() {
@@ -34,8 +35,22 @@ export default function SingleAppointmentPage() {
   });
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const router = useRouter();
 
-  // Fetch Appointment & Prescriptions
+  const initiateVideoCall = async () => {
+    try {
+      const { data } = await api.post(
+        `/video-consultation/create/${appointmentId}`
+      );
+      router.push(
+        `/appointments/${appointmentId}/video-call?roomId=${data.roomId}`
+      );
+    } catch (error) {
+      console.error("Error initiating video call:", error);
+      alert("Failed to initiate video call. Please try again.");
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -285,6 +300,13 @@ export default function SingleAppointmentPage() {
                 className="ml-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105"
               >
                 Update Status
+              </button>
+              <button
+                onClick={initiateVideoCall}
+                className="ml-4 bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center"
+              >
+                <Video className="mr-2" size={20} />
+                Start Video Call
               </button>
             </div>
           </div>

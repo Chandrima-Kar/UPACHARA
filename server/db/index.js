@@ -55,7 +55,7 @@ export async function runSeedScript(pool) {
         const rowCount = parseInt(result.rows[0].count, 10);
 
         if (rowCount > 0) {
-          console.log(`Table ${tableName} is not empty. Skipping insertion.`);
+          // console.log(`Table ${tableName} is not empty. Skipping insertion.`);
           continue;
         } else {
           console.log(
