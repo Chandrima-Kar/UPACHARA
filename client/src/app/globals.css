@@ -17,22 +17,87 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* scrollbar */
-::-webkit-scrollbar-track {
-  background: transparent;
+/* Custom scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
 
-/* Customize the scrollbar */
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* General scrollbar styles */
 ::-webkit-scrollbar {
   width: 4px;
 }
 
-/* Customize the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #3b82f6;
   border-radius: 50px;
 }
 
+/* Animations */
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* React Calendar Styles */
 .react-calendar {
   width: 550px;
   max-width: 100%;
@@ -109,8 +174,9 @@ abbr[title] {
   color: white;
 }
 
+/* Blog Cards */
 .blogCards {
-  box-shadow: 20px 5px 50px rgb(0, 0, 0, 0.5);
+  box-shadow: 20px 5px 50px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
 }
 
@@ -126,7 +192,7 @@ abbr[title] {
   opacity: 1;
 }
 
-/* header */
+/* Header Links */
 .header_links {
   position: relative;
   text-decoration: none;
@@ -173,7 +239,7 @@ abbr[title] {
   width: 100%;
 }
 
-/* Home page */
+/* Home Page */
 .perspective {
   perspective: 1000px;
 }
@@ -204,49 +270,4 @@ abbr[title] {
 
 .rotate-y-180 {
   transform: rotateY(180deg);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-@keyframes pulse-slow {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
 }

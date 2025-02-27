@@ -1,3 +1,8 @@
+import {
+  calculateAppointmentAdherence,
+  calculateMedicationAdherence,
+  calculateVitalsTrend,
+} from "../helper/index.js";
 import { pool } from "../index.js";
 
 export const getDashboardData = async (req, res) => {
@@ -329,3 +334,182 @@ export const doctor_patients = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export async function getPatientDashboard(req, res) {
+  const patientId = req.user.id;
+
+  try {
+    const patientInfo = await pool.query(
+      `SELECT 
+        id, first_name, last_name, email, date_of_birth, gender,
+        blood_group, phone, address, image_url,
+        emergency_contact, emergency_phone
+       FROM patients 
+       WHERE id = $1`,
+      [patientId]
+    );
+
+    const upcomingAppointments = await pool.query(
+      `SELECT 
+        a.id, a.appointment_date, a.start_time, a.end_time,
+        a.status, a.type, a.reason,
+        d.first_name as doctor_first_name,
+        d.last_name as doctor_last_name,
+        d.specialization,
+        d.image_url as doctor_image,
+        vc.meeting_link,
+        vc.status as video_status
+       FROM appointments a
+       LEFT JOIN doctors d ON a.doctor_id = d.id
+       LEFT JOIN video_consultations vc ON a.id = vc.appointment_id
+       WHERE a.patient_id = $1 
+       AND a.appointment_date >= CURRENT_DATE
+       AND a.status NOT IN ('cancelled', 'completed')
+       ORDER BY a.appointment_date, a.start_time
+       LIMIT 5`,
+      [patientId]
+    );
+
+    const recentAppointments = await pool.query(
+      `SELECT 
+        a.id, a.appointment_date, a.status, a.type,
+        a.reason, a.symptoms, a.notes,
+        d.first_name as doctor_first_name,
+        d.last_name as doctor_last_name,
+        d.specialization,
+        p.id as prescription_id,
+        p.diagnosis,
+        json_agg(json_build_object(
+          'medicine_name', pm.medicine_name,
+          'dosage', pm.dosage,
+          'frequency', pm.frequency,
+          'duration', pm.duration,
+          'instructions', pm.instructions
+        )) as medicines
+       FROM appointments a
+       LEFT JOIN doctors d ON a.doctor_id = d.id
+       LEFT JOIN prescriptions p ON a.id = p.appointment_id
+       LEFT JOIN prescription_medicines pm ON p.id = pm.prescription_id
+       WHERE a.patient_id = $1 
+       AND a.status = 'completed'
+       GROUP BY a.id, d.first_name, d.last_name, d.specialization, p.id, p.diagnosis
+       ORDER BY a.appointment_date DESC
+       LIMIT 10`,
+      [patientId]
+    );
+
+    const medicalHistory = await pool.query(
+      `SELECT 
+        condition_name, diagnosis_date, status, notes
+       FROM patient_medical_history
+       WHERE patient_id = $1
+       ORDER BY diagnosis_date DESC`,
+      [patientId]
+    );
+
+    const allergies = await pool.query(
+      `SELECT 
+        allergen, severity, reaction, diagnosed_date
+       FROM patient_allergies
+       WHERE patient_id = $1`,
+      [patientId]
+    );
+
+    const currentMedications = await pool.query(
+      `SELECT 
+        medication_name, dosage, frequency, 
+        start_date, end_date, prescribed_by, status, notes
+       FROM patient_previous_medications
+       WHERE patient_id = $1 
+       AND (end_date >= CURRENT_DATE OR status = 'active')
+       ORDER BY start_date DESC`,
+      [patientId]
+    );
+
+    const vitalsHistory = await pool.query(
+      `SELECT 
+        blood_pressure, heart_rate, temperature,
+        respiratory_rate, oxygen_saturation,
+        weight, height, bmi, notes,
+        recorded_at
+       FROM patient_vitals_history
+       WHERE patient_id = $1
+       ORDER BY recorded_at DESC
+       LIMIT 10`,
+      [patientId]
+    );
+
+    const doctorNotes = await pool.query(
+      `SELECT 
+        dn.note_type, dn.notes, dn.created_at,
+        d.first_name as doctor_first_name,
+        d.last_name as doctor_last_name,
+        d.specialization
+       FROM doctor_notes dn
+       JOIN doctors d ON dn.doctor_id = d.id
+       WHERE dn.patient_id = $1
+       ORDER BY dn.created_at DESC
+       LIMIT 5`,
+      [patientId]
+    );
+
+    const diseaseHistory = await pool.query(
+      `SELECT 
+        d.id, d.symptoms, d.predicted_disease,
+        d.description, d.precautions, d.diet,
+        d.workout, d.created_at,
+        r.status as review_status,
+        doc.first_name as reviewing_doctor_first_name,
+        doc.last_name as reviewing_doctor_last_name,
+        doc.specialization as reviewing_doctor_specialization
+       FROM disease d
+       LEFT JOIN reviews r ON d.id = r.disease_id
+       LEFT JOIN doctors doc ON r.doctor_id = doc.id
+       WHERE d.patient_id = $1
+       ORDER BY d.created_at DESC
+       LIMIT 5`,
+      [patientId]
+    );
+
+    const healthMetrics = {
+      appointmentAdherence: calculateAppointmentAdherence(
+        recentAppointments.rows
+      ),
+      medicationAdherence: calculateMedicationAdherence(
+        currentMedications.rows
+      ),
+      vitalsTrend: calculateVitalsTrend(vitalsHistory.rows),
+      upcomingFollowUps: upcomingAppointments.rows.filter(
+        (apt) => apt.type === "follow_up"
+      ).length,
+      pendingReviews: diseaseHistory.rows.filter(
+        (d) => d.review_status === "sent"
+      ).length,
+    };
+
+    const dashboardData = {
+      patient: patientInfo.rows[0],
+      upcomingAppointments: upcomingAppointments.rows,
+      recentAppointments: recentAppointments.rows,
+      medicalHistory: medicalHistory.rows,
+      allergies: allergies.rows,
+      currentMedications: currentMedications.rows,
+      vitalsHistory: vitalsHistory.rows,
+      doctorNotes: doctorNotes.rows,
+      diseaseHistory: diseaseHistory.rows,
+      healthMetrics,
+    };
+
+    res.status(200).json({
+      success: true,
+      data: dashboardData,
+    });
+  } catch (error) {
+    console.error("Error fetching patient dashboard data:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching dashboard data",
+      error: error.message,
+    });
+  }
+}

@@ -1,9 +1,14 @@
 import express from "express";
-import { authenticateToken, authorizeDoctor } from "../middleware/index.js";
+import {
+  authenticateToken,
+  authorizeDoctor,
+  authorizePatient,
+} from "../middleware/index.js";
 import {
   doctor_patients,
   get_doctor_analytics,
   getDashboardData,
+  getPatientDashboard,
   getPatientHistory,
   getWeeklySchedule,
   toggle_availability,
@@ -50,5 +55,7 @@ router.get(
   authorizeDoctor,
   doctor_patients
 );
+
+router.get("/", authenticateToken, authorizePatient, getPatientDashboard);
 
 export default router;
