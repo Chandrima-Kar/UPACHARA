@@ -6,6 +6,11 @@ import Peer from "simple-peer";
 import { socket } from "@/utils/socket";
 import api from "@/utils/api";
 import { VideoCallUI } from "./video-call-ui";
+import {
+  setupVideoElement,
+  checkVideoStream,
+  getOptimalVideoConstraints,
+} from "@/utils/video-helpers";
 
 export default function DoctorVideoCallPage() {
   const { id: appointmentId } = useParams();
@@ -27,6 +32,7 @@ export default function DoctorVideoCallPage() {
   const [userRole, setUserRole] = useState(null);
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [callInitiated, setCallInitiated] = useState(false);
+  const [videoError, setVideoError] = useState(null);
 
   const myVideo = useRef(null);
   const userVideo = useRef(null);
@@ -35,7 +41,6 @@ export default function DoctorVideoCallPage() {
   const messageInput = useRef(null);
   const streamRef = useRef(null);
 
-  // Fetch user info and consultation details
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -45,7 +50,6 @@ export default function DoctorVideoCallPage() {
         setUserId(storedUser.id);
         setUserRole(storedRole);
 
-        // Register with socket
         socket.emit("register_user", {
           userId: storedUser.id,
           userRole: storedRole,
@@ -68,32 +72,39 @@ export default function DoctorVideoCallPage() {
     fetchConsultationDetails();
   }, [appointmentId]);
 
-  // Setup media stream
   useEffect(() => {
     const setupMediaStream = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia(
+          getOptimalVideoConstraints()
+        );
 
-        setStream(mediaStream);
-        streamRef.current = mediaStream;
+        setStream(stream);
+        streamRef.current = stream;
+
+        if (!checkVideoStream(stream)) {
+          setVideoError("Video stream is not available or active");
+          setIsVideoOff(true);
+        }
 
         if (myVideo.current) {
-          myVideo.current.srcObject = mediaStream;
+          setupVideoElement(myVideo.current, stream, true);
         }
       } catch (err) {
         console.error("Error accessing media devices:", err);
+        setVideoError(err.message || "Failed to access camera");
+
         if (err.name === "NotAllowedError") {
           alert("Please allow access to your camera and microphone.");
+        } else if (err.name === "NotFoundError") {
+          alert("No camera detected. Please connect a camera and try again.");
+          setIsVideoOff(true);
         }
       }
     };
 
     setupMediaStream();
 
-    // Cleanup function
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
@@ -104,28 +115,27 @@ export default function DoctorVideoCallPage() {
       }
 
       if (connectionRef.current) {
-        connectionRef.current.destroy();
+        if (typeof connectionRef.current.destroy === "function") {
+          connectionRef.current.destroy();
+        }
+        connectionRef.current = null;
       }
     };
   }, [screenShare]);
 
-  // Join room and setup socket listeners
   useEffect(() => {
     if (!roomId || !userId || !userRole) return;
 
-    // Join the appointment room
     socket.emit("join_appointment_room", {
       appointmentId,
       userId,
       userRole,
     });
 
-    // Listen for room participants
     socket.on("room_participants", (participants) => {
       console.log("Room participants:", participants);
 
       if (participants.length > 1) {
-        // Find the other participant (not us)
         const otherParticipant = participants.find(
           (p) => p.socketId !== socket.id
         );
@@ -134,7 +144,6 @@ export default function DoctorVideoCallPage() {
           console.log("Found other participant:", otherParticipant);
           setRemoteSocketId(otherParticipant.socketId);
 
-          // If we're the doctor and we haven't initiated a call yet, we can auto-start
           if (userRole === "doctor" && !callInitiated && !callAccepted) {
             setCallInitiated(true);
           }
@@ -142,19 +151,16 @@ export default function DoctorVideoCallPage() {
       }
     });
 
-    // Listen for call initiation
     socket.on("call_initiated", ({ fromUserId, fromUserRole }) => {
       console.log(`Receiving call from ${fromUserRole} ${fromUserId}`);
       setReceivingCall(true);
     });
 
-    // WebRTC signaling
     socket.on("offer", ({ offer, from }) => {
       console.log("Received offer from:", from);
       setRemoteSocketId(from);
       setReceivingCall(true);
 
-      // Store the offer for later use when answering
       connectionRef.current = { offer, from };
       console.log("Offer stored:", connectionRef.current);
     });
@@ -162,7 +168,6 @@ export default function DoctorVideoCallPage() {
     socket.on("answer", (answer) => {
       console.log("Received answer:", answer);
       if (connectionRef.current && connectionRef.current.signal) {
-        // Make sure we're using the signal method correctly
         try {
           connectionRef.current.signal(answer);
           setCallAccepted(true);
@@ -179,23 +184,48 @@ export default function DoctorVideoCallPage() {
       }
     });
 
-    // Chat messages
+    socket.on("user_left", ({ userId, userRole }) => {
+      console.log(`User left: ${userRole} ${userId}`);
+      if (callAccepted && !callEnded) {
+        setCallEnded(true);
+
+        if (
+          connectionRef.current &&
+          typeof connectionRef.current.destroy === "function"
+        ) {
+          connectionRef.current.destroy();
+          connectionRef.current = null;
+        }
+
+        if (userVideo.current) {
+          userVideo.current.srcObject = null;
+        }
+      }
+    });
+
     socket.on("receive_message", (messageData) => {
       setMessages((prev) => [...prev, messageData]);
     });
 
-    // Cleanup socket listeners
     return () => {
       socket.off("room_participants");
       socket.off("call_initiated");
       socket.off("offer");
       socket.off("answer");
       socket.off("ice_candidate");
+      socket.off("user_left");
       socket.off("receive_message");
     };
-  }, [roomId, userId, userRole, appointmentId, callInitiated, callAccepted]);
+  }, [
+    roomId,
+    userId,
+    userRole,
+    appointmentId,
+    callInitiated,
+    callAccepted,
+    callEnded,
+  ]);
 
-  // Call user function
   const callUser = useCallback(() => {
     if (!streamRef.current || !remoteSocketId) {
       console.log("Cannot call: missing stream or remote socket ID");
@@ -205,21 +235,24 @@ export default function DoctorVideoCallPage() {
     setCallInitiated(true);
     console.log("Initiating call to:", remoteSocketId);
 
-    // Notify the other user we're calling
     socket.emit("initiate_call", {
       appointmentId,
       fromUserId: userId,
       fromUserRole: userRole,
     });
 
-    // Create peer connection as initiator
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream: streamRef.current,
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" },
+        ],
+      },
     });
 
-    // Handle signaling events
     peer.on("signal", (data) => {
       console.log("Generated offer, sending to:", remoteSocketId);
       socket.emit("offer", {
@@ -229,28 +262,21 @@ export default function DoctorVideoCallPage() {
       });
     });
 
-    // Handle incoming stream
     peer.on("stream", (remoteStream) => {
       console.log("Received remote stream");
       if (userVideo.current) {
-        userVideo.current.srcObject = remoteStream;
-        // Force play the video
-        userVideo.current.play().catch((err) => {
-          console.error("Error playing remote video:", err);
-        });
+        setupVideoElement(userVideo.current, remoteStream);
       }
     });
 
-    // Handle errors
     peer.on("error", (err) => {
       console.error("Peer error:", err);
+      alert(`Connection error: ${err.message}. Try refreshing the page.`);
     });
 
-    // Store the peer connection
     connectionRef.current = peer;
   }, [appointmentId, userId, userRole, remoteSocketId, roomId]);
 
-  // Answer call function
   const answerCall = () => {
     if (
       !streamRef.current ||
@@ -266,18 +292,22 @@ export default function DoctorVideoCallPage() {
     setCallAccepted(true);
     setReceivingCall(false);
 
-    // Create peer connection as receiver
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream: streamRef.current,
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" },
+        ],
+      },
     });
 
-    // Handle signaling events
     peer.on("signal", (data) => {
-      if(!connectionRef.current.from) {
+      if (!connectionRef.current.from) {
         console.error("Cannot answer call: missing from socket ID");
-        return
+        return;
       }
       console.log("Generated answer, sending to:", connectionRef.current);
       socket.emit("answer", {
@@ -287,31 +317,23 @@ export default function DoctorVideoCallPage() {
       });
     });
 
-    // Handle incoming stream
     peer.on("stream", (remoteStream) => {
       console.log("Received remote stream");
       if (userVideo.current) {
-        userVideo.current.srcObject = remoteStream;
-        // Force play the video
-        userVideo.current.play().catch((err) => {
-          console.error("Error playing remote video:", err);
-        });
+        setupVideoElement(userVideo.current, remoteStream);
       }
     });
 
-    // Handle errors
     peer.on("error", (err) => {
       console.error("Peer error:", err);
+      alert(`Connection error: ${err.message}. Try refreshing the page.`);
     });
 
-    // Signal with the stored offer
     peer.signal(connectionRef.current.offer);
 
-    // Replace the connection reference with the peer
     connectionRef.current = peer;
   };
 
-  // Toggle mute function
   const toggleMute = () => {
     if (streamRef.current) {
       const audioTracks = streamRef.current.getAudioTracks();
@@ -322,67 +344,121 @@ export default function DoctorVideoCallPage() {
     }
   };
 
-  // Toggle video function
   const toggleVideo = () => {
     if (streamRef.current) {
       const videoTracks = streamRef.current.getVideoTracks();
       if (videoTracks.length > 0) {
         videoTracks[0].enabled = isVideoOff;
         setIsVideoOff(!isVideoOff);
+
+        if (isVideoOff && !checkVideoStream(streamRef.current)) {
+          navigator.mediaDevices
+            .getUserMedia(getOptimalVideoConstraints())
+            .then((newStream) => {
+              const newVideoTrack = newStream.getVideoTracks()[0];
+              const oldVideoTrack = streamRef.current.getVideoTracks()[0];
+
+              if (oldVideoTrack) {
+                streamRef.current.removeTrack(oldVideoTrack);
+                oldVideoTrack.stop();
+              }
+
+              streamRef.current.addTrack(newVideoTrack);
+
+              if (myVideo.current) {
+                setupVideoElement(myVideo.current, streamRef.current, true);
+              }
+
+              if (connectionRef.current && connectionRef.current.replaceTrack) {
+                connectionRef.current.replaceTrack(
+                  oldVideoTrack,
+                  newVideoTrack,
+                  streamRef.current
+                );
+              }
+            })
+            .catch((err) => {
+              console.error("Error restarting video:", err);
+              setVideoError("Could not restart video: " + err.message);
+              setIsVideoOff(true);
+            });
+        }
       }
     }
   };
 
-  // Share screen function
   const shareScreen = async () => {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
+        video: {
+          cursor: "always",
+          displaySurface: "monitor",
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100,
+        },
       });
 
       setScreenShare(screenStream);
 
-      if (screenVideo.current) {
-        screenVideo.current.srcObject = screenStream;
+      screenStream.getVideoTracks()[0].addEventListener("ended", () => {
+        stopScreenShare();
+      });
+
+      if (connectionRef.current) {
+        const videoTrack = screenStream.getVideoTracks()[0];
+
+        const senders = connectionRef.current.getSenders();
+        const videoSender = senders.find(
+          (sender) => sender.track && sender.track.kind === "video"
+        );
+
+        if (videoSender) {
+          const originalTrack = videoSender.track;
+
+          videoSender.replaceTrack(videoTrack);
+
+          screenShare.originalTrack = originalTrack;
+        }
       }
 
-      // If we're in a call, replace the video track with screen share
-      if (connectionRef.current && connectionRef.current.getSenders) {
-        const videoTrack = screenStream.getVideoTracks()[0];
-        const senders = connectionRef.current.getSenders();
-        const sender = senders.find((s) => s.track && s.track.kind === "video");
-        if (sender && videoTrack) {
-          sender.replaceTrack(videoTrack);
-        }
+      if (screenVideo.current) {
+        screenVideo.current.srcObject = screenStream;
+        await screenVideo.current.play().catch((err) => {
+          console.error("Error playing screen share:", err);
+        });
       }
     } catch (err) {
       console.error("Error sharing screen:", err);
+      alert("Could not share screen: " + err.message);
     }
   };
 
-  // Stop screen share function
   const stopScreenShare = () => {
     if (screenShare) {
       screenShare.getTracks().forEach((track) => track.stop());
+
+      if (screenShare.originalTrack && connectionRef.current) {
+        const senders = connectionRef.current.getSenders();
+        const videoSender = senders.find(
+          (sender) => sender.track && sender.track.kind === "video"
+        );
+
+        if (videoSender) {
+          videoSender.replaceTrack(screenShare.originalTrack);
+        }
+      }
+
       setScreenShare(null);
 
-      // Replace screen share track with camera track
-      if (
-        connectionRef.current &&
-        connectionRef.current.getSenders &&
-        streamRef.current
-      ) {
-        const videoTrack = streamRef.current.getVideoTracks()[0];
-        const senders = connectionRef.current.getSenders();
-        const sender = senders.find((s) => s.track && s.track.kind === "video");
-        if (sender && videoTrack) {
-          sender.replaceTrack(videoTrack);
-        }
+      if (screenVideo.current) {
+        screenVideo.current.srcObject = null;
       }
     }
   };
 
-  // Send message function
   const sendMessage = (text) => {
     if (!roomId || !text.trim()) return;
 
@@ -394,31 +470,33 @@ export default function DoctorVideoCallPage() {
     });
   };
 
-  // Leave call function
   const leaveCall = () => {
     setCallEnded(true);
 
+    socket.emit("leave_call", {
+      roomId,
+      userId,
+      userRole,
+    });
+
     if (connectionRef.current) {
-      connectionRef.current.destroy();
+      if (typeof connectionRef.current.destroy === "function") {
+        connectionRef.current.destroy();
+      }
+      connectionRef.current = null;
     }
 
-    // Update consultation status
-    if (consultationDetails?.id) {
-      api.put(`/video-consultation/${consultationDetails.id}/status`, {
-        status: "completed",
-      });
+    if (userVideo.current) {
+      userVideo.current.srcObject = null;
     }
-
-    // Redirect back to appointments
-    router.push("/appointments");
+    setCallAccepted(false);
+    router.push(`/appointments/${appointmentId}`);
   };
 
-  // Toggle chat function
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
 
-  // Submit message function
   const onSubmitMessage = (e) => {
     e.preventDefault();
     if (messageInput.current && messageInput.current.value.trim()) {
@@ -427,7 +505,6 @@ export default function DoctorVideoCallPage() {
     }
   };
 
-  // Auto-start call if we're the doctor
   useEffect(() => {
     if (
       userRole === "doctor" &&
@@ -479,7 +556,8 @@ export default function DoctorVideoCallPage() {
       onSubmitMessage={onSubmitMessage}
       socket={socket}
       consultationDetails={consultationDetails}
-      isDoctor={true} // Add this prop to customize UI for doctor
+      isDoctor={true}
+      videoError={videoError}
     />
   );
 }

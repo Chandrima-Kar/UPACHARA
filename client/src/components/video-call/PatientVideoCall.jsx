@@ -1,11 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import Peer from "simple-peer";
 import { socket } from "@/utils/socket";
 import api from "@/utils/api";
 import { VideoCallUI } from "./video-call-ui";
+import {
+  setupVideoElement,
+  checkVideoStream,
+  getOptimalVideoConstraints,
+} from "@/utils/video-helpers";
 
 export default function PatientVideoCallPage() {
   const { id: appointmentId } = useParams();
@@ -26,6 +31,7 @@ export default function PatientVideoCallPage() {
   const [userId, setUserId] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [remoteSocketId, setRemoteSocketId] = useState(null);
+  const [videoError, setVideoError] = useState(null);
 
   const myVideo = useRef(null);
   const userVideo = useRef(null);
@@ -34,7 +40,6 @@ export default function PatientVideoCallPage() {
   const messageInput = useRef(null);
   const streamRef = useRef(null);
 
-  // Fetch user info and consultation details
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -44,7 +49,6 @@ export default function PatientVideoCallPage() {
         setUserId(storedUser.id);
         setUserRole(storedRole);
 
-        // Register with socket
         socket.emit("register_user", {
           userId: storedUser.id,
           userRole: storedRole,
@@ -67,32 +71,39 @@ export default function PatientVideoCallPage() {
     fetchConsultationDetails();
   }, [appointmentId]);
 
-  // Setup media stream
   useEffect(() => {
     const setupMediaStream = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
+        const stream = await navigator.mediaDevices.getUserMedia(
+          getOptimalVideoConstraints()
+        );
 
-        setStream(mediaStream);
-        streamRef.current = mediaStream;
+        setStream(stream);
+        streamRef.current = stream;
+
+        if (!checkVideoStream(stream)) {
+          setVideoError("Video stream is not available or active");
+          setIsVideoOff(true);
+        }
 
         if (myVideo.current) {
-          myVideo.current.srcObject = mediaStream;
+          setupVideoElement(myVideo.current, stream, true);
         }
       } catch (err) {
         console.error("Error accessing media devices:", err);
+        setVideoError(err.message || "Failed to access camera");
+
         if (err.name === "NotAllowedError") {
           alert("Please allow access to your camera and microphone.");
+        } else if (err.name === "NotFoundError") {
+          alert("No camera detected. Please connect a camera and try again.");
+          setIsVideoOff(true);
         }
       }
     };
 
     setupMediaStream();
 
-    // Cleanup function
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
@@ -103,28 +114,32 @@ export default function PatientVideoCallPage() {
       }
 
       if (connectionRef.current) {
-        connectionRef.current.destroy();
+        if (
+          connectionRef.current.peer &&
+          typeof connectionRef.current.peer.destroy === "function"
+        ) {
+          connectionRef.current.peer.destroy();
+        } else if (typeof connectionRef.current.destroy === "function") {
+          connectionRef.current.destroy();
+        }
+        connectionRef.current = null;
       }
     };
   }, [screenShare]);
 
-  // Join room and setup socket listeners
   useEffect(() => {
     if (!roomId || !userId || !userRole) return;
 
-    // Join the appointment room
     socket.emit("join_appointment_room", {
       appointmentId,
       userId,
       userRole,
     });
 
-    // Listen for room participants
     socket.on("room_participants", (participants) => {
       console.log("Room participants:", participants);
 
       if (participants.length > 1) {
-        // Find the other participant (not us)
         const otherParticipant = participants.find(
           (p) => p.socketId !== socket.id
         );
@@ -136,19 +151,16 @@ export default function PatientVideoCallPage() {
       }
     });
 
-    // Listen for call initiation
     socket.on("call_initiated", ({ fromUserId, fromUserRole }) => {
       console.log(`Receiving call from ${fromUserRole} ${fromUserId}`);
       setReceivingCall(true);
     });
 
-    // WebRTC signaling
     socket.on("offer", ({ offer, from }) => {
       console.log("Received offer from:", from);
       setRemoteSocketId(from);
       setReceivingCall(true);
 
-      // Store the offer for later use when answering
       connectionRef.current = { offer, from };
       console.log("Offer stored:", connectionRef.current);
     });
@@ -156,7 +168,12 @@ export default function PatientVideoCallPage() {
     socket.on("answer", (answer) => {
       console.log("Received answer:", answer);
       if (connectionRef.current && connectionRef.current.signal) {
-        connectionRef.current.signal(answer);
+        try {
+          connectionRef.current.signal(answer);
+          setCallAccepted(true);
+        } catch (err) {
+          console.error("Error signaling answer:", err);
+        }
       }
     });
 
@@ -167,24 +184,45 @@ export default function PatientVideoCallPage() {
       }
     });
 
-    // Chat messages
+    socket.on("user_left", ({ userId, userRole }) => {
+      console.log(`User left: ${userRole} ${userId}`);
+      if (callAccepted && !callEnded) {
+        setCallEnded(true);
+
+        if (connectionRef.current) {
+          if (
+            connectionRef.current.peer &&
+            typeof connectionRef.current.peer.destroy === "function"
+          ) {
+            connectionRef.current.peer.destroy();
+          } else if (typeof connectionRef.current.destroy === "function") {
+            connectionRef.current.destroy();
+          }
+          connectionRef.current = null;
+        }
+
+        if (userVideo.current) {
+          userVideo.current.srcObject = null;
+        }
+      }
+    });
+
     socket.on("receive_message", (messageData) => {
       setMessages((prev) => [...prev, messageData]);
     });
 
-    // Cleanup socket listeners
     return () => {
       socket.off("room_participants");
       socket.off("call_initiated");
       socket.off("offer");
       socket.off("answer");
       socket.off("ice_candidate");
+      socket.off("user_left");
       socket.off("receive_message");
     };
-  }, [roomId, userId, userRole, appointmentId]);
+  }, [roomId, userId, userRole, appointmentId, callAccepted, callEnded]);
 
-  // Answer call function - THIS IS THE CRITICAL FUNCTION THAT NEEDS FIXING
-  const answerCall = () => {
+  const answerCall = useCallback(() => {
     if (
       !streamRef.current ||
       !connectionRef.current ||
@@ -197,19 +235,24 @@ export default function PatientVideoCallPage() {
     console.log("Answering call with offer:", connectionRef.current.offer);
     console.log("Sending answer to:", connectionRef.current.from);
 
-    const fromSocketId = connectionRef.current.from; // ✅ Preserve before overwriting
+    const fromSocketId = connectionRef.current.from;
     setCallAccepted(true);
     setReceivingCall(false);
 
-    // Create peer connection as receiver
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream: streamRef.current,
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:global.stun.twilio.com:3478" },
+        ],
+      },
     });
 
     peer.on("signal", (data) => {
-      console.log("Generated answer, sending to:", fromSocketId); // ✅ Use preserved ID
+      console.log("Generated answer, sending to:", fromSocketId);
       if (!fromSocketId) {
         console.error("Cannot answer call: missing from socket ID");
         return;
@@ -217,30 +260,27 @@ export default function PatientVideoCallPage() {
       socket.emit("answer", {
         answer: data,
         roomId,
-        toSocketId: fromSocketId, // ✅ Use preserved ID
+        toSocketId: fromSocketId,
       });
     });
 
     peer.on("stream", (remoteStream) => {
       console.log("Received remote stream");
       if (userVideo.current) {
-        userVideo.current.srcObject = remoteStream;
-        userVideo.current.play().catch((err) => {
-          console.error("Error playing remote video:", err);
-        });
+        setupVideoElement(userVideo.current, remoteStream);
       }
     });
 
     peer.on("error", (err) => {
       console.error("Peer error:", err);
+      alert(`Connection error: ${err.message}. Try refreshing the page.`);
     });
 
     peer.signal(connectionRef.current.offer);
 
-    connectionRef.current = { peer, from: fromSocketId }; // ✅ Store both peer and from
-  };
+    connectionRef.current = peer;
+  }, [roomId]);
 
-  // Toggle mute function
   const toggleMute = () => {
     if (streamRef.current) {
       const audioTracks = streamRef.current.getAudioTracks();
@@ -251,67 +291,122 @@ export default function PatientVideoCallPage() {
     }
   };
 
-  // Toggle video function
   const toggleVideo = () => {
     if (streamRef.current) {
       const videoTracks = streamRef.current.getVideoTracks();
       if (videoTracks.length > 0) {
         videoTracks[0].enabled = isVideoOff;
         setIsVideoOff(!isVideoOff);
+
+        if (isVideoOff && !checkVideoStream(streamRef.current)) {
+          navigator.mediaDevices
+            .getUserMedia(getOptimalVideoConstraints())
+            .then((newStream) => {
+              const newVideoTrack = newStream.getVideoTracks()[0];
+              const oldVideoTrack = streamRef.current.getVideoTracks()[0];
+
+              if (oldVideoTrack) {
+                streamRef.current.removeTrack(oldVideoTrack);
+                oldVideoTrack.stop();
+              }
+
+              streamRef.current.addTrack(newVideoTrack);
+
+              if (myVideo.current) {
+                setupVideoElement(myVideo.current, streamRef.current, true);
+              }
+
+              if (connectionRef.current && connectionRef.current.replaceTrack) {
+                connectionRef.current.replaceTrack(
+                  oldVideoTrack,
+                  newVideoTrack,
+                  streamRef.current
+                );
+              }
+            })
+            .catch((err) => {
+              console.error("Error restarting video:", err);
+              setVideoError("Could not restart video: " + err.message);
+              setIsVideoOff(true);
+            });
+        }
       }
     }
   };
 
-  // Share screen function
   const shareScreen = async () => {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
+        video: {
+          cursor: "always",
+          displaySurface: "monitor",
+        },
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 44100,
+        },
       });
 
       setScreenShare(screenStream);
 
-      if (screenVideo.current) {
-        screenVideo.current.srcObject = screenStream;
+      screenStream.getVideoTracks()[0].addEventListener("ended", () => {
+        stopScreenShare();
+      });
+
+      if (
+        connectionRef.current &&
+        connectionRef.current.streams &&
+        connectionRef.current.streams[0]
+      ) {
+        const videoTrack = screenStream.getVideoTracks()[0];
+        const sender = connectionRef.current.streams[0].getVideoTracks()[0];
+
+        if (sender) {
+          const originalTrack = sender.clone();
+
+          sender.replaceTrack(videoTrack);
+
+          screenShare.originalTrack = originalTrack;
+        }
       }
 
-      // If we're in a call, replace the video track with screen share
-      if (connectionRef.current && connectionRef.current.getSenders) {
-        const videoTrack = screenStream.getVideoTracks()[0];
-        const senders = connectionRef.current.getSenders();
-        const sender = senders.find((s) => s.track && s.track.kind === "video");
-        if (sender && videoTrack) {
-          sender.replaceTrack(videoTrack);
-        }
+      if (screenVideo.current) {
+        screenVideo.current.srcObject = screenStream;
+        await screenVideo.current.play().catch((err) => {
+          console.error("Error playing screen share:", err);
+        });
       }
     } catch (err) {
       console.error("Error sharing screen:", err);
+      alert("Could not share screen: " + err.message);
     }
   };
 
-  // Stop screen share function
   const stopScreenShare = () => {
     if (screenShare) {
       screenShare.getTracks().forEach((track) => track.stop());
+
+      if (
+        screenShare.originalTrack &&
+        connectionRef.current &&
+        connectionRef.current.streams &&
+        connectionRef.current.streams[0]
+      ) {
+        const sender = connectionRef.current.streams[0].getVideoTracks()[0];
+        if (sender) {
+          sender.replaceTrack(screenShare.originalTrack);
+        }
+      }
+
       setScreenShare(null);
 
-      // Replace screen share track with camera track
-      if (
-        connectionRef.current &&
-        connectionRef.current.getSenders &&
-        streamRef.current
-      ) {
-        const videoTrack = streamRef.current.getVideoTracks()[0];
-        const senders = connectionRef.current.getSenders();
-        const sender = senders.find((s) => s.track && s.track.kind === "video");
-        if (sender && videoTrack) {
-          sender.replaceTrack(videoTrack);
-        }
+      if (screenVideo.current) {
+        screenVideo.current.srcObject = null;
       }
     }
   };
 
-  // Send message function
   const sendMessage = (text) => {
     if (!roomId || !text.trim()) return;
 
@@ -323,24 +418,38 @@ export default function PatientVideoCallPage() {
     });
   };
 
-  // Leave call function
   const leaveCall = () => {
     setCallEnded(true);
 
+    socket.emit("leave_call", {
+      roomId,
+      userId,
+      userRole,
+    });
+
     if (connectionRef.current) {
-      connectionRef.current.destroy();
+      if (typeof connectionRef.current.destroy === "function") {
+        connectionRef.current.destroy();
+      } else if (
+        connectionRef.current.peer &&
+        typeof connectionRef.current.peer.destroy === "function"
+      ) {
+        connectionRef.current.peer.destroy();
+      }
+      connectionRef.current = null;
     }
 
-    // Redirect back to patient dashboard
-    router.push("/dashboard");
+    if (userVideo.current) {
+      userVideo.current.srcObject = null;
+    }
+    setCallAccepted(false);
+    router.push("/");
   };
 
-  // Toggle chat function
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
 
-  // Submit message function
   const onSubmitMessage = (e) => {
     e.preventDefault();
     if (messageInput.current && messageInput.current.value.trim()) {
@@ -363,7 +472,7 @@ export default function PatientVideoCallPage() {
       isVideoOff={isVideoOff}
       messages={messages}
       onAnswer={answerCall}
-      onCall={() => {}} // Patients don't initiate calls
+      onCall={() => {}}
       onLeave={leaveCall}
       onToggleMute={toggleMute}
       onToggleVideo={toggleVideo}
@@ -376,7 +485,8 @@ export default function PatientVideoCallPage() {
       onSubmitMessage={onSubmitMessage}
       socket={socket}
       consultationDetails={consultationDetails}
-      isPatient={true} // Add this prop to customize UI for patient
+      isPatient={true}
+      videoError={videoError}
     />
   );
 }
