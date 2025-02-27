@@ -208,7 +208,12 @@ export function VideoCallUI({
                 ref={screenVideo}
                 autoPlay
                 playsInline
-                className="w-full h-full object-contain"
+                muted
+                style={{
+                  display: screenShare ? "block" : "none",
+                  width: "100%",
+                  height: "auto",
+                }}
               />
               <div className="absolute top-4 right-4 flex space-x-2">
                 <button

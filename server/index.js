@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import pino from "pino";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import pkg from "pg";
@@ -17,6 +18,7 @@ import videoConsultationRouter from "./routes/consultation.js";
 
 dotenv.config();
 
+const logger = pino();
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -59,10 +61,10 @@ const activeUsers = new Map();
 const roomParticipants = new Map();
 
 io.on("connection", (socket) => {
-  console.log("New connection:", socket.id);
+  logger.info("New connection:", socket.id);
 
   socket.on("register_user", ({ userId, userRole }) => {
-    console.log(
+    logger.info(
       `Registering user: ${userId} (${userRole}) with socket: ${socket.id}`
     );
     activeUsers.set(userId, { socketId: socket.id, userRole });
@@ -70,7 +72,7 @@ io.on("connection", (socket) => {
 
   socket.on("join_appointment_room", ({ appointmentId, userId, userRole }) => {
     const roomId = `appointment-${appointmentId}`;
-    console.log(`${userRole} ${userId} joining room: ${roomId}`);
+    logger.info(`${userRole} ${userId} joining room: ${roomId}`);
 
     socket.join(roomId);
 
@@ -85,7 +87,7 @@ io.on("connection", (socket) => {
       userId,
     });
 
-    console.log(
+    logger.info(
       "Room participants:",
       Array.from(roomParticipants.get(roomId).entries())
     );
@@ -103,7 +105,7 @@ io.on("connection", (socket) => {
 
   socket.on("initiate_call", ({ appointmentId, fromUserId, fromUserRole }) => {
     const roomId = `appointment-${appointmentId}`;
-    console.log(
+    logger.info(
       `${fromUserRole} ${fromUserId} initiating call in room: ${roomId}`
     );
 
@@ -115,7 +117,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("offer", ({ offer, roomId, toSocketId }) => {
-    console.log(
+    logger.info(
       `Sending offer from ${socket.id} to ${toSocketId} in room ${roomId}`
     );
 
@@ -126,7 +128,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("answer", ({ answer, roomId, toSocketId }) => {
-    console.log(
+    logger.info(
       `Sending answer from ${socket.id} to ${toSocketId} in room ${roomId}`
     );
 
@@ -134,12 +136,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ice_candidate", ({ candidate, roomId, toSocketId }) => {
-    console.log(`Sending ICE candidate from ${socket.id} to ${toSocketId}`);
+    logger.info(`Sending ICE candidate from ${socket.id} to ${toSocketId}`);
     io.to(toSocketId).emit("ice_candidate", candidate);
   });
 
   socket.on("send_message", ({ roomId, message, fromUserId, fromUserRole }) => {
-    console.log(`Message in room ${roomId} from ${fromUserRole} ${fromUserId}`);
+    logger.info(`Message in room ${roomId} from ${fromUserRole} ${fromUserId}`);
 
     io.in(roomId).emit("receive_message", {
       message,
@@ -150,7 +152,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave_call", ({ roomId, userId, userRole }) => {
-    console.log(`User leaving call: ${userRole} ${userId} from room ${roomId}`);
+    logger.info(`User leaving call: ${userRole} ${userId} from room ${roomId}`);
 
     activeUsers.delete(userId);
 
@@ -176,7 +178,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    logger.info("User disconnected:", socket.id);
 
     for (const [userId, data] of activeUsers.entries()) {
       if (data.socketId === socket.id) {
@@ -205,5 +207,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT;
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logger.info(`Server running on port ${PORT}`);
 });

@@ -40,7 +40,7 @@ export default function DoctorVideoCallPage() {
   const connectionRef = useRef(null);
   const messageInput = useRef(null);
   const streamRef = useRef(null);
-
+  console.log("Connection: ", connectionRef.current);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -114,14 +114,15 @@ export default function DoctorVideoCallPage() {
         screenShare.getTracks().forEach((track) => track.stop());
       }
 
-      if (connectionRef.current) {
+      if (callEnded && connectionRef.current) {
+        console.log("Call ended, destroying peer connection.");
         if (typeof connectionRef.current.destroy === "function") {
           connectionRef.current.destroy();
         }
         connectionRef.current = null;
       }
     };
-  }, [screenShare]);
+  }, [screenShare, callEnded]);
 
   useEffect(() => {
     if (!roomId || !userId || !userRole) return;
@@ -191,10 +192,9 @@ export default function DoctorVideoCallPage() {
 
         if (
           connectionRef.current &&
-          typeof connectionRef.current.destroy === "function"
+          typeof connectionRef.current.peer.destroy === "function"
         ) {
-          connectionRef.current.destroy();
-          connectionRef.current = null;
+          connectionRef.current.peer.destroy();
         }
 
         if (userVideo.current) {
@@ -390,45 +390,34 @@ export default function DoctorVideoCallPage() {
   const shareScreen = async () => {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          cursor: "always",
-          displaySurface: "monitor",
-        },
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          sampleRate: 44100,
-        },
+        video: true,
+        audio: false,
       });
 
       setScreenShare(screenStream);
+      const screenTrack = screenStream.getVideoTracks()[0];
 
-      screenStream.getVideoTracks()[0].addEventListener("ended", () => {
+      screenTrack.onended = () => {
         stopScreenShare();
-      });
+      };
 
-      if (connectionRef.current) {
-        const videoTrack = screenStream.getVideoTracks()[0];
+      if (!connectionRef.current) {
+        console.error("Peer connection is not initialized.");
+        alert("Screen share failed: No active call.");
+        return;
+      }
 
-        const senders = connectionRef.current.getSenders();
-        const videoSender = senders.find(
-          (sender) => sender.track && sender.track.kind === "video"
-        );
+      const peer = connectionRef.current;
 
-        if (videoSender) {
-          const originalTrack = videoSender.track;
-
-          videoSender.replaceTrack(videoTrack);
-
-          screenShare.originalTrack = originalTrack;
+      if (peer.streams[0]) {
+        const oldVideoTrack = peer.streams[0].getVideoTracks()[0];
+        if (oldVideoTrack) {
+          peer.replaceTrack(oldVideoTrack, screenTrack, peer.streams[0]);
         }
       }
 
       if (screenVideo.current) {
         screenVideo.current.srcObject = screenStream;
-        await screenVideo.current.play().catch((err) => {
-          console.error("Error playing screen share:", err);
-        });
       }
     } catch (err) {
       console.error("Error sharing screen:", err);
@@ -437,26 +426,39 @@ export default function DoctorVideoCallPage() {
   };
 
   const stopScreenShare = () => {
-    if (screenShare) {
-      screenShare.getTracks().forEach((track) => track.stop());
+    if (!screenShare) return;
 
-      if (screenShare.originalTrack && connectionRef.current) {
-        const senders = connectionRef.current.getSenders();
-        const videoSender = senders.find(
-          (sender) => sender.track && sender.track.kind === "video"
-        );
+    screenShare.getTracks().forEach((track) => track.stop());
 
-        if (videoSender) {
-          videoSender.replaceTrack(screenShare.originalTrack);
-        }
-      }
-
-      setScreenShare(null);
-
-      if (screenVideo.current) {
-        screenVideo.current.srcObject = null;
-      }
+    if (!connectionRef.current) {
+      console.warn("Peer connection is already closed.");
+      return;
     }
+
+    const peer = connectionRef.current;
+
+    const cameraTrack = streamRef.current?.getVideoTracks()[0];
+
+    if (!cameraTrack) {
+      console.warn("No camera track available to replace screen share.");
+      return;
+    }
+
+    const screenTrack = screenShare.getVideoTracks()[0];
+
+    if (peer.streams[0] && screenTrack) {
+      peer.replaceTrack(screenTrack, cameraTrack, peer.streams[0]);
+
+      console.log("Replaced screen share track with camera track.");
+    }
+
+    setScreenShare(null);
+
+    if (myVideo.current) {
+      myVideo.current.srcObject = streamRef.current;
+    }
+
+    console.log("Stopped screen sharing and restored camera feed.");
   };
 
   const sendMessage = (text) => {
@@ -480,8 +482,8 @@ export default function DoctorVideoCallPage() {
     });
 
     if (connectionRef.current) {
-      if (typeof connectionRef.current.destroy === "function") {
-        connectionRef.current.destroy();
+      if (typeof connectionRef.current.peer.destroy === "function") {
+        connectionRef.current.peer.destroy();
       }
       connectionRef.current = null;
     }
