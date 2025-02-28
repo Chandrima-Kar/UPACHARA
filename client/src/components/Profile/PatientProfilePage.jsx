@@ -37,10 +37,8 @@ import {
   Calculator,
 } from "lucide-react";
 import api from "@/utils/api";
+import Link from "next/link";
 
-// API utility
-
-// Loading skeleton component
 const LoadingSkeleton = () => (
   <div className="animate-pulse space-y-8 w-full max-w-7xl mx-auto p-6">
     <div className="h-8 w-64 bg-gray-200 rounded-full"></div>
@@ -414,17 +412,19 @@ const AppointmentCard = ({ appointment, isUpcoming = false }) => {
 
       {isUpcoming && appointment.meeting_link && (
         <div className="mt-4">
-          <button className="w-full py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2">
+          <Link
+            className="w-full py-2 px-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+            href={`/consultation/${appointment.id}?roomId=${appointment.meeting_link}`}
+          >
             <Video className="h-4 w-4" />
             Join Video Call
-          </button>
+          </Link>
         </div>
       )}
     </div>
   );
 };
 
-// Medical history item component
 const MedicalHistoryItem = ({ condition }) => {
   const diagnosisDate = parseISO(condition.diagnosis_date);
   const formattedDate = format(diagnosisDate, "MMM dd, yyyy");
