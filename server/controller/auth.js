@@ -251,3 +251,30 @@ export const my_doctors = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+export const getDoctorById = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    const result = await pool.query(
+      `SELECT 
+          id, 
+          concat(first_name, ' ', last_name) AS name,
+          experience_years, 
+          specialization,
+          image_url, 
+          created_at
+       FROM doctors 
+       WHERE id = $1`,
+      [doctorId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching doctor:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};

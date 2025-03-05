@@ -1,6 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useAnimation,
+  useInView,
+} from "framer-motion";
 import { FaQuoteLeft, FaQuoteRight } from "react-icons/fa";
 import Image from "next/image";
 
@@ -18,16 +23,14 @@ const reviews = [
     name: "Sattwikee Khan",
     image: "/sg.jpg",
     location: "Israel",
-
     review:
-      "As a healthcare professional, I’ve seen firsthand how this platform improves patient care. The AI-driven diagnosis tools and real-time data analysis streamline decision-making, reducing errors and saving valuable time. The integration of smart insurance advisors and blockchain security makes it a game-changer in digital healthcare.",
+      "As a healthcare professional, I've seen firsthand how this platform improves patient care. The AI-driven diagnosis tools and real-time data analysis streamline decision-making, reducing errors and saving valuable time. The integration of smart insurance advisors and blockchain security makes it a game-changer in digital healthcare.",
   },
   {
     id: 3,
     name: "Chandrima Khatun",
     image: "/ck.png",
     location: "Dubai",
-
     review:
       "Healthcare has never been this efficient! The multi-disease prediction feature is incredibly accurate, helping me stay ahead of potential health issues. The blockchain security gives me peace of mind, knowing my data is protected. This platform is the future of personalized healthcare!",
   },
@@ -36,7 +39,6 @@ const reviews = [
     name: "Md. Rupal Reyaz",
     image: "/rp.png",
     location: "Afghanistan",
-
     review:
       "I was skeptical at first, but this platform exceeded my expectations. The AI chatbot provides instant support, and the drug forecasting feature helps me find effective medication alternatives effortlessly. With its intuitive interface and cutting-edge AI capabilities, it truly bridges the gap between technology and quality healthcare.",
   },
@@ -45,16 +47,14 @@ const reviews = [
     name: "Ayaan Mukherjee",
     image: "/12.png",
     location: "Prayagraj",
-
     review:
-      "This platform is a lifesaver! The AI-driven symptom analysis helped me identify potential health risks early, allowing me to take preventive measures. The virtual consultation feature made it easy to connect with doctors without long wait times. It’s a must-have for anyone looking for smarter healthcare solutions.",
+      "This platform is a lifesaver! The AI-driven symptom analysis helped me identify potential health risks early, allowing me to take preventive measures. The virtual consultation feature made it easy to connect with doctors without long wait times. It's a must-have for anyone looking for smarter healthcare solutions.",
   },
   {
     id: 6,
-    name: " Zaib Sengupta",
+    name: "Zaib Sengupta",
     image: "/mzr.png",
     location: "Vrindavan",
-
     review:
       "I love how this platform simplifies healthcare. The drug response predictor ensures I take medications that work best for me, while the AI-powered diagnostics provide reliable insights. The user-friendly interface makes navigation effortless, making it accessible to all age groups.",
   },
@@ -62,18 +62,20 @@ const reviews = [
 
 const TestimonialSection = () => {
   const [selectedTestimonial, setSelectedTestimonial] = useState(reviews[0]);
-
-  const handleImageClick = (reviews) => {
-    setSelectedTestimonial(reviews);
-  };
-
-  const variants = {
-    enter: { opacity: 0, x: 10 },
-    center: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -10 },
-  };
-
   const [isHovered, setIsHovered] = useState(false);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
+
+  const handleImageClick = (review) => {
+    setSelectedTestimonial(review);
+  };
 
   useEffect(() => {
     if (!isHovered) {
@@ -87,91 +89,140 @@ const TestimonialSection = () => {
 
       return () => clearInterval(interval);
     }
-  }, [isHovered, selectedTestimonial, reviews]);
+  }, [isHovered, selectedTestimonial]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
+  const cardVariants = {
+    enter: { opacity: 0, y: 20 },
+    center: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
+
   return (
-    <section className="flex items-center ">
-      <div
+    <section
+      ref={ref}
+      className="py-24 px-6 bg-gradient-to-b from-white to-blue-50"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate={controls}
         className="container mx-auto flex flex-col items-center"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Heading */}
-        <h1 className="text-3xl sm:text-4xl   font-montserrat">
+        <motion.h1
+          variants={itemVariants}
+          className="text-4xl md:text-5xl font-bold font-montserrat mb-16 relative inline-block"
+        >
           Patient Reviews
-        </h1>
+          <span className="absolute -bottom-2 left-1/4 w-1/2 h-2 bg-blue-200 rounded-full"></span>
+        </motion.h1>
 
         {/* Testimonial Card */}
+        <motion.div
+          variants={itemVariants}
+          className="w-full mt-[2.5rem] xl:mt-[4rem] flex flex-col items-center"
+        >
+          <div className="testimonial-card bg-white bg-opacity-80 p-8 rounded-2xl shadow-xl h-auto md:h-[450px] lg:h-[400px] w-full max-w-6xl mx-auto relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-white rounded-2xl"></div>
 
-        <div className="w-full mt-[2.5rem] xl:mt-[4rem] flex flex-col items-center">
-          <div className="testimonial-card bg-opacity-80 p-4 lg:p-8 rounded-lg shadow-xl  h-[520px] md:h-[450px] lg:h-[500px] xl:h-[400px] w-full max-w-6xl mx-auto relative flex flex-col xl:flex-row items-center justify-center xl:justify-between gap-16 md:gap-10 xl:gap-16">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedTestimonial.id}
-                variants={variants}
+                variants={cardVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.5 }}
-                className="w-full flex flex-col xl:flex-row items-center justify-center xl:justify-between gap-16 md:gap-10 xl:gap-16"
+                className="relative z-10 w-full h-full flex flex-col xl:flex-row items-center justify-center xl:justify-between gap-8 md:gap-10 xl:gap-16"
               >
                 {/* Left Section: Image & Name */}
-                <div className="flex xl:flex-col items-center justify-center gap-1 md:gap-5">
-                  <Image
-                    src={selectedTestimonial.image}
-                    alt={selectedTestimonial.name}
-                    width={200}
-                    height={200}
-                    className="w-[5rem] md:w-[7rem] xl:w-[15rem] rounded-full"
-                  />
+                <div className="flex flex-col items-center justify-center gap-5">
+                  <motion.div
+                    whileHover={{ scale: 1.05, rotate: 3 }}
+                    className="relative"
+                  >
+                    <div className="absolute inset-0 bg-blue-200 rounded-full blur-md"></div>
+                    <Image
+                      src={selectedTestimonial.image || "/placeholder.svg"}
+                      alt={selectedTestimonial.name}
+                      width={200}
+                      height={200}
+                      className="w-[7rem] md:w-[10rem] xl:w-[12rem] rounded-full border-4 border-white shadow-lg relative z-10"
+                    />
+                  </motion.div>
 
-                  <div className="text-center flex items-centerjustify-center text-lg font-lato">
-                    <span className="font-bold ">
+                  <div className="text-center">
+                    <h3 className="font-bold text-xl text-blue-800 font-montserrat">
                       {selectedTestimonial.name}
-                      {"  "}
-                    </span>
-
-                    <span className="font-normal">
-                      ,{"  "}
+                    </h3>
+                    <p className="text-blue-600 font-lato">
                       {selectedTestimonial.location}
-                    </span>
+                    </p>
                   </div>
                 </div>
 
                 {/* Right Section: Review Text */}
-                <div className="relative z-10 max-w-[43rem] ">
-                  <FaQuoteLeft className="absolute -top-10 left-0 xl:-left-10 w-5 xl:w-8 h-8" />
-                  <FaQuoteRight className="absolute -bottom-5 right-0 xl:-right-5 w-5 xl:w-8 h-8" />
-                  <p className="text-base leading-5 md:text-lg text-gray-800  font-lato">
+                <div className="relative z-10 max-w-[43rem] bg-white bg-opacity-70 p-6 rounded-xl shadow-lg">
+                  <FaQuoteLeft className="absolute -top-5 -left-5 w-10 h-10 text-blue-200" />
+                  <FaQuoteRight className="absolute -bottom-5 -right-5 w-10 h-10 text-blue-200" />
+                  <p className="text-lg text-gray-800 font-lato leading-relaxed">
                     {selectedTestimonial.review}
                   </p>
                 </div>
               </motion.div>
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mt-8 flex flex-wrap justify-center space-x-4">
+        <motion.div
+          variants={itemVariants}
+          className="mt-12 flex flex-wrap justify-center gap-4"
+        >
           {reviews.map((review) => (
-            <div
+            <motion.div
               key={review.id}
+              whileHover={{ scale: 1.1, y: -5 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => handleImageClick(review)}
-              className={`cursor-pointer border-2 p-1 rounded-full transition ${
+              className={`cursor-pointer border-2 p-1 rounded-full transition-all duration-300 ${
                 selectedTestimonial.id === review.id
-                  ? "border-blue-500"
+                  ? "border-blue-500 shadow-lg shadow-blue-200"
                   : "border-transparent"
               } `}
             >
               <Image
-                src={review.image}
+                src={review.image || "/placeholder.svg"}
                 alt={review.name}
                 width={200}
                 height={200}
                 className="w-12 lg:w-16 h-12 lg:h-16 rounded-full"
               />
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 };

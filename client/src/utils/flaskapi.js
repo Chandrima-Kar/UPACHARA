@@ -18,7 +18,7 @@ flaskapi.interceptors.request.use(
 flaskapi.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         window.localStorage.removeItem("profile");
         window.localStorage.removeItem("token");

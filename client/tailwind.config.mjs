@@ -14,16 +14,39 @@ export default {
   ],
   theme: {
     extend: {
-      animation: {
-        "bounce-slow": "bounce 3s infinite",
-        "pulse-slow": "pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        float: "float 3s ease-in-out infinite",
-        "fade-in": "fadeIn 0.6s ease-out forwards",
-      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      fontFamily: {
+        montserrat: ["Montserrat", "sans-serif"],
+        lato: ["Lato", "sans-serif"],
+        ubuntu: ["Ubuntu", "sans-serif"],
+        open_sans: ["Open Sans", "sans-serif"],
+        playfair: ["Playfair Display", "serif"],
+      },
+      animation: {
+        "spin-slow": "spin 3s linear infinite",
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "bounce-slow": "bounce 3s infinite",
+        float: "float 3s ease-in-out infinite",
+        "fade-in": "fadeIn 0.6s ease-out forwards",
+        wiggle: "wiggle 1s ease-in-out infinite",
+      },
+      transitionProperty: {
+        height: "height",
+        spacing: "margin, padding",
+      },
+      keyframes: {
+        wiggle: {
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       colors: {
         border: "hsl(var(--border))",
@@ -64,19 +87,6 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        fadeIn: {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-      },
-      fontFamily: {
-        open_sans: ["Open Sans", "sans-serif"],
-        playfair: ["Playfair Display", "serif"],
-        lato: ["Lato", "sans-serif"],
-        montserrat: ["Montserrat", "sans-serif"],
-        ubuntu: ["Ubuntu", "sans-serif"],
       },
     },
   },

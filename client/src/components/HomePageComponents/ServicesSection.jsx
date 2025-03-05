@@ -1,11 +1,9 @@
 "use client";
-
-import React, { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { MdArrowOutward } from "react-icons/md";
-
-import { motion } from "framer-motion";
+import { motion, useAnimation, useInView } from "framer-motion";
 
 const cardsLeft = [
   {
@@ -40,6 +38,15 @@ const cardsRight = [
 const ServicesSection = () => {
   const [flippedCards, setFlippedCards] = useState({});
   const router = useRouter();
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
 
   const handleFlip = (id) => {
     setFlippedCards((prev) => ({
@@ -47,102 +54,189 @@ const ServicesSection = () => {
       [id]: !prev[id],
     }));
   };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.6, ease: "easeOut" },
+    },
+  };
+
+  const logoVariants = {
+    hidden: { scale: 0.8, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+        yoyo: Number.POSITIVE_INFINITY,
+        repeatDelay: 2,
+      },
+    },
+  };
+
   return (
-    <section className="flex items-center ">
-      <div className="container mx-auto flex flex-col items-center">
-        <h1 className="text-3xl sm:text-4xl   font-montserrat">Our Services</h1>
+    <section
+      ref={ref}
+      className="py-24 px-6 bg-gradient-to-b from-blue-50 to-white"
+    >
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate={controls}
+        className="container mx-auto"
+      >
+        <motion.h1
+          variants={itemVariants}
+          className="text-4xl md:text-5xl font-bold text-center font-montserrat mb-16 relative inline-block mx-auto"
+        >
+          Our Services
+          <span className="absolute -bottom-2 left-1/4 w-1/2 h-2 bg-blue-200 rounded-full"></span>
+        </motion.h1>
 
-        <div className="flex items-center justify-center gap-24 mt-[2.5rem] xl:mt-[4rem] ">
-          <div className="grid grid-cols-1 place-items-center gap-10">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-24">
+          <motion.div
+            variants={containerVariants}
+            className="grid grid-cols-1 place-items-center gap-10"
+          >
             {cardsLeft.map((card) => (
-              <div
+              <motion.div
                 key={card.id}
-                className="relative w-[28rem] h-[298.6px]"
+                variants={itemVariants}
+                whileHover={{ scale: 1.02 }}
+                className="relative w-full sm:w-[28rem] h-[300px]"
                 onClick={() => handleFlip(card.id)}
               >
                 <motion.div
                   animate={{ rotateY: flippedCards[card.id] ? 180 : 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative preserve-3d cursor-pointer"
+                  className="relative preserve-3d cursor-pointer w-full h-full"
                 >
                   {/* Front Side */}
-                  <div className="absolute w-[28rem] backface-hidden">
+                  <div className="absolute w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-xl">
                     <Image
-                      src={card.image}
+                      src={card.image || "/placeholder.svg"}
                       alt="Upachara"
                       width={900}
                       height={600}
-                      className="rounded-2xl"
+                      className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                      <p className="text-white p-6 font-medium">
+                        Click to learn more
+                      </p>
+                    </div>
                   </div>
 
                   {/* Back Side */}
-                  <div className="absolute w-[28rem] h-[298.6px] bg-blue-500 text-white flex flex-col items-center justify-center rounded-xl shadow-2xl shadow-blue-200 rotate-y-180 backface-hidden">
-                    <p className="text-center font-lato p-4">{card.text}</p>
+                  <div className="absolute w-full h-full bg-gradient-to-br from-blue-600 to-blue-400 text-white flex flex-col items-center justify-center rounded-2xl shadow-2xl shadow-blue-200 rotate-y-180 backface-hidden p-6">
+                    <p className="text-center font-lato">{card.text}</p>
 
-                    <div
-                      onClick={() => router.push("/disease-prediction")}
-                      className=" flex items-center justify-center p-3 outline-dotted outline-3 -outline-offset-[7px] outline-white  bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-110 hover:bg-blue-700 cursor-pointer"
+                    <motion.div
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push("/disease-prediction");
+                      }}
+                      className="mt-6 flex items-center justify-center p-3 outline-dotted outline-3 -outline-offset-[7px] outline-white bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 cursor-pointer"
                     >
-                      <MdArrowOutward className=" w-7 h-7" />
-                    </div>
+                      <MdArrowOutward className="w-7 h-7" />
+                    </motion.div>
                   </div>
                 </motion.div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          <div className="flex flex-col items-center justify-center">
-            <Image
-              src="/logoU.png"
-              alt="Logo"
-              width={170}
-              height={56.27}
-              className=""
-            />
-            <h1 className=" text-lg font-mono pl-5">Presents</h1>
-          </div>
+          <motion.div
+            variants={logoVariants}
+            className="flex flex-col items-center justify-center py-10"
+          >
+            <div className="relative">
+              <div className="absolute inset-0 bg-blue-200 rounded-full blur-xl opacity-50 animate-pulse"></div>
+              <Image
+                src="/logoU.png"
+                alt="Logo"
+                width={170}
+                height={56.27}
+                className="relative z-10"
+              />
+            </div>
+            <h1 className="text-lg font-mono pl-5 mt-2 bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              Presents
+            </h1>
+          </motion.div>
 
-          <div className="grid grid-cols-1 place-items-center gap-10">
+          <motion.div
+            variants={containerVariants}
+            className="grid grid-cols-1 place-items-center gap-10"
+          >
             {cardsRight.map((card) => (
-              <div
+              <motion.div
                 key={card.id}
-                className="relative w-[28rem] h-[298.6px]"
+                variants={itemVariants}
+                whileHover={{ scale: 1.02 }}
+                className="relative w-full sm:w-[28rem] h-[300px]"
                 onClick={() => handleFlip(card.id)}
               >
                 <motion.div
                   animate={{ rotateY: flippedCards[card.id] ? 180 : 0 }}
                   transition={{ duration: 0.6 }}
-                  className="relative preserve-3d cursor-pointer"
+                  className="relative preserve-3d cursor-pointer w-full h-full"
                 >
                   {/* Front Side */}
-                  <div className="absolute w-[28rem] backface-hidden">
+                  <div className="absolute w-full h-full backface-hidden rounded-2xl overflow-hidden shadow-xl">
                     <Image
-                      src={card.image}
+                      src={card.image || "/placeholder.svg"}
                       alt="Upachara"
                       width={900}
                       height={600}
-                      className="rounded-2xl"
+                      className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                      <p className="text-white p-6 font-medium">
+                        Click to learn more
+                      </p>
+                    </div>
                   </div>
 
                   {/* Back Side */}
-                  <div className="absolute w-[28rem] h-[298.6px] bg-blue-500 text-white flex flex-col items-center justify-center rounded-xl shadow-2xl shadow-blue-200 rotate-y-180 backface-hidden">
-                    <p className="text-center font-lato p-4">{card.text}</p>
+                  <div className="absolute w-full h-full bg-gradient-to-br from-blue-600 to-blue-400 text-white flex flex-col items-center justify-center rounded-2xl shadow-2xl shadow-blue-200 rotate-y-180 backface-hidden p-6">
+                    <p className="text-center font-lato">{card.text}</p>
 
-                    <div
-                      onClick={() => router.push("/blogs")}
-                      className=" flex items-center justify-center p-3 outline-dotted outline-3 -outline-offset-[7px] outline-white  bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 transform hover:scale-110 hover:bg-blue-700 cursor-pointer"
+                    <motion.div
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push("/blogs");
+                      }}
+                      className="mt-6 flex items-center justify-center p-3 outline-dotted outline-3 -outline-offset-[7px] outline-white bg-blue-500 text-white font-semibold rounded-full shadow-lg transition-all duration-500 cursor-pointer"
                     >
-                      <MdArrowOutward className=" w-7 h-7" />
-                    </div>
+                      <MdArrowOutward className="w-7 h-7" />
+                    </motion.div>
                   </div>
                 </motion.div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

@@ -7,6 +7,7 @@ import {
   doctor_login,
   doctor_profile,
   doctor_register,
+  getDoctorById,
   my_doctors,
   my_patients,
   patient_login,
@@ -41,6 +42,8 @@ router.get(
   authorizePatient,
   patient_profile
 );
+
+router.get("/doctor/:doctorId", getDoctorById);
 
 router.get("/doctor/patients", authenticateToken, authorizeDoctor, my_patients);
 router.get("/patient/doctors", authenticateToken, authorizePatient, my_doctors);

@@ -77,9 +77,12 @@ export const get_doctor_availability = async (req, res) => {
     );
 
     if (doctorInfo.rows.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No availability found for this doctor on this day" });
+      return res.json({
+        status: 200,
+        success: false,
+        availability: null,
+        availableSlots: [],
+      });
     }
 
     const doctorSchedule = doctorInfo.rows[0];
@@ -124,6 +127,8 @@ export const get_doctor_availability = async (req, res) => {
     }
 
     res.json({
+      status: 200,
+      success: true,
       doctor: {
         firstName: doctorSchedule.first_name,
         lastName: doctorSchedule.last_name,
