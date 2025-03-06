@@ -4,7 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { DoctorHeader, PatientHeader } from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import Baseline from "@/components/Baseline/Baseline";
 import { UserProvider, useUser } from "@/context/UserContext";

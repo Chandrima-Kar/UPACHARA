@@ -316,9 +316,9 @@ section {
 }
 
 /* Ensure all section backgrounds are transparent */
-[class*="bg-white"] {
+/* [class*="bg-white"] {
   background-color: transparent !important;
-}
+} */
 
 /* Ensure gradient backgrounds blend properly */
 .bg-gradient-to-b,
@@ -328,10 +328,6 @@ section {
   background-color: transparent !important;
 }
 
-/* Fix for loader background */
-.fixed.inset-0 {
-  background: transparent !important;
-}
 
 /* Glassmorphism effects for cards */
 .glass-card {
@@ -339,15 +335,6 @@ section {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-}
-
-/* Ensure about page sections blend with background */
-.about-section {
-  background: transparent !important;
-}
-
-.about-section > div {
-  background: transparent !important;
 }
 
 /* Appointment page styles */

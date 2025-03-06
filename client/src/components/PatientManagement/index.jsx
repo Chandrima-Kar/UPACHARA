@@ -163,27 +163,27 @@ export default function PatientManagement() {
       {
         icon: HeartPulse,
         label: "Blood Pressure",
-        value: latest.blood_pressure,
+        value: latest?.blood_pressure,
       },
-      { icon: Heart, label: "Heart Rate", value: `${latest.heart_rate} bpm` },
+      { icon: Heart, label: "Heart Rate", value: `${latest?.heart_rate} bpm` },
       {
         icon: ThermometerSun,
         label: "Temperature",
-        value: `${latest.temperature}°C`,
+        value: `${latest?.temperature}°C`,
       },
       {
         icon: Lungs,
         label: "Respiratory Rate",
-        value: `${latest.respiratory_rate} /min`,
+        value: `${latest?.respiratory_rate} /min`,
       },
       {
         icon: Activity,
         label: "O2 Saturation",
-        value: `${latest.oxygen_saturation}%`,
+        value: `${latest?.oxygen_saturation}%`,
       },
-      { icon: Scale, label: "Weight", value: `${latest.weight} kg` },
-      { icon: Ruler, label: "Height", value: `${latest.height} cm` },
-      { icon: Calculator, label: "BMI", value: latest.bmi },
+      { icon: Scale, label: "Weight", value: `${latest?.weight} kg` },
+      { icon: Ruler, label: "Height", value: `${latest?.height} cm` },
+      { icon: Calculator, label: "BMI", value: latest?.bmi },
     ];
 
     return (
