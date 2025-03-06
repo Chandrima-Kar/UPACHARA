@@ -22,6 +22,17 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.style.scrollBehavior = "smooth";
+    return () => {
+      document.documentElement.style.scrollBehavior = "auto";
+    };
+  }, []);
+
   if (isLoading) {
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-blue-200 to-white z-50">

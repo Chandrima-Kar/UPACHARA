@@ -41,7 +41,7 @@ const OurBlogSection = () => {
     }
 
     fetchBlogs();
-  }, []);
+  }, [user]);
 
   // Pagination Logic
   const visiblePosts = blogs.slice(startIndex, startIndex + 4);
